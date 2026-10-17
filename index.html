@@ -636,7 +636,7 @@ function renderMenu() {
   const t = menuOf(tk);
   box.append(el('div',{class:'group-title',text:'Hoy · ' + fmtDay(today)}));
   if (t && t.meals.length) box.append(dayCard(t));
-  else box.append(el('div',{class:'card'}, el('div',{class:'empty',text:'No hay menú cargado para hoy.'})));
+  else box.append(el('div',{class:'card'}, el('div',{class:'empty',text:[0,6].includes(today.getDay()) ? 'Fin de semana: no hay menú de guardería.' : 'No hay menú cargado para hoy.'})));
   const wd = k => keyDate(k).toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'});
   const up = state.menu.filter(m => m.day > tk && m.meals.length).sort((a,b)=>a.day.localeCompare(b.day));
   if (up.length) { box.append(el('div',{class:'group-title',text:'Próximos días'})); up.forEach(m => box.append(dayCard(m, wd(m.day)))); }
