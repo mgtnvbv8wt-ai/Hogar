@@ -1,0 +1,562 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nuestro Hogar</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#e05d3f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Hogar">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<style>
+:root{
+  --bg:#fbf6f0; --card:#ffffff; --ink:#2a211c; --muted:#8a7d74; --line:#eadfd3;
+  --accent:#e05d3f; --accent-ink:#fff; --accent-soft:#fde7df; --mine:#e05d3f; --theirs:#efe6db;
+  --ok:#3c8d5a; --danger:#c0392b;
+  --radius:16px;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#17120f; --card:#241d19; --ink:#f4ece4; --muted:#a39385; --line:#3a2f28;
+    --accent:#ee7355; --accent-soft:#3b2219; --mine:#c9502f; --theirs:#352b25; --ok:#5fb07d; --danger:#e8695a; }
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.4 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;overscroll-behavior:none}
+button,input,textarea,select{font:inherit;color:inherit}
+input,textarea,select{font-size:16px;width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--card);outline:none}
+input:focus,textarea:focus,select:focus{border-color:var(--accent)}
+button{cursor:pointer;border:0;border-radius:12px;padding:12px 16px;background:var(--accent);color:var(--accent-ink);font-weight:600}
+button.ghost{background:transparent;color:var(--accent);padding:8px 10px}
+button.soft{background:var(--accent-soft);color:var(--accent)}
+button.danger{background:transparent;color:var(--danger)}
+button:disabled{opacity:.5}
+[hidden]{display:none!important}
+
+#app{display:flex;flex-direction:column;height:100dvh;max-width:640px;margin:0 auto}
+header{display:flex;align-items:center;justify-content:space-between;padding:calc(env(safe-area-inset-top) + 12px) 16px 10px}
+header h1{font-size:22px;margin:0;letter-spacing:-.3px}
+main{flex:1;overflow-y:auto;padding:0 16px 16px;-webkit-overflow-scrolling:touch}
+nav{display:grid;grid-template-columns:repeat(4,1fr);background:var(--card);border-top:1px solid var(--line);padding:6px 4px calc(env(safe-area-inset-bottom) + 6px)}
+nav button{background:transparent;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;padding:6px 0;font-weight:600}
+nav button svg{width:24px;height:24px}
+nav button.on{color:var(--accent)}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px;margin-bottom:12px}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.row{display:flex;gap:8px;align-items:center}
+.stack>*+*{margin-top:10px}
+
+/* auth */
+.auth{max-width:420px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 40px) 20px 20px}
+.auth h1{font-size:30px;letter-spacing:-.5px;margin:0 0 4px}
+.auth .logo{width:64px;height:64px;border-radius:16px;margin-bottom:16px}
+.err{color:var(--danger);font-size:14px;min-height:20px}
+
+/* calendar */
+.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.cal-head h2{margin:0;font-size:18px}.cal-head h2::first-letter{text-transform:uppercase}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center}
+.dow{font-size:12px;color:var(--muted);padding:4px 0;font-weight:600}
+.day{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:12px;background:transparent;color:var(--ink);padding:0;font-weight:500;position:relative}
+.day.out{color:var(--muted);opacity:.45}
+.day.today{box-shadow:inset 0 0 0 1.5px var(--accent)}
+.day.sel{background:var(--accent);color:var(--accent-ink)}
+.day .dot{width:5px;height:5px;border-radius:50%;background:var(--accent);margin-top:2px;visibility:hidden}
+.day.has .dot{visibility:visible}
+.day.sel .dot{background:var(--accent-ink)}
+
+.ev{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-top:1px solid var(--line)}
+.ev:first-child{border-top:0}
+.ev .time{min-width:54px;font-weight:700;color:var(--accent);font-size:14px;padding-top:1px}
+.ev .body{flex:1;min-width:0}
+.ev .t{font-weight:600;word-break:break-word}
+.ev .del{padding:4px 8px;font-size:20px;line-height:1}
+.group-title{font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin:18px 0 6px}
+
+/* chat */
+#view-chat{display:flex;flex-direction:column;height:100%}
+#chatlog{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:6px;padding:4px 0 10px}
+.msg{max-width:78%;padding:9px 13px;border-radius:18px;background:var(--theirs);align-self:flex-start;word-break:break-word;white-space:pre-wrap}
+.msg.mine{background:var(--mine);color:#fff;align-self:flex-end}
+.msg .who{display:block;font-size:11px;font-weight:700;opacity:.7;margin-bottom:1px}
+.msg .at{display:block;font-size:10px;opacity:.6;margin-top:2px;text-align:right}
+.composer{display:flex;gap:8px;padding-top:8px}
+.composer input{flex:1}
+
+/* shopping */
+.item{display:flex;align-items:center;gap:12px;padding:12px 4px;border-top:1px solid var(--line)}
+.item:first-child{border-top:0}
+.chk{width:26px;height:26px;border-radius:50%;border:2px solid var(--line);background:transparent;padding:0;flex:none;display:grid;place-items:center;color:#fff}
+.item.done .chk{background:var(--ok);border-color:var(--ok)}
+.item.done .nm{text-decoration:line-through;color:var(--muted)}
+.item .nm{flex:1;word-break:break-word}
+
+/* modal */
+.sheet-bg{position:fixed;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:flex-end;justify-content:center;z-index:10}
+.sheet{background:var(--bg);width:100%;max-width:640px;border-radius:22px 22px 0 0;padding:18px 16px calc(env(safe-area-inset-bottom) + 18px);max-height:90dvh;overflow:auto}
+.sheet h3{margin:0 0 12px;font-size:20px}
+label.f{display:block;font-size:13px;font-weight:600;color:var(--muted);margin:10px 0 4px}
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:14px;z-index:20}
+.empty{text-align:center;color:var(--muted);padding:28px 10px}
+.code{font:700 26px/1 ui-monospace,Menlo,monospace;letter-spacing:3px;background:var(--accent-soft);color:var(--accent);padding:12px 14px;border-radius:12px;text-align:center}
+</style>
+</head>
+<body>
+
+<!-- Pantalla de acceso -->
+<div id="auth" class="auth" hidden>
+  <img class="logo" src="icon-192.png" alt="">
+  <h1>Nuestro Hogar</h1>
+  <p class="muted" style="margin:0 0 20px">Calendario, eventos, chat y compra, solo para vosotros.</p>
+  <form id="authForm" class="stack">
+    <input id="aEmail" type="email" placeholder="Email" autocomplete="email" required>
+    <input id="aPass" type="password" placeholder="Contraseña (mín. 6)" autocomplete="current-password" minlength="6" required>
+    <div class="err" id="aErr"></div>
+    <button id="aGo" type="submit" style="width:100%">Entrar</button>
+    <button id="aSwitch" type="button" class="ghost" style="width:100%">Crear cuenta nueva</button>
+  </form>
+</div>
+
+<!-- Elegir hogar -->
+<div id="onboard" class="auth" hidden>
+  <h1>Vuestro hogar</h1>
+  <p class="muted" style="margin:0 0 18px">Uno de los dos crea el hogar y el otro se une con el código.</p>
+  <div class="card stack">
+    <strong>Tu nombre</strong>
+    <input id="oName" placeholder="Cómo te llamas" maxlength="30">
+  </div>
+  <div class="card stack">
+    <strong>Crear un hogar</strong>
+    <input id="oHome" placeholder="Nombre (p. ej. Casa)" maxlength="40">
+    <button id="oCreate" style="width:100%">Crear hogar</button>
+  </div>
+  <div class="card stack">
+    <strong>Unirme con código</strong>
+    <input id="oCode" placeholder="Código de invitación" autocapitalize="none" autocorrect="off" maxlength="20">
+    <button id="oJoin" class="soft" style="width:100%">Unirme</button>
+  </div>
+  <div class="err" id="oErr"></div>
+  <button id="oOut" class="ghost" style="width:100%">Cerrar sesión</button>
+</div>
+
+<!-- App -->
+<div id="app" hidden>
+  <header>
+    <h1 id="title">Calendario</h1>
+    <button class="ghost" id="btnSettings" aria-label="Ajustes">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+    </button>
+  </header>
+  <main>
+    <section id="view-cal">
+      <div class="card">
+        <div class="cal-head">
+          <button class="ghost" id="prevM" aria-label="Mes anterior">‹</button>
+          <h2 id="monthTitle"></h2>
+          <button class="ghost" id="nextM" aria-label="Mes siguiente">›</button>
+        </div>
+        <div class="grid" id="dows"></div>
+        <div class="grid" id="days"></div>
+      </div>
+      <div class="row" style="justify-content:space-between;margin:6px 2px">
+        <strong id="dayTitle"></strong>
+        <button class="soft" id="addEvDay">+ Evento</button>
+      </div>
+      <div class="card" id="dayList"></div>
+    </section>
+
+    <section id="view-ev" hidden>
+      <div class="row" style="justify-content:flex-end;margin-bottom:6px"><button id="addEv">+ Nuevo evento</button></div>
+      <div id="evList"></div>
+    </section>
+
+    <section id="view-chat" hidden>
+      <div id="chatlog"></div>
+      <form class="composer" id="chatForm">
+        <input id="chatIn" placeholder="Escribe un mensaje…" autocomplete="off" maxlength="2000">
+        <button type="submit" aria-label="Enviar">Enviar</button>
+      </form>
+    </section>
+
+    <section id="view-shop" hidden>
+      <form class="row" id="shopForm" style="margin-bottom:12px">
+        <input id="shopIn" placeholder="Añadir a la compra…" autocomplete="off" maxlength="100">
+        <button type="submit">Añadir</button>
+      </form>
+      <div class="card" id="shopList"></div>
+      <button class="danger" id="clearDone" style="width:100%">Borrar los comprados</button>
+    </section>
+  </main>
+  <nav id="tabs">
+    <button data-tab="cal" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Calendario</button>
+    <button data-tab="ev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg>Eventos</button>
+    <button data-tab="chat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L3 21l1.9-5.4A8 8 0 1 1 21 12z"/></svg>Chat</button>
+    <button data-tab="shop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6h15l-1.5 9h-12z"/><path d="M6 6L5 3H2"/><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/></svg>Compra</button>
+  </nav>
+</div>
+
+<div id="modal" class="sheet-bg" hidden><div class="sheet" id="sheet"></div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+const SUPABASE_URL = 'https://rlsxtsmaxhirdiljzsck.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_7JI6ZuxHzsHYc1VcrGK5fg_xtT6nQfx';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const $ = s => document.querySelector(s);
+const state = { user:null, member:null, household:null, members:{}, events:[], messages:[], items:[],
+  tab:'cal', month:new Date(), sel:new Date(), channel:null, signup:false };
+
+/* ---------- utilidades ---------- */
+const pad = n => String(n).padStart(2,'0');
+const ymd = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const sameDay = (a,b) => ymd(a)===ymd(b);
+const fmtTime = d => d.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
+const fmtDay = d => d.toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'});
+const el = (tag, props={}, ...kids) => {
+  const e = document.createElement(tag);
+  for (const [k,v] of Object.entries(props)) {
+    if (k==='class') e.className=v; else if (k.startsWith('on')) e.addEventListener(k.slice(2),v);
+    else if (k==='text') e.textContent=v; else e.setAttribute(k,v);
+  }
+  kids.flat().forEach(c => c!=null && e.append(c.nodeType?c:document.createTextNode(c)));
+  return e;
+};
+function toast(msg){ const t=el('div',{class:'toast',text:msg}); document.body.append(t); setTimeout(()=>t.remove(),2500); }
+const errMsg = e => {
+  const m = (e && e.message) || String(e);
+  if (/Invalid login/i.test(m)) return 'Email o contraseña incorrectos.';
+  if (/already registered/i.test(m)) return 'Ese email ya tiene cuenta. Prueba a entrar.';
+  if (/Email not confirmed/i.test(m)) return 'Confirma tu email (mira tu correo) y vuelve a entrar.';
+  if (/invalid invite code/i.test(m)) return 'Código de invitación no válido.';
+  if (/rate limit/i.test(m)) return 'Demasiados intentos. Espera unos minutos.';
+  return m;
+};
+
+/* ---------- acceso ---------- */
+function showOnly(id){ for (const x of ['auth','onboard','app']) $('#'+x).hidden = x!==id; }
+
+$('#aSwitch').onclick = () => {
+  state.signup = !state.signup;
+  $('#aGo').textContent = state.signup ? 'Crear cuenta' : 'Entrar';
+  $('#aSwitch').textContent = state.signup ? 'Ya tengo cuenta' : 'Crear cuenta nueva';
+  $('#aPass').autocomplete = state.signup ? 'new-password' : 'current-password';
+  $('#aErr').textContent = '';
+};
+$('#authForm').onsubmit = async e => {
+  e.preventDefault();
+  const email = $('#aEmail').value.trim(), password = $('#aPass').value;
+  $('#aErr').textContent = ''; $('#aGo').disabled = true;
+  try {
+    if (state.signup) {
+      const { data, error } = await sb.auth.signUp({ email, password });
+      if (error) throw error;
+      if (!data.session) {
+        state.signup = false;
+        $('#aGo').textContent = 'Entrar'; $('#aSwitch').textContent = 'Crear cuenta nueva';
+        $('#aErr').style.color = 'var(--ok)';
+        $('#aErr').textContent = 'Cuenta creada. Revisa tu correo para confirmarla y luego entra.';
+        $('#aGo').disabled = false; return;
+      }
+    } else {
+      const { error } = await sb.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+    }
+  } catch (err) { $('#aErr').style.color='var(--danger)'; $('#aErr').textContent = errMsg(err); }
+  $('#aGo').disabled = false;
+};
+
+$('#oOut').onclick = () => sb.auth.signOut();
+async function onboard(fn) {
+  const name = $('#oName').value.trim();
+  if (!name) { $('#oErr').textContent = 'Escribe tu nombre.'; return; }
+  $('#oErr').textContent = '';
+  const { error } = await fn(name);
+  if (error) { $('#oErr').textContent = errMsg(error); return; }
+  await boot();
+}
+$('#oCreate').onclick = () => onboard(n => sb.rpc('create_household', { p_name: $('#oHome').value.trim(), p_display_name: n }));
+$('#oJoin').onclick = () => onboard(n => sb.rpc('join_household', { p_code: $('#oCode').value, p_display_name: n }));
+
+sb.auth.onAuthStateChange((event, session) => {
+  // evitar deadlocks: no hacer llamadas supabase dentro del callback
+  setTimeout(() => {
+    if (session) { state.user = session.user; boot(); }
+    else { state.user = null; teardown(); showOnly('auth'); }
+  }, 0);
+});
+
+/* ---------- arranque ---------- */
+async function boot() {
+  const { data: me, error } = await sb.from('members').select('*').eq('user_id', state.user.id).maybeSingle();
+  if (error) { toast(errMsg(error)); return; }
+  if (!me) { showOnly('onboard'); return; }
+  state.member = me;
+  const [{ data: h }, { data: ms }] = await Promise.all([
+    sb.from('households').select('*').eq('id', me.household_id).single(),
+    sb.from('members').select('user_id,display_name'),
+  ]);
+  state.household = h;
+  state.members = Object.fromEntries((ms||[]).map(m => [m.user_id, m.display_name]));
+  showOnly('app');
+  await loadAll();
+  subscribe();
+  render();
+}
+async function loadAll() {
+  const since = new Date(Date.now() - 60*86400e3).toISOString();
+  const [ev, ms, it] = await Promise.all([
+    sb.from('events').select('*').gte('starts_at', since).order('starts_at'),
+    sb.from('messages').select('*').order('created_at', { ascending:false }).limit(200),
+    sb.from('shopping_items').select('*').order('created_at'),
+  ]);
+  state.events = ev.data || [];
+  state.messages = (ms.data || []).reverse();
+  state.items = it.data || [];
+}
+function teardown() {
+  if (state.channel) { sb.removeChannel(state.channel); state.channel = null; }
+  Object.assign(state, { member:null, household:null, events:[], messages:[], items:[] });
+}
+
+/* ---------- tiempo real ---------- */
+function upsert(list, row) { const i = list.findIndex(x => x.id===row.id); if (i>=0) list[i]=row; else list.push(row); }
+function subscribe() {
+  if (state.channel) sb.removeChannel(state.channel);
+  const hid = state.household.id;
+  const f = `household_id=eq.${hid}`;
+  const ch = sb.channel('hogar-'+hid);
+  for (const [table, key, sort] of [['events','events',(a,b)=>a.starts_at.localeCompare(b.starts_at)],
+                                    ['messages','messages',(a,b)=>a.created_at.localeCompare(b.created_at)],
+                                    ['shopping_items','items',(a,b)=>a.created_at.localeCompare(b.created_at)]]) {
+    ch.on('postgres_changes', { event:'*', schema:'public', table, filter:f }, p => {
+      if (p.eventType==='DELETE') state[key] = state[key].filter(x => x.id !== p.old.id);
+      else { upsert(state[key], p.new); state[key].sort(sort); }
+      render();
+    });
+  }
+  ch.subscribe();
+  state.channel = ch;
+  // al volver a la app, refrescar por si el socket se durmió
+  document.addEventListener('visibilitychange', async () => {
+    if (document.visibilityState==='visible' && state.household) { await loadAll(); render(); }
+  });
+}
+
+/* ---------- navegación ---------- */
+const TITLES = { cal:'Calendario', ev:'Eventos', chat:'Chat', shop:'Compra' };
+$('#tabs').onclick = e => {
+  const b = e.target.closest('button[data-tab]'); if (!b) return;
+  state.tab = b.dataset.tab; render();
+  if (state.tab==='chat') scrollChat();
+};
+function render() {
+  if (!state.household) return;
+  $('#title').textContent = TITLES[state.tab];
+  document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab===state.tab));
+  for (const t of Object.keys(TITLES)) $('#view-'+t).hidden = t!==state.tab;
+  $('main').style.overflowY = state.tab==='chat' ? 'hidden' : 'auto';
+  $('main').style.display = state.tab==='chat' ? 'flex' : 'block';
+  $('main').style.flexDirection = 'column';
+  renderCal(); renderEvents(); renderChat(); renderShop();
+}
+
+/* ---------- calendario ---------- */
+['L','M','X','J','V','S','D'].forEach(d => $('#dows').append(el('div',{class:'dow',text:d})));
+$('#prevM').onclick = () => { state.month = new Date(state.month.getFullYear(), state.month.getMonth()-1, 1); render(); };
+$('#nextM').onclick = () => { state.month = new Date(state.month.getFullYear(), state.month.getMonth()+1, 1); render(); };
+
+function eventsOn(d) { return state.events.filter(e => sameDay(new Date(e.starts_at), d)); }
+
+function renderCal() {
+  const m = state.month, y = m.getFullYear(), mo = m.getMonth();
+  $('#monthTitle').textContent = m.toLocaleDateString('es-ES',{month:'long',year:'numeric'});
+  const first = new Date(y, mo, 1);
+  const start = new Date(y, mo, 1 - ((first.getDay()+6)%7));
+  const days = $('#days'); days.replaceChildren();
+  const today = new Date();
+  for (let i=0;i<42;i++) {
+    const d = new Date(start.getFullYear(), start.getMonth(), start.getDate()+i);
+    const b = el('button',{class:'day'+(d.getMonth()!==mo?' out':'')+(sameDay(d,today)?' today':'')+(sameDay(d,state.sel)?' sel':'')+(eventsOn(d).length?' has':'')},
+      el('span',{text:d.getDate()}), el('span',{class:'dot'}));
+    b.onclick = () => { state.sel = d; if (d.getMonth()!==mo) state.month = new Date(d.getFullYear(), d.getMonth(), 1); render(); };
+    days.append(b);
+  }
+  $('#dayTitle').textContent = fmtDay(state.sel);
+  const list = $('#dayList'); list.replaceChildren();
+  const evs = eventsOn(state.sel);
+  if (!evs.length) list.append(el('div',{class:'empty',text:'Nada planeado este día.'}));
+  evs.forEach(e => list.append(evRow(e, false)));
+}
+$('#addEvDay').onclick = () => eventForm(state.sel);
+
+function evRow(e, showDate) {
+  const s = new Date(e.starts_at);
+  const when = e.all_day ? 'Todo el día' : fmtTime(s) + (e.ends_at ? '–'+fmtTime(new Date(e.ends_at)) : '');
+  return el('div',{class:'ev'},
+    el('div',{class:'time', text: showDate ? s.toLocaleDateString('es-ES',{day:'numeric',month:'short'}) : (e.all_day?'Día':fmtTime(s))}),
+    el('div',{class:'body'},
+      el('div',{class:'t',text:e.title}),
+      el('div',{class:'small muted',text: [showDate?when:(e.all_day?'Todo el día':when), e.location].filter(Boolean).join(' · ')}),
+      e.notes ? el('div',{class:'small',text:e.notes}) : null,
+      el('div',{class:'small muted',text:'Añadido por '+(state.members[e.created_by]||'—')})),
+    el('button',{class:'ghost del','aria-label':'Editar',text:'✎',onclick:()=>eventForm(null,e)}));
+}
+
+/* ---------- eventos (próximos) ---------- */
+function renderEvents() {
+  const box = $('#evList'); box.replaceChildren();
+  const now = new Date(); now.setHours(0,0,0,0);
+  const up = state.events.filter(e => new Date(e.starts_at) >= now);
+  if (!up.length) { box.append(el('div',{class:'empty',text:'No hay eventos próximos. ¡Crea el primero!'})); return; }
+  const groups = {};
+  up.forEach(e => { const k = ymd(new Date(e.starts_at)); (groups[k] ||= []).push(e); });
+  Object.keys(groups).sort().forEach(k => {
+    const d = new Date(k+'T00:00:00');
+    box.append(el('div',{class:'group-title',text:fmtDay(d)}));
+    const c = el('div',{class:'card'}); groups[k].forEach(e => c.append(evRow(e,false))); box.append(c);
+  });
+}
+$('#addEv').onclick = () => eventForm(new Date());
+
+function openSheet(...kids) { const s=$('#sheet'); s.replaceChildren(...kids); $('#modal').hidden=false; }
+function closeSheet() { $('#modal').hidden = true; }
+$('#modal').addEventListener('click', e => { if (e.target.id==='modal') closeSheet(); });
+
+function eventForm(day, ev=null) {
+  const base = ev ? new Date(ev.starts_at) : new Date(day.getFullYear(), day.getMonth(), day.getDate(), 20, 0);
+  const end = ev?.ends_at ? new Date(ev.ends_at) : null;
+  const local = d => `${ymd(d)}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  const title = el('input',{placeholder:'Título (p. ej. Cena con los suegros)',maxlength:'120',value:ev?.title||''});
+  const allDay = el('input',{type:'checkbox',style:'width:auto'}); allDay.checked = !!ev?.all_day;
+  const start = el('input',{type:'datetime-local',value:local(base)});
+  const endI = el('input',{type:'datetime-local',value:end?local(end):''});
+  const place = el('input',{placeholder:'Lugar (opcional)',maxlength:'120',value:ev?.location||''});
+  const notes = el('textarea',{placeholder:'Notas (opcional)',rows:'2',maxlength:'500'}); notes.value = ev?.notes||'';
+  const err = el('div',{class:'err'});
+  const syncType = () => { const t = allDay.checked?'date':'datetime-local'; start.type=t; endI.type=t;
+    start.value = allDay.checked ? ymd(base) : local(base); endI.value=''; endI.parentElement.hidden = allDay.checked; };
+  const endWrap = el('div',{},el('label',{class:'f',text:'Fin (opcional)'}),endI);
+  allDay.onchange = syncType;
+  const save = el('button',{text:ev?'Guardar':'Crear evento',style:'flex:1'});
+  save.onclick = async () => {
+    if (!title.value.trim()) { err.textContent='Pon un título.'; return; }
+    if (!start.value) { err.textContent='Pon la fecha.'; return; }
+    const s = allDay.checked ? new Date(start.value+'T00:00:00') : new Date(start.value);
+    const e2 = (!allDay.checked && endI.value) ? new Date(endI.value) : null;
+    if (e2 && e2 < s) { err.textContent='El fin es anterior al inicio.'; return; }
+    const row = { title:title.value.trim(), location:place.value.trim()||null, notes:notes.value.trim()||null,
+      starts_at:s.toISOString(), ends_at:e2?e2.toISOString():null, all_day:allDay.checked };
+    save.disabled = true;
+    const q = ev ? sb.from('events').update(row).eq('id',ev.id).select().single()
+                 : sb.from('events').insert({ ...row, household_id: state.household.id }).select().single();
+    const { data, error } = await q;
+    if (error) { err.textContent = errMsg(error); save.disabled=false; return; }
+    upsert(state.events, data); state.events.sort((a,b)=>a.starts_at.localeCompare(b.starts_at));
+    state.sel = s; state.month = new Date(s.getFullYear(), s.getMonth(), 1);
+    closeSheet(); render();
+  };
+  const kids = [el('h3',{text:ev?'Editar evento':'Nuevo evento'}), title,
+    el('label',{class:'f row'},allDay,' Todo el día'),
+    el('label',{class:'f',text:'Inicio'}), start, endWrap,
+    el('label',{class:'f',text:'Lugar'}), place, el('label',{class:'f',text:'Notas'}), notes, err,
+    el('div',{class:'row',style:'margin-top:12px'},
+      el('button',{class:'ghost',text:'Cancelar',onclick:closeSheet}), save)];
+  if (ev) kids.push(el('button',{class:'danger',style:'width:100%;margin-top:6px',text:'Eliminar evento',onclick:async()=>{
+    if (!confirm('¿Eliminar este evento?')) return;
+    const { error } = await sb.from('events').delete().eq('id',ev.id);
+    if (error) { err.textContent=errMsg(error); return; }
+    state.events = state.events.filter(x=>x.id!==ev.id); closeSheet(); render();
+  }}));
+  openSheet(...kids);
+  syncType(); if (!allDay.checked) { start.value = local(base); }
+}
+
+/* ---------- chat ---------- */
+function renderChat() {
+  const log = $('#chatlog'); const atBottom = log.scrollHeight - log.scrollTop - log.clientHeight < 80;
+  log.replaceChildren();
+  if (!state.messages.length) log.append(el('div',{class:'empty',text:'Aún no hay mensajes. Saluda 👋'}));
+  state.messages.forEach(m => {
+    const mine = m.user_id === state.user.id;
+    log.append(el('div',{class:'msg'+(mine?' mine':'')},
+      mine ? null : el('span',{class:'who',text:state.members[m.user_id]||'—'}),
+      m.body, el('span',{class:'at',text:fmtTime(new Date(m.created_at))})));
+  });
+  if (atBottom) scrollChat();
+}
+function scrollChat() { requestAnimationFrame(()=>{ const l=$('#chatlog'); l.scrollTop=l.scrollHeight; }); }
+$('#chatForm').onsubmit = async e => {
+  e.preventDefault();
+  const body = $('#chatIn').value.trim(); if (!body) return;
+  $('#chatIn').value = '';
+  const { data, error } = await sb.from('messages').insert({ household_id: state.household.id, body }).select().single();
+  if (error) { toast(errMsg(error)); $('#chatIn').value = body; return; }
+  upsert(state.messages, data); renderChat(); scrollChat();
+};
+
+/* ---------- compra ---------- */
+function renderShop() {
+  const box = $('#shopList'); box.replaceChildren();
+  const pending = state.items.filter(i=>!i.done), done = state.items.filter(i=>i.done);
+  if (!state.items.length) box.append(el('div',{class:'empty',text:'La lista está vacía.'}));
+  [...pending, ...done].forEach(i => {
+    box.append(el('div',{class:'item'+(i.done?' done':'')},
+      el('button',{class:'chk','aria-label':'Marcar',onclick:()=>toggleItem(i),text:i.done?'✓':''}),
+      el('div',{class:'nm',text:i.name}),
+      el('button',{class:'ghost del','aria-label':'Borrar',text:'×',style:'font-size:22px',onclick:()=>delItem(i)})));
+  });
+  $('#clearDone').hidden = !done.length;
+}
+async function toggleItem(i) {
+  i.done = !i.done; renderShop();
+  const { error } = await sb.from('shopping_items').update({ done:i.done }).eq('id',i.id);
+  if (error) { i.done=!i.done; renderShop(); toast(errMsg(error)); }
+}
+async function delItem(i) {
+  state.items = state.items.filter(x=>x.id!==i.id); renderShop();
+  const { error } = await sb.from('shopping_items').delete().eq('id',i.id);
+  if (error) { toast(errMsg(error)); await loadAll(); renderShop(); }
+}
+$('#shopForm').onsubmit = async e => {
+  e.preventDefault();
+  const name = $('#shopIn').value.trim(); if (!name) return;
+  $('#shopIn').value = '';
+  const { data, error } = await sb.from('shopping_items').insert({ household_id: state.household.id, name }).select().single();
+  if (error) { toast(errMsg(error)); $('#shopIn').value = name; return; }
+  upsert(state.items, data); state.items.sort((a,b)=>a.created_at.localeCompare(b.created_at)); renderShop();
+};
+$('#clearDone').onclick = async () => {
+  const ids = state.items.filter(i=>i.done).map(i=>i.id); if (!ids.length) return;
+  state.items = state.items.filter(i=>!i.done); renderShop();
+  const { error } = await sb.from('shopping_items').delete().in('id', ids);
+  if (error) { toast(errMsg(error)); await loadAll(); renderShop(); }
+};
+
+/* ---------- ajustes ---------- */
+$('#btnSettings').onclick = () => {
+  const names = Object.values(state.members).join(' y ');
+  openSheet(
+    el('h3',{text:state.household.name}),
+    el('p',{class:'muted',text:'En el hogar: '+names}),
+    el('label',{class:'f',text:'Código para invitar a tu pareja'}),
+    el('div',{class:'code',text:state.household.invite_code}),
+    el('button',{class:'soft',style:'width:100%;margin-top:10px',text:'Copiar código',onclick:async()=>{
+      try { await navigator.clipboard.writeText(state.household.invite_code); toast('Código copiado'); } catch { toast('Cópialo a mano'); }}}),
+    el('hr',{style:'border:0;border-top:1px solid var(--line);margin:18px 0'}),
+    el('button',{class:'danger',style:'width:100%',text:'Cerrar sesión',onclick:()=>{closeSheet(); sb.auth.signOut();}}),
+    el('button',{class:'ghost',style:'width:100%;margin-top:6px',text:'Cerrar',onclick:closeSheet}));
+};
+
+/* ---------- PWA ---------- */
+if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(()=>{}));
+
+// estado inicial
+sb.auth.getSession().then(({ data }) => { if (!data.session) showOnly('auth'); });
+</script>
+</body>
+</html>
