@@ -303,9 +303,12 @@ async function boot() {
   state.household = h;
   state.members = Object.fromEntries((ms||[]).map(m => [m.user_id, m.display_name]));
   showOnly('app');
+  const wanted = new URLSearchParams(location.search).get('tab');
+  if (wanted && TITLES[wanted]) state.tab = wanted;
   await loadAll();
   subscribe();
   render();
+  refreshPush();
 }
 async function loadAll() {
   const since = new Date(Date.now() - 60*86400e3).toISOString();
@@ -540,6 +543,27 @@ $('#clearDone').onclick = async () => {
 /* ---------- ajustes ---------- */
 $('#btnSettings').onclick = () => {
   const names = Object.values(state.members).join(' y ');
+  const pushNote = el('p',{class:'small muted',style:'margin:0 0 8px',text:'Comprobando…'});
+  const pushBtn = el('button',{class:'soft',style:'width:100%',hidden:'',text:''});
+  const paint = async () => {
+    const st = await pushState();
+    pushBtn.hidden = !(st==='on' || st==='off');
+    pushBtn.disabled = false;
+    pushNote.textContent = {
+      unsupported:'Para recibir avisos, añade esta app a la pantalla de inicio (Compartir → Añadir a pantalla de inicio) y ábrela desde ahí. Requiere iOS 16.4 o superior.',
+      denied:'Has bloqueado los avisos. Actívalos en Ajustes del iPhone → Notificaciones → Hogar.',
+      off:'Recibirás un aviso cuando tu pareja escriba, añada algo a la compra o cree un evento.',
+      on:'Avisos activados: te llegarán los mensajes, la compra y los eventos nuevos de tu pareja.'
+    }[st];
+    pushBtn.textContent = st==='on' ? 'Desactivar avisos' : 'Activar avisos';
+    pushBtn.onclick = async () => {
+      pushBtn.disabled = true;
+      try { st==='on' ? await disablePush() : await enablePush(); }
+      catch (e) { toast(errMsg(e)); }
+      paint();
+    };
+  };
+  paint();
   openSheet(
     el('h3',{text:state.household.name}),
     el('p',{class:'muted',text:'En el hogar: '+names}),
@@ -548,9 +572,49 @@ $('#btnSettings').onclick = () => {
     el('button',{class:'soft',style:'width:100%;margin-top:10px',text:'Copiar código',onclick:async()=>{
       try { await navigator.clipboard.writeText(state.household.invite_code); toast('Código copiado'); } catch { toast('Cópialo a mano'); }}}),
     el('hr',{style:'border:0;border-top:1px solid var(--line);margin:18px 0'}),
+    el('label',{class:'f',text:'Avisos en este móvil'}),
+    pushNote, pushBtn,
+    el('hr',{style:'border:0;border-top:1px solid var(--line);margin:18px 0'}),
     el('button',{class:'danger',style:'width:100%',text:'Cerrar sesión',onclick:()=>{closeSheet(); sb.auth.signOut();}}),
     el('button',{class:'ghost',style:'width:100%;margin-top:6px',text:'Cerrar',onclick:closeSheet}));
 };
+
+/* ---------- avisos push ---------- */
+const VAPID_PUBLIC = 'BNPXq508qsSfFthyNsN8d9yyEm5sB_8NBRDzKef0Anrxf5JkaA_mFdDXOirshw-12-QAD68uKSt0X_7t_hx8b88';
+const b64 = s => { const r = atob((s + '='.repeat((4 - s.length % 4) % 4)).replace(/-/g,'+').replace(/_/g,'/')); return Uint8Array.from(r, c => c.charCodeAt(0)); };
+const pushSupported = () => 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
+async function pushSub() { const reg = await navigator.serviceWorker.ready; return reg.pushManager.getSubscription(); }
+async function pushState() {
+  if (!pushSupported()) return 'unsupported';
+  if (Notification.permission === 'denied') return 'denied';
+  return (Notification.permission === 'granted' && await pushSub()) ? 'on' : 'off';
+}
+async function saveSub(sub) {
+  const j = sub.toJSON();
+  const { error } = await sb.rpc('save_push_subscription', { p_endpoint: j.endpoint, p_p256dh: j.keys.p256dh, p_auth: j.keys.auth });
+  if (error) throw error;
+}
+async function enablePush() {
+  const perm = await Notification.requestPermission();
+  if (perm !== 'granted') throw new Error('Permiso denegado');
+  const reg = await navigator.serviceWorker.ready;
+  const sub = (await reg.pushManager.getSubscription()) ||
+    await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64(VAPID_PUBLIC) });
+  await saveSub(sub);
+}
+async function disablePush() {
+  const sub = await pushSub(); if (!sub) return;
+  await sb.from('push_subscriptions').delete().eq('endpoint', sub.endpoint);
+  await sub.unsubscribe();
+}
+// mantener este dispositivo asociado al usuario actual
+async function refreshPush() {
+  try { if (await pushState() === 'on') await saveSub(await pushSub()); } catch (_) {}
+}
+if ('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message', e => {
+  const t = e.data && e.data.tab;
+  if (t && TITLES[t]) { state.tab = t; render(); if (t === 'chat') scrollChat(); }
+});
 
 /* ---------- PWA ---------- */
 if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(()=>{}));
