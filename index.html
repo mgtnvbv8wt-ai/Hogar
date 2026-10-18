@@ -228,6 +228,7 @@ label.f{display:block;font-size:calc(13px * var(--fs));font-weight:600;color:var
     </section>
 
     <section id="view-shop" hidden>
+      <div class="seg" id="shopSeg"></div>
       <form class="row" id="shopForm" style="margin-bottom:8px">
         <input id="shopIn" placeholder="Añadir a la compra…" autocomplete="off" maxlength="100">
         <button type="submit">Añadir</button>
@@ -239,6 +240,7 @@ label.f{display:block;font-size:calc(13px * var(--fs));font-weight:600;color:var
     </section>
 
     <section id="view-chores" hidden>
+      <div class="seg" id="choreSeg"></div>
       <form class="row" id="choreForm" style="margin-bottom:12px">
         <input id="choreIn" placeholder="Nueva tarea…" autocomplete="off" maxlength="200">
         <button type="submit">Añadir</button>
@@ -272,9 +274,13 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const $ = s => document.querySelector(s);
 const state = { user:null, member:null, household:null, members:{}, events:[], messages:[], items:[], chores:[], menu:[], staples:[],
-  tab:'home', calMode:'month', stapleEdit:false, month:new Date(), sel:new Date(), channel:null, signup:false };
+  tab:'home', place:loadPlace(), calMode:'month', stapleEdit:false, month:new Date(), sel:new Date(), channel:null, signup:false };
 
 /* ---------- preferencias (tema y tamaño de letra) ---------- */
+const PLACES = [['estartit', "L'Estartit"], ['torello', 'Torelló']];
+const PLACE_NAME = Object.fromEntries(PLACES);
+function loadPlace() { try { const v = localStorage.getItem('hogar-place'); return PLACE_NAME[v] ? v : 'estartit'; } catch (_) { return 'estartit'; } }
+function savePlace(v) { try { localStorage.setItem('hogar-place', v); } catch (_) {} }
 const PREFS_KEY = 'hogar-prefs';
 function loadPrefs() { try { return JSON.parse(localStorage.getItem(PREFS_KEY)) || {}; } catch (_) { return {}; } }
 function savePrefs(p) { try { localStorage.setItem(PREFS_KEY, JSON.stringify(p)); } catch (_) {} }
@@ -467,7 +473,7 @@ function render() {
   $('main').style.overflowY = state.tab==='chat' ? 'hidden' : 'auto';
   $('main').style.display = state.tab==='chat' ? 'flex' : 'block';
   $('main').style.flexDirection = 'column';
-  renderHome(); renderCal(); renderEvents(); renderChat(); renderShop(); renderChores(); renderMenu();
+  renderPlaceSeg(); renderHome(); renderCal(); renderEvents(); renderChat(); renderShop(); renderChores(); renderMenu();
 }
 
 /* ---------- calendario ---------- */
@@ -655,6 +661,20 @@ $('#chatForm').onsubmit = async e => {
   upsert(state.messages, data); renderChat(); scrollChat();
 };
 
+/* ---------- viviendas (L'Estartit / Torelló) ---------- */
+function renderPlaceSeg() {
+  const fill = (sel, list) => {
+    $(sel).replaceChildren(...PLACES.map(([k, l]) => {
+      const n = list.filter(x => !x.done && x.place === k).length;
+      const b = el('button',{class:state.place === k ? 'on' : '', text:l + (n ? ' (' + n + ')' : '')});
+      b.onclick = () => { state.place = k; savePlace(k); render(); };
+      return b;
+    }));
+  };
+  fill('#shopSeg', state.items); fill('#choreSeg', state.chores);
+}
+const placeSelect = v => { const s = el('select',{}, ...PLACES.map(([k, l]) => el('option',{value:k,text:l}))); s.value = v; return s; };
+
 /* ---------- compra ---------- */
 const CATS = [['frutas','Fruta y verdura'],['carne','Carne y pescado'],['lacteos','Lácteos y huevos'],['pan','Panadería'],
   ['despensa','Despensa'],['bebidas','Bebidas'],['congelados','Congelados'],['limpieza','Limpieza'],
@@ -677,7 +697,7 @@ const catOf = i => CAT_NAME[i.category] ? i.category : 'otros';
 const catSelect = withAuto => el('select',{}, withAuto ? el('option',{value:'auto',text:'Categoría: automática'}) : null,
   ...CATS.map(([k,v]) => el('option',{value:k,text:v})));
 $('#shopCat').replaceWith(Object.assign(catSelect(true), { id:'shopCat', style:'margin-bottom:12px' }));
-const stapleOf = name => state.staples.find(x => x.name.toLowerCase() === name.trim().toLowerCase());
+const stapleOf = (name, place = state.place) => state.staples.find(x => x.place === place && x.name.toLowerCase() === name.trim().toLowerCase());
 
 function itemRow(i) {
   return el('div',{class:'item'+(i.done?' done':'')},
@@ -687,8 +707,9 @@ function itemRow(i) {
 }
 function renderShop() {
   const box = $('#shopList'); box.replaceChildren();
-  const pending = state.items.filter(i=>!i.done), done = state.items.filter(i=>i.done);
-  if (!state.items.length) box.append(el('div',{class:'card'}, el('div',{class:'empty',text:'La lista está vacía.'})));
+  const here = state.items.filter(i => i.place === state.place);
+  const pending = here.filter(i=>!i.done), done = here.filter(i=>i.done);
+  if (!here.length) box.append(el('div',{class:'card'}, el('div',{class:'empty',text:'La lista de ' + PLACE_NAME[state.place] + ' está vacía.'})));
   for (const [k, label] of CATS) {
     const its = pending.filter(i => catOf(i) === k); if (!its.length) continue;
     box.append(el('div',{class:'group-title',text:label}));
@@ -699,19 +720,20 @@ function renderShop() {
     const c = el('div',{class:'card'}); done.forEach(i => c.append(itemRow(i))); box.append(c);
   }
   $('#clearDone').hidden = !done.length;
-  renderStaples();
+  renderStaples(); renderPlaceSeg();
 }
 function renderStaples() {
   const box = $('#staples'); box.replaceChildren();
-  if (!state.staples.length) {
-    if (state.items.length) box.append(el('div',{class:'small muted',style:'margin:0 2px 12px',text:'Consejo: toca un producto de la lista y márcalo como «habitual» para añadirlo luego con un toque.'}));
+  const staples = state.staples.filter(x => x.place === state.place);
+  if (!staples.length) {
+    if (state.items.some(i => i.place === state.place)) box.append(el('div',{class:'small muted',style:'margin:0 2px 12px',text:'Consejo: toca un producto de la lista y márcalo como «habitual» para añadirlo luego con un toque.'}));
     return;
   }
-  const onList = new Set(state.items.filter(i=>!i.done).map(i=>i.name.toLowerCase()));
+  const onList = new Set(state.items.filter(i=>!i.done && i.place === state.place).map(i=>i.name.toLowerCase()));
   box.append(el('div',{class:'title-row'}, el('div',{class:'group-title',style:'margin:6px 0',text:'Habituales'}),
     el('button',{class:'ghost',text:state.stapleEdit?'Listo':'Editar',onclick:()=>{ state.stapleEdit = !state.stapleEdit; renderStaples(); }})));
   const row = el('div',{class:'chips'});
-  state.staples.forEach(st => {
+  staples.forEach(st => {
     const on = onList.has(st.name.toLowerCase());
     const b = el('button',{class:'chip'+(on&&!state.stapleEdit?' on':''),text: state.stapleEdit ? st.name+'  ×' : (on?'✓ ':'+ ')+st.name});
     b.disabled = on && !state.stapleEdit;
@@ -721,7 +743,7 @@ function renderStaples() {
   box.append(row);
 }
 async function addItem(name, category) {
-  const { data, error } = await sb.from('shopping_items').insert({ household_id: state.household.id, name, category }).select().single();
+  const { data, error } = await sb.from('shopping_items').insert({ household_id: state.household.id, name, category, place: state.place }).select().single();
   if (error) { toast(errMsg(error)); return false; }
   upsert(state.items, data); state.items.sort((a,b)=>a.created_at.localeCompare(b.created_at)); renderShop(); return true;
 }
@@ -730,14 +752,14 @@ async function delStaple(st) {
   const { error } = await sb.from('shopping_staples').delete().eq('id', st.id);
   if (error) { toast(errMsg(error)); await loadAll(); renderStaples(); }
 }
-async function syncStaple(name, category, want, oldName) {
-  const ex = stapleOf(oldName || name);
+async function syncStaple(name, category, want, oldName, place) {
+  const ex = stapleOf(oldName || name, place);
   if (want && !ex) {
-    const { data, error } = await sb.from('shopping_staples').insert({ household_id: state.household.id, name, category }).select().single();
+    const { data, error } = await sb.from('shopping_staples').insert({ household_id: state.household.id, name, category, place }).select().single();
     if (error) { toast(errMsg(error)); return; }
     upsert(state.staples, data);
   } else if (want && ex) {
-    const { data, error } = await sb.from('shopping_staples').update({ name, category }).eq('id', ex.id).select().single();
+    const { data, error } = await sb.from('shopping_staples').update({ name, category, place }).eq('id', ex.id).select().single();
     if (error) { toast(errMsg(error)); return; }
     upsert(state.staples, data);
   } else if (!want && ex) {
@@ -750,20 +772,22 @@ async function syncStaple(name, category, want, oldName) {
 function itemForm(i) {
   const name = el('input',{maxlength:'100',value:i.name});
   const cat = catSelect(false); cat.value = catOf(i);
-  const stap = el('input',{type:'checkbox',style:'width:auto'}); stap.checked = !!stapleOf(i.name);
+  const plc = placeSelect(i.place);
+  const stap = el('input',{type:'checkbox',style:'width:auto'}); stap.checked = !!stapleOf(i.name, i.place);
   const err = el('div',{class:'err'});
   const save = el('button',{text:'Guardar',style:'flex:1'});
   save.onclick = async () => {
     const nm = name.value.trim(); if (!nm) { err.textContent = 'Escribe el nombre.'; return; }
     save.disabled = true;
-    const { data, error } = await sb.from('shopping_items').update({ name:nm, category:cat.value }).eq('id', i.id).select().single();
+    const { data, error } = await sb.from('shopping_items').update({ name:nm, category:cat.value, place:plc.value }).eq('id', i.id).select().single();
     if (error) { err.textContent = errMsg(error); save.disabled = false; return; }
     upsert(state.items, data);
-    await syncStaple(nm, cat.value, stap.checked, i.name);
+    await syncStaple(nm, cat.value, stap.checked, plc.value === i.place ? i.name : nm, plc.value);
     closeSheet(); renderShop();
   };
   openSheet(el('h3',{text:'Editar producto'}), name,
     el('label',{class:'f',text:'Categoría'}), cat,
+    el('label',{class:'f',text:'Vivienda'}), plc,
     el('label',{class:'f row'}, stap, ' Producto habitual (acceso rápido)'), err,
     el('div',{class:'row',style:'margin-top:12px'}, el('button',{class:'ghost',text:'Cancelar',onclick:closeSheet}), save));
 }
@@ -786,8 +810,8 @@ $('#shopForm').onsubmit = async e => {
   if (!(await addItem(name, category))) $('#shopIn').value = name;
 };
 $('#clearDone').onclick = async () => {
-  const ids = state.items.filter(i=>i.done).map(i=>i.id); if (!ids.length) return;
-  state.items = state.items.filter(i=>!i.done); renderShop();
+  const ids = state.items.filter(i=>i.done && i.place === state.place).map(i=>i.id); if (!ids.length) return;
+  state.items = state.items.filter(i=>!ids.includes(i.id)); render();
   const { error } = await sb.from('shopping_items').delete().in('id', ids);
   if (error) { toast(errMsg(error)); await loadAll(); renderShop(); }
 };
@@ -824,9 +848,10 @@ function recurLabel(c) {
   }
   return CHORE_REC[c.recur];
 }
-function choreRow(c) {
+function choreRow(c, showPlace) {
   const today = ymd(new Date());
   const meta = [];
+  if (showPlace) meta.push('🏠 ' + PLACE_NAME[c.place]);
   if (c.assignee) meta.push('Para ' + who(c.assignee));
   const rl = recurLabel(c); if (rl) meta.push('🔁 ' + rl);
   if (c.done) meta.push('Hecho por ' + who(c.done_by) + (c.done_at ? ' · ' + fmtShort(new Date(c.done_at)) : ''));
@@ -842,12 +867,13 @@ function choreRow(c) {
 }
 function renderChores() {
   const box = $('#choreList'); box.replaceChildren();
-  const pending = state.chores.filter(c=>!c.done)
+  const here = state.chores.filter(c => c.place === state.place);
+  const pending = here.filter(c=>!c.done)
     .sort((a,b) => (a.due||'9999').localeCompare(b.due||'9999') || a.created_at.localeCompare(b.created_at));
-  const done = state.chores.filter(c=>c.done).sort((a,b)=>(b.done_at||'').localeCompare(a.done_at||''));
-  if (!state.chores.length) box.append(el('div',{class:'empty',text:'No hay tareas. Añade la primera.'}));
+  const done = here.filter(c=>c.done).sort((a,b)=>(b.done_at||'').localeCompare(a.done_at||''));
+  if (!here.length) box.append(el('div',{class:'empty',text:'No hay tareas en ' + PLACE_NAME[state.place] + '. Añade la primera.'}));
   [...pending, ...done].forEach(c => box.append(choreRow(c)));
-  $('#clearChores').hidden = !done.length;
+  $('#clearChores').hidden = !done.length; renderPlaceSeg();
 }
 async function toggleChore(c) {
   const old = { done:c.done, done_by:c.done_by, done_at:c.done_at, due:c.due, last_done_at:c.last_done_at, last_done_by:c.last_done_by };
@@ -873,14 +899,14 @@ $('#choreForm').onsubmit = async e => {
   e.preventDefault();
   const title = $('#choreIn').value.trim(); if (!title) return;
   $('#choreIn').value = '';
-  const { data, error } = await sb.from('chores').insert({ household_id: state.household.id, title }).select().single();
+  const { data, error } = await sb.from('chores').insert({ household_id: state.household.id, title, place: state.place }).select().single();
   if (error) { toast(errMsg(error)); $('#choreIn').value = title; return; }
   upsert(state.chores, data); state.chores.sort((a,b)=>a.created_at.localeCompare(b.created_at)); render();
 };
 $('#choreMore').onclick = () => { const t = $('#choreIn').value.trim(); $('#choreIn').value = ''; choreForm(null, t); };
 $('#clearChores').onclick = async () => {
-  const ids = state.chores.filter(c=>c.done).map(c=>c.id); if (!ids.length) return;
-  state.chores = state.chores.filter(c=>!c.done); render();
+  const ids = state.chores.filter(c=>c.done && c.place === state.place).map(c=>c.id); if (!ids.length) return;
+  state.chores = state.chores.filter(c=>!ids.includes(c.id)); render();
   const { error } = await sb.from('chores').delete().in('id', ids);
   if (error) { toast(errMsg(error)); await loadAll(); render(); }
 };
@@ -892,6 +918,7 @@ function choreForm(c, presetTitle = '') {
   const recur = el('select',{}, el('option',{value:'',text:'No se repite'}),
     ...Object.entries(CHORE_REC).map(([k,v]) => el('option',{value:k,text:v})));
   recur.value = c?.recur || '';
+  const plc = placeSelect(c?.place || state.place);
   const days = new Set(c?.recur_days || []);
   const dayBtns = el('div',{class:'sel-row'}, ...DOW_ORDER.map(([n,l]) => {
     const b = el('button',{type:'button',class:'chip'+(days.has(n)?' sel':''),text:l,style:'min-width:40px'});
@@ -906,7 +933,7 @@ function choreForm(c, presetTitle = '') {
   const save = el('button',{text:c?'Guardar':'Añadir tarea',style:'flex:1'});
   save.onclick = async () => {
     const t = title.value.trim(); if (!t) { err.textContent = 'Escribe la tarea.'; return; }
-    const row = { title:t, assignee:assignee.value || null, recur:recur.value || null,
+    const row = { title:t, place:plc.value, assignee:assignee.value || null, recur:recur.value || null,
       recur_days: recur.value === 'weekly' && days.size ? [...days].sort() : null, due: due.value || null };
     if (row.recur && !row.due) row.due = ymd(new Date());
     save.disabled = true;
@@ -918,6 +945,7 @@ function choreForm(c, presetTitle = '') {
     closeSheet(); render();
   };
   const kids = [el('h3',{text:c?'Editar tarea':'Nueva tarea'}), title,
+    el('label',{class:'f',text:'Vivienda'}), plc,
     el('label',{class:'f',text:'¿A quién le toca?'}), assignee,
     el('label',{class:'f',text:'Repetición'}), recur, daysWrap, dueLbl, due, err,
     el('div',{class:'row',style:'margin-top:12px'}, el('button',{class:'ghost',text:'Cancelar',onclick:closeSheet}), save)];
@@ -1091,10 +1119,10 @@ function renderHome() {
   box.append(el('div',{style:'margin:2px 2px 14px'},
     el('h2',{style:'margin:0;font-size:calc(24px * var(--fs));letter-spacing:-.3px',text:'Hola, ' + (state.members[state.user.id] || '')}),
     el('div',{class:'muted',text:fmtDay(today)})));
-  const tile = (n, label, tab) => el('button',{class:'tile',onclick:()=>openTab(tab)}, el('span',{class:'n',text:n}), label);
-  box.append(el('div',{class:'tiles'},
-    tile(state.items.filter(i=>!i.done).length, 'por comprar', 'shop'),
-    tile(state.chores.filter(c=>!c.done).length, 'tareas pendientes', 'chores')));
+  const split = list => PLACES.map(([k, l]) => l + ' ' + list.filter(x => !x.done && x.place === k).length).join(' · ');
+  const tile = (list, label, tab) => el('button',{class:'tile',onclick:()=>openTab(tab)},
+    el('span',{class:'n',text:list.filter(x=>!x.done).length}), label, el('div',{class:'small muted',style:'margin-top:2px',text:split(list)}));
+  box.append(el('div',{class:'tiles'}, tile(state.items, 'por comprar', 'shop'), tile(state.chores, 'tareas pendientes', 'chores')));
 
   box.append(el('div',{class:'group-title',text:'Hoy'}));
   const evs = eventsOn(today), c = el('div',{class:'card'});
@@ -1105,7 +1133,7 @@ function renderHome() {
     .sort((a,b) => (a.due||'9999').localeCompare(b.due||'9999')).slice(0, 6);
   if (mine.length) {
     box.append(el('div',{class:'group-title',text:'Tareas para hoy'}));
-    const cc = el('div',{class:'card'}); mine.forEach(x => cc.append(choreRow(x))); box.append(cc);
+    const cc = el('div',{class:'card'}); mine.forEach(x => cc.append(choreRow(x, true))); box.append(cc);
   }
 
   const t = menuOf(tk);
