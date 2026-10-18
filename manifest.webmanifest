@@ -1,7 +1,7 @@
 {
   "name": "Nuestro Hogar",
   "short_name": "Hogar",
-  "description": "Calendario, eventos, chat y lista de la compra para dos.",
+  "description": "Calendario, chat, compra, tareas y menú para dos.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
