@@ -139,6 +139,14 @@ label.f{display:block;font-size:calc(13px * var(--fs));font-weight:600;color:var
 .preview .pd{padding:6px 0;border-top:1px solid var(--line);font-size:14px}
 .preview .pd:first-child{border-top:0}
 .sel-row{display:flex;gap:6px;flex-wrap:wrap}
+.wx{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;width:100%;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px;margin-bottom:10px;color:var(--ink);font-weight:500}
+.wx .where{font-size:calc(12px * var(--fs));font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.wx .big{font-size:calc(38px * var(--fs));font-weight:700;line-height:1}
+.wx .stats{display:grid;gap:3px;text-align:right;font-size:calc(14px * var(--fs));color:var(--muted)}
+.kv{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-top:1px solid var(--line)}
+.kv:first-child{border-top:0}
+.kv b{font-weight:600}
+.spark{width:100%;height:90px;display:block;margin:6px 0 2px}
 </style>
 </head>
 <body>
@@ -274,7 +282,7 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const $ = s => document.querySelector(s);
 const state = { user:null, member:null, household:null, members:{}, events:[], messages:[], items:[], chores:[], menu:[], staples:[],
-  tab:'home', place:loadPlace(), calMode:'month', stapleEdit:false, month:new Date(), sel:new Date(), channel:null, signup:false };
+  tab:'home', place:loadPlace(), stations:[], weather:null, weatherAt:0, weatherBusy:false, calMode:'month', stapleEdit:false, month:new Date(), sel:new Date(), channel:null, signup:false };
 
 /* ---------- preferencias (tema y tamaño de letra) ---------- */
 const PLACES = [['estartit', "L'Estartit"], ['torello', 'Torelló']];
@@ -399,16 +407,18 @@ async function boot() {
   subscribe();
   render();
   refreshPush();
+  loadWeather(true);
 }
 async function loadAll() {
   const since = new Date(Date.now() - 60*86400e3).toISOString();
-  const [ev, ms, it, ch, mn, st] = await Promise.all([
+  const [ev, ms, it, ch, mn, st, wst] = await Promise.all([
     sb.from('events').select('*').or('starts_at.gte.' + since + ',recur.not.is.null').order('starts_at'),
     sb.from('messages').select('*').order('created_at', { ascending:false }).limit(200),
     sb.from('shopping_items').select('*').order('created_at'),
     sb.from('chores').select('*').order('created_at'),
     sb.from('menu_days').select('*').gte('day', ymd(new Date(Date.now() - 45*86400e3))).order('day'),
     sb.from('shopping_staples').select('*').order('name'),
+    sb.from('weather_stations').select('*'),
   ]);
   state.events = ev.data || [];
   state.messages = (ms.data || []).reverse();
@@ -416,10 +426,11 @@ async function loadAll() {
   state.chores = ch.data || [];
   state.menu = mn.data || [];
   state.staples = st.data || [];
+  state.stations = wst.data || [];
 }
 function teardown() {
   if (state.channel) { sb.removeChannel(state.channel); state.channel = null; }
-  Object.assign(state, { member:null, household:null, events:[], messages:[], items:[], chores:[], menu:[], staples:[] });
+  Object.assign(state, { member:null, household:null, events:[], messages:[], items:[], chores:[], menu:[], staples:[], stations:[], weather:null, weatherAt:0 });
 }
 
 /* ---------- tiempo real ---------- */
@@ -447,8 +458,9 @@ function subscribe() {
   if (!state.visHooked) {
     state.visHooked = true;
     document.addEventListener('visibilitychange', async () => {
-      if (document.visibilityState==='visible' && state.household) { await loadAll(); render(); }
+      if (document.visibilityState==='visible' && state.household) { await loadAll(); render(); loadWeather(); }
     });
+    setInterval(() => { if (state.tab === 'home' && document.visibilityState === 'visible') loadWeather(); }, 5 * 60 * 1000);
   }
 }
 
@@ -459,6 +471,7 @@ function openTab(t) {
   if (!TITLES[t]) return;
   state.tab = t; render();
   $('main').scrollTop = 0;
+  if (t === 'home') loadWeather();
   if (t === 'chat') scrollChat();
 }
 $('#tabs').onclick = e => {
@@ -1112,6 +1125,131 @@ function menuForm(key) {
   openSheet(...kids);
 }
 
+/* ---------- el tiempo (estaciones Ecowitt) ---------- */
+async function loadWeather(force) {
+  if (!state.household || !state.stations.length || state.weatherBusy) return;
+  if (!force && Date.now() - state.weatherAt < 2 * 60 * 1000) return;
+  state.weatherBusy = true;
+  try {
+    const { data, error } = await sb.functions.invoke('weather', { body: {} });
+    if (error) throw error;
+    state.weather = data; state.weatherAt = Date.now();
+  } catch (_) {
+    state.weather = { configured: true, stations: [], failed: true }; state.weatherAt = Date.now() - 90 * 1000;   // reintenta en ~30 s
+  }
+  state.weatherBusy = false;
+  if (state.tab === 'home') renderHome();
+}
+const COMPASS = ['N','NE','E','SE','S','SO','O','NO'];
+const compass = d => d == null ? '' : COMPASS[Math.round(d / 45) % 8];
+const fnum = (n, d = 1) => n == null ? null : Number(n).toLocaleString('es-ES', { minimumFractionDigits: d, maximumFractionDigits: d });
+function ago(iso) {
+  const m = Math.max(0, Math.round((Date.now() - new Date(iso).getTime()) / 60000));
+  return m < 2 ? 'ahora' : m < 60 ? 'hace ' + m + ' min' : m < 1440 ? 'hace ' + Math.round(m / 60) + ' h' : 'hace ' + Math.round(m / 1440) + ' d';
+}
+function renderWeather(box) {
+  box.append(el('div',{class:'group-title',text:'El tiempo'}));
+  if (!state.stations.length) {
+    box.append(el('div',{class:'card'}, el('div',{class:'small muted',style:'margin-bottom:8px',text:'Conecta tu estación Ecowitt para ver aquí la temperatura, el viento y la lluvia de cada vivienda.'}),
+      el('button',{class:'soft',style:'width:100%',text:'Configurar estación',onclick:()=>$('#btnSettings').click()})));
+    return;
+  }
+  const w = state.weather;
+  if (w && w.configured === false) {
+    box.append(el('div',{class:'card'}, el('div',{class:'small muted',text:w.reason === 'keys'
+      ? 'Faltan las claves de Ecowitt en el servidor. Cuando se añadan, aparecerá aquí el tiempo.' : 'No hay estaciones configuradas.'})));
+    return;
+  }
+  PLACES.forEach(([k, label]) => {
+    if (!state.stations.some(x => x.place === k)) return;
+    const st = w && (w.stations || []).find(x => x.place === k), r = st && st.reading;
+    if (!w) { box.append(el('div',{class:'wx'}, el('div',{}, el('div',{class:'where',text:label}), el('div',{class:'muted',text:'Cargando…'})))); return; }
+    if (!r) {
+      box.append(el('div',{class:'wx'}, el('div',{}, el('div',{class:'where',text:label}),
+        el('div',{class:'muted',text: w.failed ? 'No se pudo cargar el tiempo.' : (st && st.error) || 'Sin datos todavía.'}))));
+      return;
+    }
+    const old = Date.now() - new Date(r.taken_at).getTime() > 3 * 3600e3;
+    const stats = [
+      r.humidity != null ? '💧 ' + fnum(r.humidity, 0) + ' %' : null,
+      r.wind_kmh != null ? '💨 ' + fnum(r.wind_kmh, 0) + ' km/h ' + compass(r.wind_dir) : null,
+      r.rain_today_mm != null ? '🌧 ' + fnum(r.rain_today_mm, 1) + ' mm hoy' : null,
+    ].filter(Boolean);
+    box.append(el('button',{class:'wx',onclick:()=>weatherDetail(k, r)},
+      el('div',{}, el('div',{class:'where',text:label}),
+        el('div',{class:'big',text: r.temp_c != null ? fnum(r.temp_c, 1) + '°' : '—'}),
+        el('div',{class:'small muted',style:'margin-top:4px',text: old ? 'Sin datos recientes · ' + ago(r.taken_at) : ago(r.taken_at) + (st.stale ? ' · sin conexión' : '')})),
+      el('div',{class:'stats'}, ...stats.map(t => el('div',{text:t})))));
+  });
+}
+function sparkline(points) {                     // [{t: ms, v: número}] → SVG
+  if (points.length < 2) return null;
+  const W = 300, H = 90, P = 6;
+  const t0 = points[0].t, t1 = points[points.length - 1].t || t0 + 1;
+  const vs = points.map(p => p.v), lo = Math.min(...vs), hi = Math.max(...vs), span = hi - lo || 1;
+  const xy = p => [P + (p.t - t0) / (t1 - t0 || 1) * (W - 2*P), H - P - (p.v - lo) / span * (H - 2*P)];
+  const d = points.map((p, i) => { const [x, y] = xy(p); return (i ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1); }).join(' ');
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H); svg.setAttribute('class', 'spark'); svg.setAttribute('preserveAspectRatio', 'none');
+  svg.innerHTML = '<path d="' + d + '" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>';
+  return svg;
+}
+async function weatherDetail(place, r) {
+  const rows = [
+    ['Temperatura', r.temp_c, v => fnum(v, 1) + ' °C'], ['Sensación térmica', r.feels_c, v => fnum(v, 1) + ' °C'],
+    ['Humedad', r.humidity, v => fnum(v, 0) + ' %'], ['Presión', r.pressure_hpa, v => fnum(v, 1) + ' hPa'],
+    ['Viento', r.wind_kmh, v => fnum(v, 1) + ' km/h ' + compass(r.wind_dir)], ['Racha máxima', r.gust_kmh, v => fnum(v, 1) + ' km/h'],
+    ['Lluvia hoy', r.rain_today_mm, v => fnum(v, 1) + ' mm'], ['Intensidad de lluvia', r.rain_rate_mm, v => fnum(v, 1) + ' mm/h'],
+    ['Índice UV', r.uv, v => fnum(v, 1)], ['Radiación solar', r.solar_wm2, v => fnum(v, 0) + ' W/m²'],
+    ['Temperatura interior', r.indoor_temp_c, v => fnum(v, 1) + ' °C'], ['Humedad interior', r.indoor_humidity, v => fnum(v, 0) + ' %'],
+  ].filter(x => x[1] != null);
+  const chart = el('div',{}, el('div',{class:'small muted',text:'Cargando historial…'}));
+  openSheet(el('h3',{text:PLACE_NAME[place]}), el('div',{class:'small muted',style:'margin:-6px 0 8px',text:'Actualizado ' + ago(r.taken_at)}),
+    ...rows.map(([k, v, f]) => el('div',{class:'kv'}, el('span',{class:'muted',text:k}), el('b',{text:f(v)}))),
+    el('label',{class:'f',text:'Temperatura, últimas 24 h'}), chart,
+    el('button',{class:'ghost',style:'width:100%;margin-top:10px',text:'Cerrar',onclick:closeSheet}));
+  const since = new Date(Date.now() - 24 * 3600e3).toISOString();
+  const { data } = await sb.from('weather_readings').select('taken_at,temp_c').eq('place', place).gte('taken_at', since).order('taken_at');
+  const pts = (data || []).filter(x => x.temp_c != null).map(x => ({ t: new Date(x.taken_at).getTime(), v: Number(x.temp_c) }));
+  chart.replaceChildren();
+  const svg = sparkline(pts);
+  if (svg) {
+    const vs = pts.map(p => p.v);
+    chart.append(svg, el('div',{class:'small muted',text:'Mín ' + fnum(Math.min(...vs), 1) + '° · Máx ' + fnum(Math.max(...vs), 1) + '°'}));
+  } else chart.append(el('div',{class:'small muted',text:'El historial se va completando cada vez que se abre la app.'}));
+}
+function stationFields() {
+  const norm = v => { let x = v.trim().toUpperCase().replace(/[^0-9A-F]/g, ''); return x.length === 12 ? x.match(/../g).join(':') : null; };
+  const wrap = el('div',{});
+  wrap.append(el('label',{class:'f',text:'Estaciones Ecowitt (dirección MAC)'}),
+    el('p',{class:'small muted',style:'margin:0 0 6px',text:'La MAC aparece en ecowitt.net → Dispositivos (formato AA:BB:CC:DD:EE:FF). Déjala vacía si esa vivienda no tiene estación.'}));
+  PLACES.forEach(([k, label]) => {
+    const inp = el('input',{placeholder:label + ': AA:BB:CC:DD:EE:FF',value:(state.stations.find(x => x.place === k) || {}).mac || '',autocapitalize:'characters',autocorrect:'off',maxlength:'20'});
+    const btn = el('button',{class:'soft',text:'Guardar'});
+    btn.onclick = async () => {
+      const cur = state.stations.find(x => x.place === k);   // se lee al pulsar, por si se guardó antes en esta misma hoja
+      const raw = inp.value.trim(), mac = raw ? norm(raw) : null;
+      if (raw && !mac) { toast('MAC no válida (12 caracteres hexadecimales)'); return; }
+      btn.disabled = true;
+      let error;
+      if (!raw) {
+        if (cur) ({ error } = await sb.from('weather_stations').delete().eq('id', cur.id));
+        if (!error) state.stations = state.stations.filter(x => x.place !== k);
+      } else {
+        const res = await sb.from('weather_stations').upsert({ household_id: state.household.id, place: k, mac }, { onConflict:'household_id,place' }).select().single();
+        error = res.error;
+        if (!error) { state.stations = state.stations.filter(x => x.place !== k).concat(res.data); inp.value = mac; }
+      }
+      btn.disabled = false;
+      if (error) { toast(errMsg(error)); return; }
+      toast(raw ? 'Estación guardada' : 'Estación eliminada');
+      state.weather = null; state.weatherAt = 0; renderHome(); loadWeather(true);
+    };
+    wrap.append(el('div',{class:'row',style:'margin-bottom:8px'}, inp, btn));
+  });
+  return wrap;
+}
+
 /* ---------- inicio ---------- */
 function renderHome() {
   const box = $('#homeBox'); box.replaceChildren();
@@ -1123,6 +1261,7 @@ function renderHome() {
   const tile = (list, label, tab) => el('button',{class:'tile',onclick:()=>openTab(tab)},
     el('span',{class:'n',text:list.filter(x=>!x.done).length}), label, el('div',{class:'small muted',style:'margin-top:2px',text:split(list)}));
   box.append(el('div',{class:'tiles'}, tile(state.items, 'por comprar', 'shop'), tile(state.chores, 'tareas pendientes', 'chores')));
+  renderWeather(box);
 
   box.append(el('div',{class:'group-title',text:'Hoy'}));
   const evs = eventsOn(today), c = el('div',{class:'card'});
@@ -1225,6 +1364,8 @@ $('#btnSettings').onclick = () => {
     el('hr',{style:'border:0;border-top:1px solid var(--line);margin:18px 0'}),
     el('label',{class:'f',text:'Tema'}), prefSeg('theme', [['', 'Automático'], ['light', 'Claro'], ['dark', 'Oscuro']]),
     el('label',{class:'f',text:'Tamaño de letra'}), prefSeg('size', [['normal', 'Normal'], ['large', 'Grande'], ['xl', 'Muy grande']]),
+    el('hr',{style:'border:0;border-top:1px solid var(--line);margin:18px 0'}),
+    stationFields(),
     el('hr',{style:'border:0;border-top:1px solid var(--line);margin:18px 0'}),
     el('label',{class:'f',text:'Avisos en este móvil'}),
     pushNote, pushBtn,
