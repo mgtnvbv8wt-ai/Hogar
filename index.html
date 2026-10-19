@@ -185,6 +185,7 @@ label.f{display:block;font-size:calc(13px * var(--fs));font-weight:600;color:var
     <div class="err" id="aErr"></div>
     <button id="aGo" type="submit" style="width:100%">Entrar</button>
     <button id="aSwitch" type="button" class="ghost" style="width:100%">Crear cuenta nueva</button>
+    <button id="aForgot" type="button" class="ghost" style="width:100%">He olvidado la contraseña</button>
   </form>
 </div>
 
@@ -534,6 +535,17 @@ function loadLang() { try { const v = localStorage.getItem('hogar-lang'); if (v 
 const LANG = loadLang();
 const LOCALE = LANG === 'ca' ? 'ca-ES' : 'es-ES';
 const tr = s => (LANG === 'ca' && Object.prototype.hasOwnProperty.call(CA, s)) ? CA[s] : s;
+Object.assign(CA, {
+  'Escribe tu email arriba y pulsa de nuevo.': "Escriu el teu correu a dalt i torna a prémer.",
+  'Te hemos enviado un enlace para crear una contraseña nueva. Mira tu correo (y la carpeta de spam).': "T'hem enviat un enllaç per crear una contrasenya nova. Mira el correu (i la carpeta de brossa).",
+  'Nueva contraseña': "Contrasenya nova",
+  'Nueva contraseña (mín. 6)': "Contrasenya nova (mín. 6)",
+  'Cambiar contraseña': "Canviar la contrasenya",
+  'Contraseña cambiada': "Contrasenya canviada",
+  'La contraseña debe tener al menos 6 caracteres.': "La contrasenya ha de tenir almenys 6 caràcters.",
+  'Elige una contraseña nueva para entrar en Nuestro Hogar.': "Tria una contrasenya nova per entrar a Nuestro Hogar."
+});
+Object.assign(HTML_CA, { 'He olvidado la contraseña': "He oblidat la contrasenya" });
 document.documentElement.lang = LANG;
 if (LANG === 'ca') {
   const T = x => { const k = x.trim(); const v = HTML_CA[k] || CA[k]; return v ? x.replace(k, v) : x; };
@@ -630,6 +642,33 @@ $('#authForm').onsubmit = async e => {
   $('#aGo').disabled = false;
 };
 
+$('#aForgot').onclick = async () => {
+  const email = $('#aEmail').value.trim();
+  const err = $('#aErr'); err.style.color = 'var(--danger)';
+  if (!email) { err.textContent = tr('Escribe tu email arriba y pulsa de nuevo.'); return; }
+  $('#aForgot').disabled = true;
+  const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: location.origin + location.pathname });
+  $('#aForgot').disabled = false;
+  if (error) { err.textContent = errMsg(error); return; }
+  err.style.color = 'var(--ok)';
+  err.textContent = tr('Te hemos enviado un enlace para crear una contraseña nueva. Mira tu correo (y la carpeta de spam).');
+};
+function passwordForm(intro) {
+  const pw = el('input',{type:'password',placeholder:tr('Nueva contraseña (mín. 6)'),autocomplete:'new-password',minlength:'6'});
+  const err = el('div',{class:'err'});
+  openSheet(el('h2',{text:tr('Nueva contraseña')}),
+    intro ? el('p',{class:'small muted',text:tr('Elige una contraseña nueva para entrar en Nuestro Hogar.')}) : null,
+    pw, err,
+    el('button',{style:'width:100%;margin-top:10px',text:tr('Guardar'),onclick:async()=>{
+      if (pw.value.length < 6) { err.textContent = tr('La contraseña debe tener al menos 6 caracteres.'); return; }
+      const { error } = await sb.auth.updateUser({ password: pw.value });
+      if (error) { err.textContent = errMsg(error); return; }
+      closeSheet(); toast(tr('Contraseña cambiada'));
+    }}),
+    el('button',{class:'ghost',style:'width:100%;margin-top:6px',text:tr('Cancelar'),onclick:closeSheet}));
+  setTimeout(() => pw.focus(), 50);
+}
+
 $('#oOut').onclick = () => sb.auth.signOut();
 async function onboard(fn) {
   const name = $('#oName').value.trim();
@@ -645,7 +684,7 @@ $('#oJoin').onclick = () => onboard(n => sb.rpc('join_household', { p_code: $('#
 sb.auth.onAuthStateChange((event, session) => {
   // evitar deadlocks: no hacer llamadas supabase dentro del callback
   setTimeout(() => {
-    if (session) { state.user = session.user; boot(); }
+    if (session) { state.user = session.user; const rec = event === 'PASSWORD_RECOVERY'; Promise.resolve(boot()).then(() => { if (rec) { passwordForm(true); history.replaceState(null, '', location.pathname); } }); }
     else { state.user = null; teardown(); showOnly('auth'); }
   }, 0);
 });
@@ -1643,6 +1682,7 @@ $('#btnSettings').onclick = () => {
     el('p',{class:'small muted',style:'margin:0 0 8px',text:tr('Descarga todos los datos del hogar (eventos, mensajes, compra, tareas y menús) en un archivo.')}),
     el('button',{class:'soft',style:'width:100%',text:tr('Descargar copia de seguridad'),onclick:exportBackup}),
     el('hr',{style:'border:0;border-top:1px solid var(--line);margin:18px 0'}),
+    el('button',{class:'soft',style:'width:100%;margin-bottom:8px',text:tr('Cambiar contraseña'),onclick:()=>passwordForm(false)}),
     el('button',{class:'danger',style:'width:100%',text:tr('Cerrar sesión'),onclick:()=>{closeSheet(); sb.auth.signOut();}}),
     el('button',{class:'ghost',style:'width:100%;margin-top:6px',text:tr('Cerrar'),onclick:closeSheet}));
 };
