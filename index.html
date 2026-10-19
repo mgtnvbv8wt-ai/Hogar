@@ -303,6 +303,245 @@ const SUPABASE_URL = 'https://rlsxtsmaxhirdiljzsck.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_7JI6ZuxHzsHYc1VcrGK5fg_xtT6nQfx';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+/* ---------- idioma (castellano / català) ---------- */
+const CA = {
+"Email o contraseña incorrectos.": "Correu electrònic o contrasenya incorrectes.",
+"Ese email ya tiene cuenta. Prueba a entrar.": "Aquest correu ja té compte. Prova d'entrar.",
+"Confirma tu email (mira tu correo) y vuelve a entrar.": "Confirma el teu correu (mira la safata d'entrada) i torna a entrar.",
+"Código de invitación no válido.": "Codi d'invitació no vàlid.",
+"Demasiados intentos. Espera unos minutos.": "Massa intents. Espera uns minuts.",
+"Crear cuenta": "Crear compte",
+"Ya tengo cuenta": "Ja tinc compte",
+"Crear cuenta nueva": "Crear un compte nou",
+"Cuenta creada. Revisa tu correo para confirmarla y luego entra.": "Compte creat. Revisa el correu per confirmar-lo i després entra.",
+"Escribe tu nombre.": "Escriu el teu nom.",
+"Cada día": "Cada dia",
+"Cada semana": "Cada setmana",
+"Cada mes": "Cada mes",
+"Cada año": "Cada any",
+"Cada ": "Cada ",
+"Nada planeado este día.": "No hi ha res planificat aquest dia.",
+"Todo el día": "Tot el dia",
+" Todo el día": " Tot el dia",
+"Día": "Dia",
+"Añadido por ": "Afegit per ",
+"No hay eventos próximos. ¡Crea el primero!": "No hi ha esdeveniments propers. Crea el primer!",
+"Título (p. ej. Cena con los suegros)": "Títol (p. ex. Sopar amb els sogres)",
+"Lugar (opcional)": "Lloc (opcional)",
+"Notas (opcional)": "Notes (opcional)",
+"No se repite": "No es repeteix",
+"Repetir hasta (opcional)": "Repeteix fins a (opcional)",
+"Fin (opcional)": "Final (opcional)",
+"Crear evento": "Crear esdeveniment",
+"Pon un título.": "Posa un títol.",
+"Pon la fecha.": "Posa la data.",
+"El fin es anterior al inicio.": "El final és anterior a l'inici.",
+"«Repetir hasta» es anterior al inicio.": "«Repeteix fins a» és anterior a l'inici.",
+"Editar evento": "Editar esdeveniment",
+"Nuevo evento": "Nou esdeveniment",
+"Repetición": "Repetició",
+"Eliminar toda la serie": "Eliminar tota la sèrie",
+"Eliminar evento": "Eliminar esdeveniment",
+"¿Eliminar este evento y todas sus repeticiones?": "Vols eliminar aquest esdeveniment i totes les seves repeticions?",
+"¿Eliminar este evento?": "Vols eliminar aquest esdeveniment?",
+"Aún no hay mensajes. Saluda 👋": "Encara no hi ha missatges. Saluda 👋",
+"Fruta y verdura": "Fruita i verdura",
+"Carne y pescado": "Carn i peix",
+"Lácteos y huevos": "Làctics i ous",
+"Panadería": "Fleca",
+"Despensa": "Rebost",
+"Bebidas": "Begudes",
+"Congelados": "Congelats",
+"Limpieza": "Neteja",
+"Higiene y farmacia": "Higiene i farmàcia",
+"Bebé": "Nadó",
+"Otros": "Altres",
+"Categoría: automática": "Categoria: automàtica",
+"Categoría": "Categoria",
+"La lista de ": "La llista de ",
+" está vacía.": " és buida.",
+"Consejo: toca un producto de la lista y márcalo como «habitual» para añadirlo luego con un toque.": "Consell: toca un producte de la llista i marca'l com a «habitual» per afegir-lo després amb un toc.",
+"Escribe el nombre.": "Escriu el nom.",
+"Editar producto": "Editar producte",
+" Producto habitual (acceso rápido)": " Producte habitual (accés ràpid)",
+"Atrasada · ": "Endarrerida · ",
+"Mañana": "Demà",
+"Hoy": "Avui",
+"Para ": "Per a ",
+"Hecho por ": "Fet per ",
+"Última vez: ": "Última vegada: ",
+"Marcar como pendiente": "Marcar com a pendent",
+"Marcar como hecha": "Marcar com a feta",
+"No hay tareas en ": "No hi ha tasques a ",
+"Hecho ✓ · próxima: ": "Fet ✓ · propera: ",
+"Tarea (p. ej. Bajar la basura)": "Tasca (p. ex. Baixar les escombraries)",
+"Días de la semana (si no eliges, se repite el mismo día)": "Dies de la setmana (si no n'escolleixes, es repeteix el mateix dia)",
+"Próxima vez": "Propera vegada",
+"Fecha límite (opcional)": "Data límit (opcional)",
+"Añadir tarea": "Afegir tasca",
+"Escribe la tarea.": "Escriu la tasca.",
+"Editar tarea": "Editar tasca",
+"Nueva tarea": "Nova tasca",
+"¿A quién le toca?": "A qui li toca?",
+"Eliminar tarea": "Eliminar tasca",
+"¿Eliminar esta tarea?": "Vols eliminar aquesta tasca?",
+"Hoy · ": "Avui · ",
+"Fin de semana: no hay menú de guardería.": "Cap de setmana: no hi ha menú de la guarderia.",
+"No hay menú cargado para hoy.": "No hi ha cap menú carregat per avui.",
+"Próximos días": "Propers dies",
+"Días anteriores (": "Dies anteriors (",
+"+ Añadir o corregir un día": "+ Afegir o corregir un dia",
+"Pegar el menú de todo el mes": "Enganxar el menú de tot el mes",
+"No entiendo la fecha: «": "No entenc la data: «",
+"Línea sin día, ignorada: «": "Línia sense dia, ignorada: «",
+"Todavía no reconozco ningún día. Empieza cada día con su fecha (p. ej. «Lunes 20»).": "Encara no reconec cap dia. Comença cada dia amb la data (p. ex. «Dilluns 20»).",
+"  (sustituye al actual)": "  (substitueix l'actual)",
+"Guardar ": "Desar ",
+" día": " dia",
+" días": " dies",
+"Menú guardado: ": "Menú desat: ",
+"Pegar el menú": "Enganxar el menú",
+"Pega el texto del menú. Cada día empieza con su fecha y debajo las comidas («Comida: …», «Merienda: …»).": "Enganxa el text del menú. Cada dia comença amb la data i a sota els àpats («Dinar: …», «Berenar: …»).",
+"Mes (para días sin mes, como «Lunes 20»)": "Mes (per a dies sense mes, com «Dilluns 20»)",
+"Texto del menú": "Text del menú",
+"Comida (p. ej. Comida, Merienda)": "Àpat (p. ex. Dinar, Berenar)",
+"Qué comen": "Què mengen",
+"Elige el día.": "Tria el dia.",
+"Escribe al menos una comida.": "Escriu com a mínim un àpat.",
+"Añadir menú de un día": "Afegir el menú d'un dia",
+"+ Añadir comida": "+ Afegir àpat",
+"Eliminar este día": "Eliminar aquest dia",
+"¿Eliminar el menú de este día?": "Vols eliminar el menú d'aquest dia?",
+"Comida": "Dinar",
+"Merienda": "Berenar",
+"hace ": "fa ",
+"El tiempo": "El temps",
+"Conecta tu estación Ecowitt para ver aquí la temperatura, el viento y la lluvia de cada vivienda.": "Connecta l'estació Ecowitt per veure aquí la temperatura, el vent i la pluja de cada habitatge.",
+"Configurar estación": "Configurar estació",
+"Faltan las claves de Ecowitt en el servidor. Cuando se añadan, aparecerá aquí el tiempo.": "Falten les claus d'Ecowitt al servidor. Quan s'afegeixin, hi apareixerà el temps.",
+"No hay estaciones configuradas.": "No hi ha estacions configurades.",
+"No se pudo cargar el tiempo.": "No s'ha pogut carregar el temps.",
+"Sin datos todavía.": "Encara no hi ha dades.",
+" mm hoy": " mm avui",
+"Sin datos recientes · ": "Sense dades recents · ",
+" · sin conexión": " · sense connexió",
+"Sensación térmica": "Sensació tèrmica",
+"Presión": "Pressió",
+"Racha máxima": "Ratxa màxima",
+"Lluvia hoy": "Pluja avui",
+"Intensidad de lluvia": "Intensitat de la pluja",
+"Índice UV": "Índex UV",
+"Radiación solar": "Radiació solar",
+"Temperatura interior": "Temperatura interior",
+"Humedad interior": "Humitat interior",
+"Humedad": "Humitat",
+"Viento": "Vent",
+"Cargando historial…": "Carregant l'historial…",
+"Cargando…": "Carregant…",
+"Actualizado ": "Actualitzat ",
+"Temperatura, últimas 24 h": "Temperatura, últimes 24 h",
+"Mín ": "Mín ",
+"° · Máx ": "° · Màx ",
+"El historial se va completando cada vez que se abre la app.": "L'historial es va completant cada cop que s'obre l'app.",
+"Estaciones Ecowitt (dirección MAC)": "Estacions Ecowitt (adreça MAC)",
+"La MAC aparece en ecowitt.net → Dispositivos (formato AA:BB:CC:DD:EE:FF). Déjala vacía si esa vivienda no tiene estación.": "La MAC apareix a ecowitt.net → Dispositius (format AA:BB:CC:DD:EE:FF). Deixa-la buida si aquest habitatge no té estació.",
+"MAC no válida (12 caracteres hexadecimales)": "MAC no vàlida (12 caràcters hexadecimals)",
+"Estación guardada": "Estació desada",
+"Estación eliminada": "Estació eliminada",
+"Vivienda": "Habitatge",
+"Hola, ": "Hola, ",
+"por comprar": "per comprar",
+"tareas pendientes": "tasques pendents",
+"Sin eventos hoy.": "Cap esdeveniment avui.",
+"Tareas para hoy": "Tasques per avui",
+"Menú de la guardería": "Menú de la guarderia",
+"Cargar el menú": "Carregar el menú",
+"Próximos eventos": "Propers esdeveniments",
+"Ver todos": "Veure-ho tot",
+"Preparando copia…": "Preparant la còpia…",
+"Copia de seguridad de Nuestro Hogar": "Còpia de seguretat de Nuestro Hogar",
+"Copia descargada": "Còpia descarregada",
+"Para recibir avisos, añade esta app a la pantalla de inicio (Compartir → Añadir a pantalla de inicio) y ábrela desde ahí. Requiere iOS 16.4 o superior.": "Per rebre avisos, afegeix aquesta app a la pantalla d'inici (Comparteix → Afegeix a la pantalla d'inici) i obre-la des d'allà. Requereix iOS 16.4 o superior.",
+"Has bloqueado los avisos. Actívalos en Ajustes del iPhone → Notificaciones → Hogar.": "Has bloquejat els avisos. Activa'ls a Ajustos de l'iPhone → Notificacions → Hogar.",
+"Recibirás un aviso cuando tu pareja escriba, añada algo a la compra o cree un evento.": "Rebràs un avís quan la teva parella escrigui, afegeixi alguna cosa a la compra o creï un esdeveniment.",
+"Avisos activados: te llegarán los mensajes, la compra y los eventos nuevos de tu pareja.": "Avisos activats: et arribaran els missatges, la compra i els esdeveniments nous de la teva parella.",
+"Desactivar avisos": "Desactivar els avisos",
+"Activar avisos": "Activar els avisos",
+"En el hogar: ": "A la llar: ",
+"Código para invitar a tu pareja": "Codi per convidar la teva parella",
+"Copiar código": "Copiar el codi",
+"Código copiado": "Codi copiat",
+"Cópialo a mano": "Copia'l a mà",
+"Automático": "Automàtic",
+"Tamaño de letra": "Mida de la lletra",
+"Muy grande": "Molt gran",
+"Grande": "Gran",
+"Claro": "Clar",
+"Oscuro": "Fosc",
+"Avisos en este móvil": "Avisos en aquest mòbil",
+"Copia de seguridad": "Còpia de seguretat",
+"Descarga todos los datos del hogar (eventos, mensajes, compra, tareas y menús) en un archivo.": "Descarrega totes les dades de la llar (esdeveniments, missatges, compra, tasques i menús) en un fitxer.",
+"Descargar copia de seguridad": "Descarregar la còpia de seguretat",
+"Cerrar sesión": "Tancar la sessió",
+"Cerrar": "Tancar",
+"Permiso denegado": "Permís denegat",
+"Comprobando…": "Comprovant…",
+"Inicio": "Inici",
+"Calendario": "Calendari",
+"Chat": "Xat",
+"Guardar": "Desar",
+"Borrar": "Esborrar",
+"Comprado": "Comprat",
+"Habituales": "Habituals",
+"Listo": "Fet",
+"Cualquiera": "Qualsevol",
+"Fecha": "Data",
+"Quitar": "Treure",
+"Lugar": "Lloc",
+"Notas": "Notes",
+"Editar": "Editar",
+". Añade la primera.": ". Afegeix la primera.",
+"Lunes 20\nComida: lentejas con verduras\nMerienda: fruta y pan\n\nMartes 21\nComida: pasta con tomate\nMerienda: yogur\n\n(también vale «21/10: Comida: …» o «21 de octubre»)": "Dilluns 20\nDinar: llenties amb verdures\nBerenar: fruita i pa\n\nDimarts 21\nDinar: pasta amb tomàquet\nBerenar: iogurt\n\n(també val «21/10: Dinar: …» o «21 d'octubre»)"
+};
+const HTML_CA = {
+"Calendario, chat, compra, tareas y menú, solo para vosotros.": "Calendari, xat, compra, tasques i menú, només per a vosaltres.",
+"Vuestro hogar": "La vostra llar",
+"Uno de los dos crea el hogar y el otro se une con el código.": "Un dels dos crea la llar i l'altre s'hi uneix amb el codi.",
+"Crear un hogar": "Crear una llar",
+"Crear hogar": "Crear llar",
+"Unirme con código": "Unir-me amb un codi",
+"Unirme": "Unir-me",
+"+ Evento": "+ Esdeveniment",
+"+ Nuevo evento": "+ Nou esdeveniment",
+"Añadir": "Afegir",
+"Borrar los comprados": "Esborrar els comprats",
+"Más": "Més",
+"Borrar las hechas": "Esborrar les fetes",
+"Email": "Correu electrònic",
+"Contraseña (mín. 6)": "Contrasenya (mín. 6)",
+"Cómo te llamas": "Com et dius",
+"Tu nombre": "El teu nom",
+"Nombre (p. ej. Casa)": "Nom (p. ex. Casa)",
+"Código de invitación": "Codi d'invitació",
+"Mes anterior": "Mes anterior",
+"Mes siguiente": "Mes següent",
+"Escribe un mensaje…": "Escriu un missatge…",
+"Añadir a la compra…": "Afegir a la compra…",
+"Nueva tarea…": "Nova tasca…",
+"Más opciones": "Més opcions"
+};
+function loadLang() { try { const v = localStorage.getItem('hogar-lang'); if (v === 'es' || v === 'ca') return v; } catch (_) {} return /^ca\b/i.test(navigator.language || '') ? 'ca' : 'es'; }
+const LANG = loadLang();
+const LOCALE = LANG === 'ca' ? 'ca-ES' : 'es-ES';
+const tr = s => (LANG === 'ca' && Object.prototype.hasOwnProperty.call(CA, s)) ? CA[s] : s;
+document.documentElement.lang = LANG;
+if (LANG === 'ca') {
+  const T = x => { const k = x.trim(); const v = HTML_CA[k] || CA[k]; return v ? x.replace(k, v) : x; };
+  const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+  for (let n; (n = w.nextNode());) if (n.nodeValue.trim()) n.nodeValue = T(n.nodeValue);
+  document.querySelectorAll('[placeholder],[aria-label],[title],[alt]').forEach(e => ['placeholder','aria-label','title','alt'].forEach(a => { if (e.hasAttribute(a)) e.setAttribute(a, T(e.getAttribute(a))); }));
+}
+
 const $ = s => document.querySelector(s);
 const state = { user:null, member:null, household:null, members:{}, events:[], messages:[], items:[], chores:[], menu:[], staples:[],
   tab:'home', place:loadPlace(), stations:[], weather:null, weatherAt:0, weatherBusy:false, calMode:'month', stapleEdit:false, month:new Date(), sel:new Date(), channel:null, signup:false };
@@ -329,8 +568,8 @@ matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyPrefs
 const pad = n => String(n).padStart(2,'0');
 const ymd = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
 const sameDay = (a,b) => ymd(a)===ymd(b);
-const fmtTime = d => d.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
-const fmtDay = d => d.toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'});
+const fmtTime = d => d.toLocaleTimeString(LOCALE,{hour:'2-digit',minute:'2-digit'});
+const fmtDay = d => d.toLocaleDateString(LOCALE,{weekday:'long',day:'numeric',month:'long'});
 const el = (tag, props={}, ...kids) => {
   const e = document.createElement(tag);
   for (const [k,v] of Object.entries(props)) {
@@ -342,7 +581,7 @@ const el = (tag, props={}, ...kids) => {
 };
 const keyDate = k => new Date(k + 'T00:00:00');
 const addDaysYmd = (k, n) => { const d = keyDate(k); d.setDate(d.getDate() + n); return ymd(d); };
-const fmtShort = d => d.toLocaleDateString('es-ES',{day:'numeric',month:'short'});
+const fmtShort = d => d.toLocaleDateString(LOCALE,{day:'numeric',month:'short'});
 const MEMBER_COLORS = ['#e05d3f','#3c7dd9','#8a5cc2','#2e9c8a'];
 const memberColor = uid => { const ids = Object.keys(state.members).sort(); const i = ids.indexOf(uid); return MEMBER_COLORS[(i < 0 ? 0 : i) % MEMBER_COLORS.length]; };
 const who = uid => state.members[uid] || '—';
@@ -350,11 +589,11 @@ const byLine = (prefix, uid) => el('div',{class:'small muted'}, el('span',{class
 function toast(msg){ const t=el('div',{class:'toast',text:msg}); document.body.append(t); setTimeout(()=>t.remove(),2500); }
 const errMsg = e => {
   const m = (e && e.message) || String(e);
-  if (/Invalid login/i.test(m)) return 'Email o contraseña incorrectos.';
-  if (/already registered/i.test(m)) return 'Ese email ya tiene cuenta. Prueba a entrar.';
-  if (/Email not confirmed/i.test(m)) return 'Confirma tu email (mira tu correo) y vuelve a entrar.';
-  if (/invalid invite code/i.test(m)) return 'Código de invitación no válido.';
-  if (/rate limit/i.test(m)) return 'Demasiados intentos. Espera unos minutos.';
+  if (/Invalid login/i.test(m)) return tr('Email o contraseña incorrectos.');
+  if (/already registered/i.test(m)) return tr('Ese email ya tiene cuenta. Prueba a entrar.');
+  if (/Email not confirmed/i.test(m)) return tr('Confirma tu email (mira tu correo) y vuelve a entrar.');
+  if (/invalid invite code/i.test(m)) return tr('Código de invitación no válido.');
+  if (/rate limit/i.test(m)) return tr('Demasiados intentos. Espera unos minutos.');
   return m;
 };
 
@@ -363,8 +602,8 @@ function showOnly(id){ for (const x of ['auth','onboard','app']) $('#'+x).hidden
 
 $('#aSwitch').onclick = () => {
   state.signup = !state.signup;
-  $('#aGo').textContent = state.signup ? 'Crear cuenta' : 'Entrar';
-  $('#aSwitch').textContent = state.signup ? 'Ya tengo cuenta' : 'Crear cuenta nueva';
+  $('#aGo').textContent = state.signup ? tr('Crear cuenta') : 'Entrar';
+  $('#aSwitch').textContent = state.signup ? tr('Ya tengo cuenta') : tr('Crear cuenta nueva');
   $('#aPass').autocomplete = state.signup ? 'new-password' : 'current-password';
   $('#aErr').textContent = '';
 };
@@ -378,9 +617,9 @@ $('#authForm').onsubmit = async e => {
       if (error) throw error;
       if (!data.session) {
         state.signup = false;
-        $('#aGo').textContent = 'Entrar'; $('#aSwitch').textContent = 'Crear cuenta nueva';
+        $('#aGo').textContent = 'Entrar'; $('#aSwitch').textContent = tr('Crear cuenta nueva');
         $('#aErr').style.color = 'var(--ok)';
-        $('#aErr').textContent = 'Cuenta creada. Revisa tu correo para confirmarla y luego entra.';
+        $('#aErr').textContent = tr('Cuenta creada. Revisa tu correo para confirmarla y luego entra.');
         $('#aGo').disabled = false; return;
       }
     } else {
@@ -394,7 +633,7 @@ $('#authForm').onsubmit = async e => {
 $('#oOut').onclick = () => sb.auth.signOut();
 async function onboard(fn) {
   const name = $('#oName').value.trim();
-  if (!name) { $('#oErr').textContent = 'Escribe tu nombre.'; return; }
+  if (!name) { $('#oErr').textContent = tr('Escribe tu nombre.'); return; }
   $('#oErr').textContent = '';
   const { error } = await fn(name);
   if (error) { $('#oErr').textContent = errMsg(error); return; }
@@ -488,7 +727,7 @@ function subscribe() {
 }
 
 /* ---------- navegación ---------- */
-const TITLES = { home:'Inicio', cal:'Calendario', chat:'Chat', shop:'Compra', chores:'Coses de Casa', menu:'Menú' };
+const TITLES = { home:tr('Inicio'), cal:tr('Calendario'), chat:tr('Chat'), shop:'Compra', chores:'Coses de Casa', menu:'Menú' };
 function openTab(t) {
   if (t === 'ev') { t = 'cal'; state.calMode = 'list'; }   // pestaña antigua «Eventos»
   if (!TITLES[t]) return;
@@ -513,12 +752,12 @@ function render() {
 }
 
 /* ---------- calendario ---------- */
-['L','M','X','J','V','S','D'].forEach(d => $('#dows').append(el('div',{class:'dow',text:d})));
+['L','M','X','J','V','S',LANG==='ca'?'G':'D'].forEach(d => $('#dows').append(el('div',{class:'dow',text:d})));
 $('#prevM').onclick = () => { state.month = new Date(state.month.getFullYear(), state.month.getMonth()-1, 1); render(); };
 $('#nextM').onclick = () => { state.month = new Date(state.month.getFullYear(), state.month.getMonth()+1, 1); render(); };
 
 /* repeticiones: se calculan al vuelo a partir del evento «serie» */
-const REC_LABEL = { daily:'Cada día', weekly:'Cada semana', monthly:'Cada mes', yearly:'Cada año' };
+const REC_LABEL = { daily:tr('Cada día'), weekly:tr('Cada semana'), monthly:tr('Cada mes'), yearly:tr('Cada año') };
 function nthStart(e, n) {
   const s = new Date(e.starts_at), H = s.getHours(), M = s.getMinutes();
   if (e.recur === 'daily')  return new Date(s.getFullYear(), s.getMonth(), s.getDate() + n, H, M);
@@ -562,7 +801,7 @@ function renderCal() {
   document.querySelectorAll('#calSeg button').forEach(b => b.classList.toggle('on', b.dataset.m === state.calMode));
   $('#calMonth').hidden = state.calMode !== 'month'; $('#calList').hidden = state.calMode !== 'list';
   const m = state.month, y = m.getFullYear(), mo = m.getMonth();
-  $('#monthTitle').textContent = m.toLocaleDateString('es-ES',{month:'long',year:'numeric'});
+  $('#monthTitle').textContent = m.toLocaleDateString(LOCALE,{month:'long',year:'numeric'});
   const first = new Date(y, mo, 1);
   const start = new Date(y, mo, 1 - ((first.getDay()+6)%7));
   const days = $('#days'); days.replaceChildren();
@@ -577,7 +816,7 @@ function renderCal() {
   $('#dayTitle').textContent = fmtDay(state.sel);
   const list = $('#dayList'); list.replaceChildren();
   const evs = eventsOn(state.sel);
-  if (!evs.length) list.append(el('div',{class:'empty',text:'Nada planeado este día.'}));
+  if (!evs.length) list.append(el('div',{class:'empty',text:tr('Nada planeado este día.')}));
   evs.forEach(e => list.append(evRow(e, false)));
 }
 $('#addEvDay').onclick = () => eventForm(state.sel);
@@ -585,22 +824,22 @@ $('#calSeg').onclick = e => { const b = e.target.closest('button[data-m]'); if (
 
 function evRow(e, showDate) {
   const s = new Date(e.starts_at);
-  const when = e.all_day ? 'Todo el día' : fmtTime(s) + (e.ends_at ? '–'+fmtTime(new Date(e.ends_at)) : '');
+  const when = e.all_day ? tr('Todo el día') : fmtTime(s) + (e.ends_at ? '–'+fmtTime(new Date(e.ends_at)) : '');
   return el('div',{class:'ev'},
-    el('div',{class:'time', text: showDate ? s.toLocaleDateString('es-ES',{day:'numeric',month:'short'}) : (e.all_day?'Día':fmtTime(s))}),
+    el('div',{class:'time', text: showDate ? s.toLocaleDateString(LOCALE,{day:'numeric',month:'short'}) : (e.all_day?tr('Día'):fmtTime(s))}),
     el('div',{class:'body'},
       el('div',{class:'t',text:e.title}),
-      el('div',{class:'small muted',text: [showDate?when:(e.all_day?'Todo el día':when), e.location, e.recur ? '🔁 ' + REC_LABEL[e.recur] : null].filter(Boolean).join(' · ')}),
+      el('div',{class:'small muted',text: [showDate?when:(e.all_day?tr('Todo el día'):when), e.location, e.recur ? '🔁 ' + REC_LABEL[e.recur] : null].filter(Boolean).join(' · ')}),
       e.notes ? el('div',{class:'small',text:e.notes}) : null,
-      byLine('Añadido por ', e.created_by)),
-    el('button',{class:'ghost del','aria-label':'Editar',text:'✎',onclick:()=>eventForm(null, e._series || e)}));
+      byLine(tr('Añadido por '), e.created_by)),
+    el('button',{class:'ghost del','aria-label':tr('Editar'),text:'✎',onclick:()=>eventForm(null, e._series || e)}));
 }
 
 /* ---------- eventos (próximos) ---------- */
 function renderEvents() {
   const box = $('#evList'); box.replaceChildren();
   const up = upcomingEvents(120);
-  if (!up.length) { box.append(el('div',{class:'empty',text:'No hay eventos próximos. ¡Crea el primero!'})); return; }
+  if (!up.length) { box.append(el('div',{class:'empty',text:tr('No hay eventos próximos. ¡Crea el primero!')})); return; }
   const groups = {};
   up.forEach(e => { const k = ymd(new Date(e.starts_at)); (groups[k] ||= []).push(e); });
   Object.keys(groups).sort().forEach(k => {
@@ -618,32 +857,32 @@ function eventForm(day, ev=null) {
   const base = ev ? new Date(ev.starts_at) : new Date(day.getFullYear(), day.getMonth(), day.getDate(), 20, 0);
   const end = ev?.ends_at ? new Date(ev.ends_at) : null;
   const local = d => `${ymd(d)}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-  const title = el('input',{placeholder:'Título (p. ej. Cena con los suegros)',maxlength:'120',value:ev?.title||''});
+  const title = el('input',{placeholder:tr('Título (p. ej. Cena con los suegros)'),maxlength:'120',value:ev?.title||''});
   const allDay = el('input',{type:'checkbox',style:'width:auto'}); allDay.checked = !!ev?.all_day;
   const start = el('input',{type:'datetime-local',value:local(base)});
   const endI = el('input',{type:'datetime-local',value:end?local(end):''});
-  const place = el('input',{placeholder:'Lugar (opcional)',maxlength:'120',value:ev?.location||''});
-  const notes = el('textarea',{placeholder:'Notas (opcional)',rows:'2',maxlength:'500'}); notes.value = ev?.notes||'';
-  const recur = el('select',{}, el('option',{value:'',text:'No se repite'}),
+  const place = el('input',{placeholder:tr('Lugar (opcional)'),maxlength:'120',value:ev?.location||''});
+  const notes = el('textarea',{placeholder:tr('Notas (opcional)'),rows:'2',maxlength:'500'}); notes.value = ev?.notes||'';
+  const recur = el('select',{}, el('option',{value:'',text:tr('No se repite')}),
     ...Object.entries(REC_LABEL).map(([k,v]) => el('option',{value:k,text:v})));
   recur.value = ev?.recur || '';
   const until = el('input',{type:'date',value:ev?.recur_until||''});
-  const untilWrap = el('div',{}, el('label',{class:'f',text:'Repetir hasta (opcional)'}), until);
+  const untilWrap = el('div',{}, el('label',{class:'f',text:tr('Repetir hasta (opcional)')}), until);
   const syncRecur = () => { untilWrap.hidden = !recur.value; };
   recur.onchange = syncRecur;
   const err = el('div',{class:'err'});
   const syncType = () => { const t = allDay.checked?'date':'datetime-local'; start.type=t; endI.type=t;
     start.value = allDay.checked ? ymd(base) : local(base); endI.value=''; endI.parentElement.hidden = allDay.checked; };
-  const endWrap = el('div',{},el('label',{class:'f',text:'Fin (opcional)'}),endI);
+  const endWrap = el('div',{},el('label',{class:'f',text:tr('Fin (opcional)')}),endI);
   allDay.onchange = syncType;
-  const save = el('button',{text:ev?'Guardar':'Crear evento',style:'flex:1'});
+  const save = el('button',{text:ev?tr('Guardar'):tr('Crear evento'),style:'flex:1'});
   save.onclick = async () => {
-    if (!title.value.trim()) { err.textContent='Pon un título.'; return; }
-    if (!start.value) { err.textContent='Pon la fecha.'; return; }
+    if (!title.value.trim()) { err.textContent=tr('Pon un título.'); return; }
+    if (!start.value) { err.textContent=tr('Pon la fecha.'); return; }
     const s = allDay.checked ? new Date(start.value+'T00:00:00') : new Date(start.value);
     const e2 = (!allDay.checked && endI.value) ? new Date(endI.value) : null;
-    if (e2 && e2 < s) { err.textContent='El fin es anterior al inicio.'; return; }
-    if (recur.value && until.value && until.value < ymd(s)) { err.textContent='«Repetir hasta» es anterior al inicio.'; return; }
+    if (e2 && e2 < s) { err.textContent=tr('El fin es anterior al inicio.'); return; }
+    if (recur.value && until.value && until.value < ymd(s)) { err.textContent=tr('«Repetir hasta» es anterior al inicio.'); return; }
     const row = { title:title.value.trim(), location:place.value.trim()||null, notes:notes.value.trim()||null,
       starts_at:s.toISOString(), ends_at:e2?e2.toISOString():null, all_day:allDay.checked,
       recur: recur.value || null, recur_until: recur.value && until.value ? until.value : null };
@@ -656,15 +895,15 @@ function eventForm(day, ev=null) {
     state.sel = s; state.month = new Date(s.getFullYear(), s.getMonth(), 1);
     closeSheet(); render();
   };
-  const kids = [el('h3',{text:ev?'Editar evento':'Nuevo evento'}), title,
-    el('label',{class:'f row'},allDay,' Todo el día'),
-    el('label',{class:'f',text:'Inicio'}), start, endWrap,
-    el('label',{class:'f',text:'Repetición'}), recur, untilWrap,
-    el('label',{class:'f',text:'Lugar'}), place, el('label',{class:'f',text:'Notas'}), notes, err,
+  const kids = [el('h3',{text:ev?tr('Editar evento'):tr('Nuevo evento')}), title,
+    el('label',{class:'f row'},allDay,tr(' Todo el día')),
+    el('label',{class:'f',text:tr('Inicio')}), start, endWrap,
+    el('label',{class:'f',text:tr('Repetición')}), recur, untilWrap,
+    el('label',{class:'f',text:tr('Lugar')}), place, el('label',{class:'f',text:tr('Notas')}), notes, err,
     el('div',{class:'row',style:'margin-top:12px'},
       el('button',{class:'ghost',text:'Cancelar',onclick:closeSheet}), save)];
-  if (ev) kids.push(el('button',{class:'danger',style:'width:100%;margin-top:6px',text:ev.recur?'Eliminar toda la serie':'Eliminar evento',onclick:async()=>{
-    if (!confirm(ev.recur ? '¿Eliminar este evento y todas sus repeticiones?' : '¿Eliminar este evento?')) return;
+  if (ev) kids.push(el('button',{class:'danger',style:'width:100%;margin-top:6px',text:ev.recur?tr('Eliminar toda la serie'):tr('Eliminar evento'),onclick:async()=>{
+    if (!confirm(ev.recur ? tr('¿Eliminar este evento y todas sus repeticiones?') : tr('¿Eliminar este evento?'))) return;
     const { error } = await sb.from('events').delete().eq('id',ev.id);
     if (error) { err.textContent=errMsg(error); return; }
     state.events = state.events.filter(x=>x.id!==ev.id); closeSheet(); render();
@@ -678,7 +917,7 @@ function eventForm(day, ev=null) {
 function renderChat() {
   const log = $('#chatlog'); const atBottom = log.scrollHeight - log.scrollTop - log.clientHeight < 80;
   log.replaceChildren();
-  if (!state.messages.length) log.append(el('div',{class:'empty',text:'Aún no hay mensajes. Saluda 👋'}));
+  if (!state.messages.length) log.append(el('div',{class:'empty',text:tr('Aún no hay mensajes. Saluda 👋')}));
   state.messages.forEach(m => {
     const mine = m.user_id === state.user.id;
     log.append(el('div',{class:'msg'+(mine?' mine':'')},
@@ -712,25 +951,25 @@ function renderPlaceSeg() {
 const placeSelect = v => { const s = el('select',{}, ...PLACES.map(([k, l]) => el('option',{value:k,text:l}))); s.value = v; return s; };
 
 /* ---------- compra ---------- */
-const CATS = [['frutas','Fruta y verdura'],['carne','Carne y pescado'],['lacteos','Lácteos y huevos'],['pan','Panadería'],
-  ['despensa','Despensa'],['bebidas','Bebidas'],['congelados','Congelados'],['limpieza','Limpieza'],
-  ['higiene','Higiene y farmacia'],['bebe','Bebé'],['otros','Otros']];
+const CATS = [['frutas',tr('Fruta y verdura')],['carne',tr('Carne y pescado')],['lacteos',tr('Lácteos y huevos')],['pan',tr('Panadería')],
+  ['despensa',tr('Despensa')],['bebidas',tr('Bebidas')],['congelados',tr('Congelados')],['limpieza',tr('Limpieza')],
+  ['higiene',tr('Higiene y farmacia')],['bebe',tr('Bebé')],['otros',tr('Otros')]];
 const CAT_NAME = Object.fromEntries(CATS);
 const GUESS = [
-  ['bebe', /pa[ñn]al|biber[óo]n|potito|papilla|chupete|beb[ée]|continuaci[óo]n/i],
-  ['frutas', /manzana|\bpera|pl[áa]tano|naranja|mandarina|lim[óo]n|fresa|\buvas?\b|mel[óo]n|sand[íi]a|kiwi|aguacate|tomate|lechuga|cebolla|\bajos?\b|patata|zanahoria|pimiento|calabac[ií]n|pepino|br[óo]coli|espinaca|champi[ñn]|fruta|verdura|ensalada|puerro|berenjena|jud[íi]as verdes|coliflor|\bcol\b|rúcula|rucula|nectarina|melocot[óo]n|ciruela|cereza/i],
-  ['carne', /pollo|ternera|cerdo|\bcarne|jam[óo]n|chorizo|salchich|bacon|\bpavo|merluza|salm[óo]n|at[úu]n|pescado|gamba|sepia|bacalao|lomo|hamburguesa|cordero|embutido|fiambre|calamar|mejill[óo]n|dorada|lubina/i],
-  ['lacteos', /leche|yogur|queso|huevo|mantequilla|\bnata\b|natillas|k[ée]fir|reques[óo]n|flan/i],
-  ['pan', /\bpan\b|baguette|boller[íi]a|croissant|panecillo|tostadas|barra de pan/i],
-  ['congelados', /congelad|helado|pizza|croqueta|nuggets?|empanadilla/i],
-  ['higiene', /champ[úu]|\bgel\b|jab[óo]n|pasta de dientes|dent[íi]frico|cepillo|papel higi[ée]nico|desodorante|compresa|tamp[óo]n|colonia|ibuprofeno|paracetamol|tirita|algod[óo]n|toallitas|crema (solar|hidratante|de manos|corporal)|maquinilla|afeitar/i],
-  ['limpieza', /lej[íi]a|detergente|suavizante|fregasuelos|friegaplatos|lavavajillas|estropajo|bayeta|papel (de )?cocina|bolsas? de basura|limpia|ambientador|fregona|escoba|pastillas (de|para)|quitagrasas|sal lavavajillas/i],
-  ['bebidas', /\bagua\b|zumo|refresco|cerveza|\bvino|\bcola\b|coca-cola|caf[ée]|infusi[óo]n|gaseosa|t[óo]nica|\bt[ée]\b|batido/i],
-  ['despensa', /arroz|\bpasta\b|macarron|espagueti|fideo|lentejas|garbanzo|alubia|aceite|\bsal\b|az[úu]car|vinagre|tomate frito|conserva|\blatas?\b|cereales|galleta|\bmiel\b|mermelada|cacao|harina|salsa|especias|frutos secos|almendra|nueces|chocolate|mayonesa|ketchup|pur[ée]/i],
+  ['bebe', /pa[ñn]al|biber[óo]n|potito|papilla|chupete|beb[ée]|continuaci[óo]n|bolquer|biber[oó]|nad[oó]|llet de continuaci/i],
+  ['frutas', /manzana|\bpera|pl[áa]tano|naranja|mandarina|lim[óo]n|fresa|\buvas?\b|mel[óo]n|sand[íi]a|kiwi|aguacate|tomate|lechuga|cebolla|\bajos?\b|patata|zanahoria|pimiento|calabac[ií]n|pepino|br[óo]coli|espinaca|champi[ñn]|fruta|verdura|ensalada|puerro|berenjena|jud[íi]as verdes|coliflor|\bcol\b|rúcula|rucula|nectarina|melocot[óo]n|ciruela|cereza|\bpoma|\bpera|platan|taronja|llimona|maduixa|\braim|\bmelo|sindria|alvocat|tomaquet|enciam|\bceba|pastanaga|pebrot|carbasso|cogombre|broquil|espinac|bolets|fruita|verdura|amanida/i],
+  ['carne', /pollo|ternera|cerdo|\bcarne|jam[óo]n|chorizo|salchich|bacon|\bpavo|merluza|salm[óo]n|at[úu]n|pescado|gamba|sepia|bacalao|lomo|hamburguesa|cordero|embutido|fiambre|calamar|mejill[óo]n|dorada|lubina|pollastre|vedella|\bporc|\bcarn\b|pernil|botifarra|salsitxa|\bbaco|gall d.indi|llus|salmo|tonyina|\bpeix|gambes|sipia|bacalla|\bllom|xai|embotit|musclos|orada|llobarro/i],
+  ['lacteos', /leche|yogur|queso|huevo|mantequilla|\bnata\b|natillas|k[ée]fir|reques[óo]n|flan|\bllet\b|iogurt|formatge|\bous?\b|mantega|natilles|kefir|mato\b|flam/i],
+  ['pan', /\bpan\b|baguette|boller[íi]a|croissant|panecillo|tostadas|barra de pan|\bpa\b|baguet|pastisseria|torrades|barra de pa/i],
+  ['congelados', /congelad|helado|pizza|croqueta|nuggets?|empanadilla|congelat|gelat|croquetes?|empanadilla/i],
+  ['higiene', /champ[úu]|\bgel\b|jab[óo]n|pasta de dientes|dent[íi]frico|cepillo|papel higi[ée]nico|desodorante|compresa|tamp[óo]n|colonia|ibuprofeno|paracetamol|tirita|algod[óo]n|toallitas|crema (solar|hidratante|de manos|corporal)|maquinilla|afeitar|xampu|\bsabo\b|pasta de dents|raspall|paper higienic|desodorant|compreses|tampons|colonia|ibuprofe|tireta|cotto|tovalloletes|maquineta|afaitar/i],
+  ['limpieza', /lej[íi]a|detergente|suavizante|fregasuelos|friegaplatos|lavavajillas|estropajo|bayeta|papel (de )?cocina|bolsas? de basura|limpia|ambientador|fregona|escoba|pastillas (de|para)|quitagrasas|sal lavavajillas|lleixiu|suavitzant|rentaplats|fregall|baieta|paper de cuina|bosses d.escombraries|netejador|escombra|desengreixant/i],
+  ['bebidas', /\bagua\b|zumo|refresco|cerveza|\bvino|\bcola\b|coca-cola|caf[ée]|infusi[óo]n|gaseosa|t[óo]nica|\bt[ée]\b|batido|\baigua\b|\bsuc\b|refresc|cervesa|\bvi\b|\bcafe\b|infusio|gasosa|tonica|\bte\b|batut/i],
+  ['despensa', /arroz|\bpasta\b|macarron|espagueti|fideo|lentejas|garbanzo|alubia|aceite|\bsal\b|az[úu]car|vinagre|tomate frito|conserva|\blatas?\b|cereales|galleta|\bmiel\b|mermelada|cacao|harina|salsa|especias|frutos secos|almendra|nueces|chocolate|mayonesa|ketchup|pur[ée]|arros|macarrons|espaguetis|fideus|llenties|cigrons|mongetes|\boli\b|sucre|llaunes?|galetes|\bmel\b|melmelada|farina|especies|fruits secs|ametlles|\bnous\b|xocolata|maionesa/i],
 ];
-function guessCat(name) { for (const [c, re] of GUESS) if (re.test(name)) return c; return 'otros'; }
+function guessCat(name) { const plain = name.normalize('NFD').replace(/[\u0300-\u036f]/g, ''); for (const [c, re] of GUESS) if (re.test(name) || re.test(plain)) return c; return 'otros'; }
 const catOf = i => CAT_NAME[i.category] ? i.category : 'otros';
-const catSelect = withAuto => el('select',{}, withAuto ? el('option',{value:'auto',text:'Categoría: automática'}) : null,
+const catSelect = withAuto => el('select',{}, withAuto ? el('option',{value:'auto',text:tr('Categoría: automática')}) : null,
   ...CATS.map(([k,v]) => el('option',{value:k,text:v})));
 $('#shopCat').replaceWith(Object.assign(catSelect(true), { id:'shopCat', style:'margin-bottom:12px' }));
 const stapleOf = (name, place = state.place) => state.staples.find(x => x.place === place && x.name.toLowerCase() === name.trim().toLowerCase());
@@ -739,20 +978,20 @@ function itemRow(i) {
   return el('div',{class:'item'+(i.done?' done':'')},
     el('button',{class:'chk','aria-label':'Marcar',onclick:()=>toggleItem(i),text:i.done?'✓':''}),
     el('div',{class:'cn',style:'cursor:pointer',onclick:()=>itemForm(i)}, el('div',{class:'ct',text:i.name}), byLine('', i.added_by)),
-    el('button',{class:'ghost del','aria-label':'Borrar',text:'×',style:'font-size:22px',onclick:()=>delItem(i)}));
+    el('button',{class:'ghost del','aria-label':tr('Borrar'),text:'×',style:'font-size:22px',onclick:()=>delItem(i)}));
 }
 function renderShop() {
   const box = $('#shopList'); box.replaceChildren();
   const here = state.items.filter(i => i.place === state.place);
   const pending = here.filter(i=>!i.done), done = here.filter(i=>i.done);
-  if (!here.length) box.append(el('div',{class:'card'}, el('div',{class:'empty',text:'La lista de ' + PLACE_NAME[state.place] + ' está vacía.'})));
+  if (!here.length) box.append(el('div',{class:'card'}, el('div',{class:'empty',text:tr('La lista de ') + PLACE_NAME[state.place] + tr(' está vacía.')})));
   for (const [k, label] of CATS) {
     const its = pending.filter(i => catOf(i) === k); if (!its.length) continue;
     box.append(el('div',{class:'group-title',text:label}));
     const c = el('div',{class:'card'}); its.forEach(i => c.append(itemRow(i))); box.append(c);
   }
   if (done.length) {
-    box.append(el('div',{class:'group-title',text:'Comprado'}));
+    box.append(el('div',{class:'group-title',text:tr('Comprado')}));
     const c = el('div',{class:'card'}); done.forEach(i => c.append(itemRow(i))); box.append(c);
   }
   $('#clearDone').hidden = !done.length;
@@ -762,12 +1001,12 @@ function renderStaples() {
   const box = $('#staples'); box.replaceChildren();
   const staples = state.staples.filter(x => x.place === state.place);
   if (!staples.length) {
-    if (state.items.some(i => i.place === state.place)) box.append(el('div',{class:'small muted',style:'margin:0 2px 12px',text:'Consejo: toca un producto de la lista y márcalo como «habitual» para añadirlo luego con un toque.'}));
+    if (state.items.some(i => i.place === state.place)) box.append(el('div',{class:'small muted',style:'margin:0 2px 12px',text:tr('Consejo: toca un producto de la lista y márcalo como «habitual» para añadirlo luego con un toque.')}));
     return;
   }
   const onList = new Set(state.items.filter(i=>!i.done && i.place === state.place).map(i=>i.name.toLowerCase()));
-  box.append(el('div',{class:'title-row'}, el('div',{class:'group-title',style:'margin:6px 0',text:'Habituales'}),
-    el('button',{class:'ghost',text:state.stapleEdit?'Listo':'Editar',onclick:()=>{ state.stapleEdit = !state.stapleEdit; renderStaples(); }})));
+  box.append(el('div',{class:'title-row'}, el('div',{class:'group-title',style:'margin:6px 0',text:tr('Habituales')}),
+    el('button',{class:'ghost',text:state.stapleEdit?tr('Listo'):'Editar',onclick:()=>{ state.stapleEdit = !state.stapleEdit; renderStaples(); }})));
   const row = el('div',{class:'chips'});
   staples.forEach(st => {
     const on = onList.has(st.name.toLowerCase());
@@ -811,9 +1050,9 @@ function itemForm(i) {
   const plc = placeSelect(i.place);
   const stap = el('input',{type:'checkbox',style:'width:auto'}); stap.checked = !!stapleOf(i.name, i.place);
   const err = el('div',{class:'err'});
-  const save = el('button',{text:'Guardar',style:'flex:1'});
+  const save = el('button',{text:tr('Guardar'),style:'flex:1'});
   save.onclick = async () => {
-    const nm = name.value.trim(); if (!nm) { err.textContent = 'Escribe el nombre.'; return; }
+    const nm = name.value.trim(); if (!nm) { err.textContent = tr('Escribe el nombre.'); return; }
     save.disabled = true;
     const { data, error } = await sb.from('shopping_items').update({ name:nm, category:cat.value, place:plc.value }).eq('id', i.id).select().single();
     if (error) { err.textContent = errMsg(error); save.disabled = false; return; }
@@ -821,10 +1060,10 @@ function itemForm(i) {
     await syncStaple(nm, cat.value, stap.checked, plc.value === i.place ? i.name : nm, plc.value);
     closeSheet(); renderShop();
   };
-  openSheet(el('h3',{text:'Editar producto'}), name,
-    el('label',{class:'f',text:'Categoría'}), cat,
-    el('label',{class:'f',text:'Vivienda'}), plc,
-    el('label',{class:'f row'}, stap, ' Producto habitual (acceso rápido)'), err,
+  openSheet(el('h3',{text:tr('Editar producto')}), name,
+    el('label',{class:'f',text:tr('Categoría')}), cat,
+    el('label',{class:'f',text:tr('Vivienda')}), plc,
+    el('label',{class:'f row'}, stap, tr(' Producto habitual (acceso rápido)')), err,
     el('div',{class:'row',style:'margin-top:12px'}, el('button',{class:'ghost',text:'Cancelar',onclick:closeSheet}), save));
 }
 async function toggleItem(i) {
@@ -853,8 +1092,8 @@ $('#clearDone').onclick = async () => {
 };
 
 /* ---------- coses de casa ---------- */
-const CHORE_REC = { daily:'Cada día', weekly:'Cada semana', monthly:'Cada mes' };
-const DOW_ORDER = [[1,'L'],[2,'M'],[3,'X'],[4,'J'],[5,'V'],[6,'S'],[0,'D']];   // getDay(): 0 = domingo
+const CHORE_REC = { daily:tr('Cada día'), weekly:tr('Cada semana'), monthly:tr('Cada mes') };
+const DOW_ORDER = [[1,'L'],[2,'M'],[3,'X'],[4,'J'],[5,'V'],[6,'S'],[0,LANG==='ca'?'G':'D']];   // getDay(): 0 = domingo
 function nextDue(c) {
   const today = ymd(new Date());
   const base = (c.due && c.due > today) ? c.due : today;
@@ -872,15 +1111,15 @@ function nextDue(c) {
 }
 function dueLabel(k) {
   const today = ymd(new Date());
-  if (k < today) return 'Atrasada · ' + fmtShort(keyDate(k));
-  if (k === today) return 'Hoy';
-  if (k === addDaysYmd(today, 1)) return 'Mañana';
+  if (k < today) return tr('Atrasada · ') + fmtShort(keyDate(k));
+  if (k === today) return tr('Hoy');
+  if (k === addDaysYmd(today, 1)) return tr('Mañana');
   return fmtShort(keyDate(k));
 }
 function recurLabel(c) {
   if (!c.recur) return null;
   if (c.recur === 'weekly' && c.recur_days && c.recur_days.length) {
-    return 'Cada ' + DOW_ORDER.filter(([n]) => c.recur_days.includes(n)).map(([,l]) => l).join(' ');
+    return tr('Cada ') + DOW_ORDER.filter(([n]) => c.recur_days.includes(n)).map(([,l]) => l).join(' ');
   }
   return CHORE_REC[c.recur];
 }
@@ -888,18 +1127,18 @@ function choreRow(c, showPlace) {
   const today = ymd(new Date());
   const meta = [];
   if (showPlace) meta.push('🏠 ' + PLACE_NAME[c.place]);
-  if (c.assignee) meta.push('Para ' + who(c.assignee));
+  if (c.assignee) meta.push(tr('Para ') + who(c.assignee));
   const rl = recurLabel(c); if (rl) meta.push('🔁 ' + rl);
-  if (c.done) meta.push('Hecho por ' + who(c.done_by) + (c.done_at ? ' · ' + fmtShort(new Date(c.done_at)) : ''));
-  else if (c.last_done_at) meta.push('Última vez: ' + who(c.last_done_by) + ' · ' + fmtShort(new Date(c.last_done_at)));
+  if (c.done) meta.push(tr('Hecho por ') + who(c.done_by) + (c.done_at ? ' · ' + fmtShort(new Date(c.done_at)) : ''));
+  else if (c.last_done_at) meta.push(tr('Última vez: ') + who(c.last_done_by) + ' · ' + fmtShort(new Date(c.last_done_at)));
   return el('div',{class:'item'+(c.done?' done':'')},
-    el('button',{class:'chk','aria-label':c.done?'Marcar como pendiente':'Marcar como hecha',text:c.done?'✓':'',onclick:()=>toggleChore(c)}),
+    el('button',{class:'chk','aria-label':c.done?tr('Marcar como pendiente'):tr('Marcar como hecha'),text:c.done?'✓':'',onclick:()=>toggleChore(c)}),
     el('div',{class:'cn',style:'cursor:pointer',onclick:()=>choreForm(c)},
       el('div',{class:'ct',text:c.title}),
       !c.done && c.due ? el('span',{class:'badge'+(c.due < today ? ' late' : ''),text:dueLabel(c.due)}) : null,
       meta.length ? el('div',{class:'small muted',text:meta.join(' · ')}) : null,
-      c.done || c.last_done_at || c.assignee ? null : byLine('Añadido por ', c.added_by)),
-    el('button',{class:'ghost del','aria-label':'Borrar',text:'×',style:'font-size:22px',onclick:()=>delChore(c)}));
+      c.done || c.last_done_at || c.assignee ? null : byLine(tr('Añadido por '), c.added_by)),
+    el('button',{class:'ghost del','aria-label':tr('Borrar'),text:'×',style:'font-size:22px',onclick:()=>delChore(c)}));
 }
 function renderChores() {
   const box = $('#choreList'); box.replaceChildren();
@@ -907,7 +1146,7 @@ function renderChores() {
   const pending = here.filter(c=>!c.done)
     .sort((a,b) => (a.due||'9999').localeCompare(b.due||'9999') || a.created_at.localeCompare(b.created_at));
   const done = here.filter(c=>c.done).sort((a,b)=>(b.done_at||'').localeCompare(a.done_at||''));
-  if (!here.length) box.append(el('div',{class:'empty',text:'No hay tareas en ' + PLACE_NAME[state.place] + '. Añade la primera.'}));
+  if (!here.length) box.append(el('div',{class:'empty',text:tr('No hay tareas en ') + PLACE_NAME[state.place] + tr('. Añade la primera.')}));
   [...pending, ...done].forEach(c => box.append(choreRow(c)));
   $('#clearChores').hidden = !done.length; renderPlaceSeg();
 }
@@ -917,7 +1156,7 @@ async function toggleChore(c) {
   let patch;
   if (c.recur && !c.done) {            // las tareas que se repiten no se «cierran»: pasan a su próxima fecha
     patch = { due: nextDue(c), last_done_at: now, last_done_by: state.user.id };
-    toast('Hecho ✓ · próxima: ' + dueLabel(patch.due));
+    toast(tr('Hecho ✓ · próxima: ') + dueLabel(patch.due));
   } else {
     const done = !c.done;
     patch = { done, done_by: done ? state.user.id : null, done_at: done ? now : null };
@@ -947,11 +1186,11 @@ $('#clearChores').onclick = async () => {
   if (error) { toast(errMsg(error)); await loadAll(); render(); }
 };
 function choreForm(c, presetTitle = '') {
-  const title = el('input',{placeholder:'Tarea (p. ej. Bajar la basura)',maxlength:'200',value:c?.title || presetTitle});
-  const assignee = el('select',{}, el('option',{value:'',text:'Cualquiera'}),
+  const title = el('input',{placeholder:tr('Tarea (p. ej. Bajar la basura)'),maxlength:'200',value:c?.title || presetTitle});
+  const assignee = el('select',{}, el('option',{value:'',text:tr('Cualquiera')}),
     ...Object.entries(state.members).map(([id,n]) => el('option',{value:id,text:n})));
   assignee.value = c?.assignee || '';
-  const recur = el('select',{}, el('option',{value:'',text:'No se repite'}),
+  const recur = el('select',{}, el('option',{value:'',text:tr('No se repite')}),
     ...Object.entries(CHORE_REC).map(([k,v]) => el('option',{value:k,text:v})));
   recur.value = c?.recur || '';
   const plc = placeSelect(c?.place || state.place);
@@ -960,15 +1199,15 @@ function choreForm(c, presetTitle = '') {
     const b = el('button',{type:'button',class:'chip'+(days.has(n)?' sel':''),text:l,style:'min-width:40px'});
     b.onclick = () => { days.has(n) ? days.delete(n) : days.add(n); b.classList.toggle('sel', days.has(n)); };
     return b; }));
-  const daysWrap = el('div',{}, el('label',{class:'f',text:'Días de la semana (si no eliges, se repite el mismo día)'}), dayBtns);
+  const daysWrap = el('div',{}, el('label',{class:'f',text:tr('Días de la semana (si no eliges, se repite el mismo día)')}), dayBtns);
   const due = el('input',{type:'date',value:c?.due || ''});
-  const dueLbl = el('label',{class:'f',text:'Fecha'});
-  const sync = () => { daysWrap.hidden = recur.value !== 'weekly'; dueLbl.textContent = recur.value ? 'Próxima vez' : 'Fecha límite (opcional)'; };
+  const dueLbl = el('label',{class:'f',text:tr('Fecha')});
+  const sync = () => { daysWrap.hidden = recur.value !== 'weekly'; dueLbl.textContent = recur.value ? tr('Próxima vez') : tr('Fecha límite (opcional)'); };
   recur.onchange = sync;
   const err = el('div',{class:'err'});
-  const save = el('button',{text:c?'Guardar':'Añadir tarea',style:'flex:1'});
+  const save = el('button',{text:c?tr('Guardar'):tr('Añadir tarea'),style:'flex:1'});
   save.onclick = async () => {
-    const t = title.value.trim(); if (!t) { err.textContent = 'Escribe la tarea.'; return; }
+    const t = title.value.trim(); if (!t) { err.textContent = tr('Escribe la tarea.'); return; }
     const row = { title:t, place:plc.value, assignee:assignee.value || null, recur:recur.value || null,
       recur_days: recur.value === 'weekly' && days.size ? [...days].sort() : null, due: due.value || null };
     if (row.recur && !row.due) row.due = ymd(new Date());
@@ -980,13 +1219,13 @@ function choreForm(c, presetTitle = '') {
     upsert(state.chores, data); state.chores.sort((a,b)=>a.created_at.localeCompare(b.created_at));
     closeSheet(); render();
   };
-  const kids = [el('h3',{text:c?'Editar tarea':'Nueva tarea'}), title,
-    el('label',{class:'f',text:'Vivienda'}), plc,
-    el('label',{class:'f',text:'¿A quién le toca?'}), assignee,
-    el('label',{class:'f',text:'Repetición'}), recur, daysWrap, dueLbl, due, err,
+  const kids = [el('h3',{text:c?tr('Editar tarea'):tr('Nueva tarea')}), title,
+    el('label',{class:'f',text:tr('Vivienda')}), plc,
+    el('label',{class:'f',text:tr('¿A quién le toca?')}), assignee,
+    el('label',{class:'f',text:tr('Repetición')}), recur, daysWrap, dueLbl, due, err,
     el('div',{class:'row',style:'margin-top:12px'}, el('button',{class:'ghost',text:'Cancelar',onclick:closeSheet}), save)];
-  if (c) kids.push(el('button',{class:'danger',style:'width:100%;margin-top:6px',text:'Eliminar tarea',onclick:async()=>{
-    if (!confirm('¿Eliminar esta tarea?')) return;
+  if (c) kids.push(el('button',{class:'danger',style:'width:100%;margin-top:6px',text:tr('Eliminar tarea'),onclick:async()=>{
+    if (!confirm(tr('¿Eliminar esta tarea?'))) return;
     const { error } = await sb.from('chores').delete().eq('id', c.id);
     if (error) { err.textContent = errMsg(error); return; }
     state.chores = state.chores.filter(x=>x.id!==c.id); closeSheet(); render();
@@ -997,35 +1236,35 @@ function choreForm(c, presetTitle = '') {
 /* ---------- menu de la guarderia ---------- */
 const menuOf = k => state.menu.find(m => m.day === k);
 const mealsEl = m => el('div',{}, ...m.meals.map(x => el('div',{class:'meal'},
-  el('div',{class:'ml',text:x.label || 'Menú'}), el('div',{class:'mt',text:x.text}))));
+  el('div',{class:'ml',text:tr(x.label || 'Menú')}), el('div',{class:'mt',text:x.text}))));
 function dayCard(m, label) {
   return el('div',{class:'card'}, el('div',{class:'menu-day'},
     el('div',{}, label ? el('h4',{text:label}) : null, mealsEl(m)),
-    el('button',{class:'ghost del','aria-label':'Editar',text:'✎',onclick:()=>menuForm(m.day)})));
+    el('button',{class:'ghost del','aria-label':tr('Editar'),text:'✎',onclick:()=>menuForm(m.day)})));
 }
 function renderMenu() {
   const box = $('#menuBox'); box.replaceChildren();
   const today = new Date(), tk = ymd(today);
   const t = menuOf(tk);
-  box.append(el('div',{class:'group-title',text:'Hoy · ' + fmtDay(today)}));
+  box.append(el('div',{class:'group-title',text:tr('Hoy · ') + fmtDay(today)}));
   if (t && t.meals.length) box.append(dayCard(t));
-  else box.append(el('div',{class:'card'}, el('div',{class:'empty',text:[0,6].includes(today.getDay()) ? 'Fin de semana: no hay menú de guardería.' : 'No hay menú cargado para hoy.'})));
-  const wd = k => keyDate(k).toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'});
+  else box.append(el('div',{class:'card'}, el('div',{class:'empty',text:[0,6].includes(today.getDay()) ? tr('Fin de semana: no hay menú de guardería.') : tr('No hay menú cargado para hoy.')})));
+  const wd = k => keyDate(k).toLocaleDateString(LOCALE,{weekday:'long',day:'numeric',month:'long'});
   const up = state.menu.filter(m => m.day > tk && m.meals.length).sort((a,b)=>a.day.localeCompare(b.day));
-  if (up.length) { box.append(el('div',{class:'group-title',text:'Próximos días'})); up.forEach(m => box.append(dayCard(m, wd(m.day)))); }
+  if (up.length) { box.append(el('div',{class:'group-title',text:tr('Próximos días')})); up.forEach(m => box.append(dayCard(m, wd(m.day)))); }
   const past = state.menu.filter(m => m.day < tk && m.meals.length).sort((a,b)=>b.day.localeCompare(a.day));
   if (past.length) {
-    const d = el('details',{class:'past'}, el('summary',{text:'Días anteriores (' + past.length + ')'}));
+    const d = el('details',{class:'past'}, el('summary',{text:tr('Días anteriores (') + past.length + ')'}));
     past.forEach(m => d.append(dayCard(m, wd(m.day))));
     box.append(d);
   }
-  box.append(el('button',{class:'soft',style:'width:100%;margin-top:6px',text:'+ Añadir o corregir un día',onclick:()=>menuForm(null)}));
-  box.append(el('button',{class:'soft',style:'width:100%;margin-top:8px',text:'Pegar el menú de todo el mes',onclick:menuBulk}));
+  box.append(el('button',{class:'soft',style:'width:100%;margin-top:6px',text:tr('+ Añadir o corregir un día'),onclick:()=>menuForm(null)}));
+  box.append(el('button',{class:'soft',style:'width:100%;margin-top:8px',text:tr('Pegar el menú de todo el mes'),onclick:menuBulk}));
 }
 
 /* --- carga del menú en bloque: se pega el texto y se ve una vista previa antes de guardar --- */
-const MONTHS = { enero:1,febrero:2,marzo:3,abril:4,mayo:5,junio:6,julio:7,agosto:8,septiembre:9,setiembre:9,octubre:10,noviembre:11,diciembre:12 };
-const WEEKDAY = '(?:lunes|martes|mi[ée]rcoles|jueves|viernes|s[áa]bado|domingo)';
+const MONTHS = { gener:1,febrer:2,'març':3,marc:3,maig:5,juny:6,juliol:7,agost:8,setembre:9,novembre:11,desembre:12, enero:1,febrero:2,marzo:3,abril:4,mayo:5,junio:6,julio:7,agosto:8,septiembre:9,setiembre:9,octubre:10,noviembre:11,diciembre:12 };
+const WEEKDAY = '(?:dilluns|dimarts|dimecres|dijous|divendres|dissabte|diumenge|lunes|martes|mi[ée]rcoles|jueves|viernes|s[áa]bado|domingo)';
 function parseMenuText(text, ym) {                       // ym = 'YYYY-MM' por defecto
   const [dy, dm] = ym.split('-').map(Number);
   const days = [], warnings = [];
@@ -1042,10 +1281,10 @@ function parseMenuText(text, ym) {                       // ym = 'YYYY-MM' por d
     if ((m = line.match(new RegExp('^(?:' + WEEKDAY + ')?[\\s,.]*(\\d{1,2})[\\/.\\-](\\d{1,2})(?:[\\/.\\-](\\d{2,4}))?\\b[:.\\-–]?\\s*(.*)$', 'i')))) {
       const y = m[3] ? (+m[3] < 100 ? 2000 + +m[3] : +m[3]) : dy; return [mkKey(y, +m[2], +m[1]), m[4]];
     }
-    if ((m = line.match(new RegExp('^' + WEEKDAY + '\\.?,?\\s+(?:d[ií]a\\s+)?(\\d{1,2})(?:\\s+de\\s+([a-zá-ú]+))?\\b[:.\\-–]?\\s*(.*)$', 'i')))) {
+    if ((m = line.match(new RegExp('^' + WEEKDAY + '\\.?,?\\s+(?:d[ií]a\\s+)?(\\d{1,2})(?:\\s+(?:de|d[\'’])\\s*([a-zá-ú]+))?(?![a-zá-ú0-9])[:.\\-–]?\\s*(.*)$', 'i')))) {
       const mo = m[2] ? monthNum(m[2]) : dm; return [mo ? mkKey(dy, mo, +m[1]) : null, m[3]];
     }
-    if ((m = line.match(/^(\d{1,2})\s+de\s+([a-zá-ú]+)(?:\s+de\s+(\d{4}))?\b[:.\-–]?\s*(.*)$/i))) {
+    if ((m = line.match(/^(\d{1,2})\s+(?:de|d['’])\s*([a-zá-ú]+)(?:\s+(?:de|d['’])\s*(\d{4}))?(?![a-zá-ú0-9])[:.\-–]?\s*(.*)$/i))) {
       const mo = monthNum(m[2]); return [mo ? mkKey(m[3] ? +m[3] : dy, mo, +m[1]) : null, m[4]];
     }
     if ((m = line.match(/^(\d{1,2})\s*[:.)\-–]\s*(.*)$/))) return [mkKey(dy, dm, +m[1]), m[2]];
@@ -1062,35 +1301,35 @@ function parseMenuText(text, ym) {                       // ym = 'YYYY-MM' por d
     const line = raw.trim(); if (!line) continue;
     const h = dayHeader(line);
     if (h) {
-      if (!h[0]) { warnings.push('No entiendo la fecha: «' + line.slice(0, 40) + '»'); cur = null; continue; }
+      if (!h[0]) { warnings.push(tr('No entiendo la fecha: «') + line.slice(0, 40) + '»'); cur = null; continue; }
       cur = days.find(d => d.day === h[0]); if (!cur) { cur = { day: h[0], meals: [] }; days.push(cur); }
       if (h[1]) addMeal(h[1]);
     } else if (cur) addMeal(line);
-    else warnings.push('Línea sin día, ignorada: «' + line.slice(0, 40) + '»');
+    else warnings.push(tr('Línea sin día, ignorada: «') + line.slice(0, 40) + '»');
   }
   return { days: days.filter(d => d.meals.length).sort((a, b) => a.day.localeCompare(b.day)), warnings };
 }
 function menuBulk() {
   const ym = el('input',{type:'month',value:ymd(new Date()).slice(0,7)});
-  const ta = el('textarea',{rows:'9',placeholder:'Lunes 20\nComida: lentejas con verduras\nMerienda: fruta y pan\n\nMartes 21\nComida: pasta con tomate\nMerienda: yogur\n\n(también vale «21/10: Comida: …» o «21 de octubre»)'});
+  const ta = el('textarea',{rows:'9',placeholder:tr("Lunes 20\nComida: lentejas con verduras\nMerienda: fruta y pan\n\nMartes 21\nComida: pasta con tomate\nMerienda: yogur\n\n(también vale «21/10: Comida: …» o «21 de octubre»)")});
   const prev = el('div',{});
   const err = el('div',{class:'err'});
-  const save = el('button',{text:'Guardar',style:'flex:1'}); save.disabled = true;
+  const save = el('button',{text:tr('Guardar'),style:'flex:1'}); save.disabled = true;
   let parsed = { days: [] };
   const refresh = () => {
     parsed = parseMenuText(ta.value, ym.value || ymd(new Date()).slice(0,7));
     prev.replaceChildren();
     if (ta.value.trim()) {
       const box = el('div',{class:'preview'});
-      if (!parsed.days.length) box.append(el('div',{class:'small muted',text:'Todavía no reconozco ningún día. Empieza cada día con su fecha (p. ej. «Lunes 20»).'}));
+      if (!parsed.days.length) box.append(el('div',{class:'small muted',text:tr('Todavía no reconozco ningún día. Empieza cada día con su fecha (p. ej. «Lunes 20»).')}));
       parsed.days.forEach(d => box.append(el('div',{class:'pd'},
-        el('strong',{text:keyDate(d.day).toLocaleDateString('es-ES',{weekday:'short',day:'numeric',month:'short'}) + (menuOf(d.day) ? '  (sustituye al actual)' : '')}),
-        ...d.meals.map(m => el('div',{class:'small',text:m.label + ': ' + m.text})))));
+        el('strong',{text:keyDate(d.day).toLocaleDateString(LOCALE,{weekday:'short',day:'numeric',month:'short'}) + (menuOf(d.day) ? tr('  (sustituye al actual)') : '')}),
+        ...d.meals.map(m => el('div',{class:'small',text:tr(m.label) + ': ' + m.text})))));
       parsed.warnings.slice(0, 5).forEach(w => box.append(el('div',{class:'small',style:'color:var(--danger)',text:w})));
       prev.append(box);
     }
     save.disabled = !parsed.days.length;
-    save.textContent = parsed.days.length ? 'Guardar ' + parsed.days.length + (parsed.days.length === 1 ? ' día' : ' días') : 'Guardar';
+    save.textContent = parsed.days.length ? tr('Guardar ') + parsed.days.length + (parsed.days.length === 1 ? tr(' día') : tr(' días')) : tr('Guardar');
   };
   ta.oninput = refresh; ym.onchange = refresh;
   save.onclick = async () => {
@@ -1101,11 +1340,11 @@ function menuBulk() {
     if (error) { err.textContent = errMsg(error); save.disabled = false; return; }
     const keys = new Set((data || []).map(r => r.day));
     state.menu = state.menu.filter(m => !keys.has(m.day)).concat(data || []).sort((a,b)=>a.day.localeCompare(b.day));
-    closeSheet(); render(); toast('Menú guardado: ' + rows.length + (rows.length === 1 ? ' día' : ' días'));
+    closeSheet(); render(); toast(tr('Menú guardado: ') + rows.length + (rows.length === 1 ? tr(' día') : tr(' días')));
   };
-  openSheet(el('h3',{text:'Pegar el menú'}),
-    el('p',{class:'small muted',style:'margin:0 0 8px',text:'Pega el texto del menú. Cada día empieza con su fecha y debajo las comidas («Comida: …», «Merienda: …»).'}),
-    el('label',{class:'f',text:'Mes (para días sin mes, como «Lunes 20»)'}), ym, el('label',{class:'f',text:'Texto del menú'}), ta, prev, err,
+  openSheet(el('h3',{text:tr('Pegar el menú')}),
+    el('p',{class:'small muted',style:'margin:0 0 8px',text:tr('Pega el texto del menú. Cada día empieza con su fecha y debajo las comidas («Comida: …», «Merienda: …»).')}),
+    el('label',{class:'f',text:tr('Mes (para días sin mes, como «Lunes 20»)')}), ym, el('label',{class:'f',text:tr('Texto del menú')}), ta, prev, err,
     el('div',{class:'row',style:'margin-top:12px'}, el('button',{class:'ghost',text:'Cancelar',onclick:closeSheet}), save));
 }
 function menuForm(key) {
@@ -1114,19 +1353,19 @@ function menuForm(key) {
   if (ex) date.disabled = true;
   const rows = el('div',{});
   const addRow = (label='', text='') => {
-    const l = el('input',{placeholder:'Comida (p. ej. Comida, Merienda)',maxlength:'40',value:label});
-    const x = el('textarea',{placeholder:'Qué comen',rows:'2',maxlength:'400'}); x.value = text;
-    const r = el('div',{class:'mrow'}, l, el('button',{class:'ghost',text:'×','aria-label':'Quitar',style:'font-size:22px',onclick:()=>r.remove()}), x);
+    const l = el('input',{placeholder:tr('Comida (p. ej. Comida, Merienda)'),maxlength:'40',value:label});
+    const x = el('textarea',{placeholder:tr('Qué comen'),rows:'2',maxlength:'400'}); x.value = text;
+    const r = el('div',{class:'mrow'}, l, el('button',{class:'ghost',text:'×','aria-label':tr('Quitar'),style:'font-size:22px',onclick:()=>r.remove()}), x);
     r._get = () => ({ label:l.value.trim(), text:x.value.trim() });
     rows.append(r);
   };
-  if (ex && ex.meals.length) ex.meals.forEach(m => addRow(m.label, m.text)); else { addRow('Comida'); addRow('Merienda'); }
+  if (ex && ex.meals.length) ex.meals.forEach(m => addRow(tr(m.label), m.text)); else { addRow(tr('Comida')); addRow(tr('Merienda')); }
   const err = el('div',{class:'err'});
-  const save = el('button',{text:'Guardar',style:'flex:1'});
+  const save = el('button',{text:tr('Guardar'),style:'flex:1'});
   save.onclick = async () => {
     const meals = [...rows.children].map(r => r._get()).filter(m => m.text);
-    if (!date.value) { err.textContent = 'Elige el día.'; return; }
-    if (!meals.length) { err.textContent = 'Escribe al menos una comida.'; return; }
+    if (!date.value) { err.textContent = tr('Elige el día.'); return; }
+    if (!meals.length) { err.textContent = tr('Escribe al menos una comida.'); return; }
     save.disabled = true;
     const { data, error } = await sb.from('menu_days')
       .upsert({ household_id: state.household.id, day: date.value, meals, updated_at: new Date().toISOString() }, { onConflict:'household_id,day' })
@@ -1136,11 +1375,11 @@ function menuForm(key) {
     state.menu.sort((a,b)=>a.day.localeCompare(b.day));
     closeSheet(); renderMenu();
   };
-  const kids = [el('h3',{text:ex ? 'Editar menú' : 'Añadir menú de un día'}), el('label',{class:'f',text:'Día'}), date, rows,
-    el('button',{class:'ghost',style:'margin-top:6px',text:'+ Añadir comida',onclick:()=>addRow()}), err,
+  const kids = [el('h3',{text:ex ? 'Editar menú' : tr('Añadir menú de un día')}), el('label',{class:'f',text:tr('Día')}), date, rows,
+    el('button',{class:'ghost',style:'margin-top:6px',text:tr('+ Añadir comida'),onclick:()=>addRow()}), err,
     el('div',{class:'row',style:'margin-top:12px'}, el('button',{class:'ghost',text:'Cancelar',onclick:closeSheet}), save)];
-  if (ex) kids.push(el('button',{class:'danger',style:'width:100%;margin-top:6px',text:'Eliminar este día',onclick:async()=>{
-    if (!confirm('¿Eliminar el menú de este día?')) return;
+  if (ex) kids.push(el('button',{class:'danger',style:'width:100%;margin-top:6px',text:tr('Eliminar este día'),onclick:async()=>{
+    if (!confirm(tr('¿Eliminar el menú de este día?'))) return;
     const { error } = await sb.from('menu_days').delete().eq('id', ex.id);
     if (error) { err.textContent = errMsg(error); return; }
     state.menu = state.menu.filter(m => m.id !== ex.id); closeSheet(); renderMenu();
@@ -1165,43 +1404,43 @@ async function loadWeather(force) {
 }
 const COMPASS = ['N','NE','E','SE','S','SO','O','NO'];
 const compass = d => d == null ? '' : COMPASS[Math.round(d / 45) % 8];
-const fnum = (n, d = 1) => n == null ? null : Number(n).toLocaleString('es-ES', { minimumFractionDigits: d, maximumFractionDigits: d });
+const fnum = (n, d = 1) => n == null ? null : Number(n).toLocaleString(LOCALE, { minimumFractionDigits: d, maximumFractionDigits: d });
 function ago(iso) {
   const m = Math.max(0, Math.round((Date.now() - new Date(iso).getTime()) / 60000));
-  return m < 2 ? 'ahora' : m < 60 ? 'hace ' + m + ' min' : m < 1440 ? 'hace ' + Math.round(m / 60) + ' h' : 'hace ' + Math.round(m / 1440) + ' d';
+  return m < 2 ? 'ahora' : m < 60 ? tr('hace ') + m + ' min' : m < 1440 ? tr('hace ') + Math.round(m / 60) + ' h' : tr('hace ') + Math.round(m / 1440) + ' d';
 }
 function renderWeather(box) {
-  box.append(el('div',{class:'group-title',text:'El tiempo'}));
+  box.append(el('div',{class:'group-title',text:tr('El tiempo')}));
   if (!state.stations.length) {
-    box.append(el('div',{class:'card'}, el('div',{class:'small muted',style:'margin-bottom:8px',text:'Conecta tu estación Ecowitt para ver aquí la temperatura, el viento y la lluvia de cada vivienda.'}),
-      el('button',{class:'soft',style:'width:100%',text:'Configurar estación',onclick:()=>$('#btnSettings').click()})));
+    box.append(el('div',{class:'card'}, el('div',{class:'small muted',style:'margin-bottom:8px',text:tr('Conecta tu estación Ecowitt para ver aquí la temperatura, el viento y la lluvia de cada vivienda.')}),
+      el('button',{class:'soft',style:'width:100%',text:tr('Configurar estación'),onclick:()=>$('#btnSettings').click()})));
     return;
   }
   const w = state.weather;
   if (w && w.configured === false) {
     box.append(el('div',{class:'card'}, el('div',{class:'small muted',text:w.reason === 'keys'
-      ? 'Faltan las claves de Ecowitt en el servidor. Cuando se añadan, aparecerá aquí el tiempo.' : 'No hay estaciones configuradas.'})));
+      ? tr('Faltan las claves de Ecowitt en el servidor. Cuando se añadan, aparecerá aquí el tiempo.') : tr('No hay estaciones configuradas.')})));
     return;
   }
   PLACES.forEach(([k, label]) => {
     if (!state.stations.some(x => x.place === k)) return;
     const st = w && (w.stations || []).find(x => x.place === k), r = st && st.reading;
-    if (!w) { box.append(el('div',{class:'wx'}, el('div',{}, el('div',{class:'where',text:label}), el('div',{class:'muted',text:'Cargando…'})))); return; }
+    if (!w) { box.append(el('div',{class:'wx'}, el('div',{}, el('div',{class:'where',text:label}), el('div',{class:'muted',text:tr('Cargando…')})))); return; }
     if (!r) {
       box.append(el('div',{class:'wx'}, el('div',{}, el('div',{class:'where',text:label}),
-        el('div',{class:'muted',text: w.failed ? 'No se pudo cargar el tiempo.' : (st && st.error) || 'Sin datos todavía.'}))));
+        el('div',{class:'muted',text: w.failed ? tr('No se pudo cargar el tiempo.') : (st && st.error) || tr('Sin datos todavía.')}))));
       return;
     }
     const old = Date.now() - new Date(r.taken_at).getTime() > 3 * 3600e3;
     const stats = [
       r.humidity != null ? '💧 ' + fnum(r.humidity, 0) + ' %' : null,
       r.wind_kmh != null ? '💨 ' + fnum(r.wind_kmh, 0) + ' km/h ' + compass(r.wind_dir) : null,
-      r.rain_today_mm != null ? '🌧 ' + fnum(r.rain_today_mm, 1) + ' mm hoy' : null,
+      r.rain_today_mm != null ? '🌧 ' + fnum(r.rain_today_mm, 1) + tr(' mm hoy') : null,
     ].filter(Boolean);
     box.append(el('button',{class:'wx',onclick:()=>weatherDetail(k, r)},
       el('div',{}, el('div',{class:'where',text:label}),
         el('div',{class:'big',text: r.temp_c != null ? fnum(r.temp_c, 1) + '°' : '—'}),
-        el('div',{class:'small muted',style:'margin-top:4px',text: old ? 'Sin datos recientes · ' + ago(r.taken_at) : ago(r.taken_at) + (st.stale ? ' · sin conexión' : '')})),
+        el('div',{class:'small muted',style:'margin-top:4px',text: old ? tr('Sin datos recientes · ') + ago(r.taken_at) : ago(r.taken_at) + (st.stale ? tr(' · sin conexión') : '')})),
       el('div',{class:'stats'}, ...stats.map(t => el('div',{text:t})))));
   });
 }
@@ -1219,18 +1458,18 @@ function sparkline(points) {                     // [{t: ms, v: número}] → SV
 }
 async function weatherDetail(place, r) {
   const rows = [
-    ['Temperatura', r.temp_c, v => fnum(v, 1) + ' °C'], ['Sensación térmica', r.feels_c, v => fnum(v, 1) + ' °C'],
-    ['Humedad', r.humidity, v => fnum(v, 0) + ' %'], ['Presión', r.pressure_hpa, v => fnum(v, 1) + ' hPa'],
-    ['Viento', r.wind_kmh, v => fnum(v, 1) + ' km/h ' + compass(r.wind_dir)], ['Racha máxima', r.gust_kmh, v => fnum(v, 1) + ' km/h'],
-    ['Lluvia hoy', r.rain_today_mm, v => fnum(v, 1) + ' mm'], ['Intensidad de lluvia', r.rain_rate_mm, v => fnum(v, 1) + ' mm/h'],
-    ['Índice UV', r.uv, v => fnum(v, 1)], ['Radiación solar', r.solar_wm2, v => fnum(v, 0) + ' W/m²'],
-    ['Temperatura interior', r.indoor_temp_c, v => fnum(v, 1) + ' °C'], ['Humedad interior', r.indoor_humidity, v => fnum(v, 0) + ' %'],
+    ['Temperatura', r.temp_c, v => fnum(v, 1) + ' °C'], [tr('Sensación térmica'), r.feels_c, v => fnum(v, 1) + ' °C'],
+    [tr('Humedad'), r.humidity, v => fnum(v, 0) + ' %'], [tr('Presión'), r.pressure_hpa, v => fnum(v, 1) + ' hPa'],
+    [tr('Viento'), r.wind_kmh, v => fnum(v, 1) + ' km/h ' + compass(r.wind_dir)], [tr('Racha máxima'), r.gust_kmh, v => fnum(v, 1) + ' km/h'],
+    [tr('Lluvia hoy'), r.rain_today_mm, v => fnum(v, 1) + ' mm'], [tr('Intensidad de lluvia'), r.rain_rate_mm, v => fnum(v, 1) + ' mm/h'],
+    [tr('Índice UV'), r.uv, v => fnum(v, 1)], [tr('Radiación solar'), r.solar_wm2, v => fnum(v, 0) + ' W/m²'],
+    [tr('Temperatura interior'), r.indoor_temp_c, v => fnum(v, 1) + ' °C'], [tr('Humedad interior'), r.indoor_humidity, v => fnum(v, 0) + ' %'],
   ].filter(x => x[1] != null);
-  const chart = el('div',{}, el('div',{class:'small muted',text:'Cargando historial…'}));
-  openSheet(el('h3',{text:PLACE_NAME[place]}), el('div',{class:'small muted',style:'margin:-6px 0 8px',text:'Actualizado ' + ago(r.taken_at)}),
+  const chart = el('div',{}, el('div',{class:'small muted',text:tr('Cargando historial…')}));
+  openSheet(el('h3',{text:PLACE_NAME[place]}), el('div',{class:'small muted',style:'margin:-6px 0 8px',text:tr('Actualizado ') + ago(r.taken_at)}),
     ...rows.map(([k, v, f]) => el('div',{class:'kv'}, el('span',{class:'muted',text:k}), el('b',{text:f(v)}))),
-    el('label',{class:'f',text:'Temperatura, últimas 24 h'}), chart,
-    el('button',{class:'ghost',style:'width:100%;margin-top:10px',text:'Cerrar',onclick:closeSheet}));
+    el('label',{class:'f',text:tr('Temperatura, últimas 24 h')}), chart,
+    el('button',{class:'ghost',style:'width:100%;margin-top:10px',text:tr('Cerrar'),onclick:closeSheet}));
   const since = new Date(Date.now() - 24 * 3600e3).toISOString();
   const { data } = await sb.from('weather_readings').select('taken_at,temp_c').eq('place', place).gte('taken_at', since).order('taken_at');
   const pts = (data || []).filter(x => x.temp_c != null).map(x => ({ t: new Date(x.taken_at).getTime(), v: Number(x.temp_c) }));
@@ -1238,21 +1477,21 @@ async function weatherDetail(place, r) {
   const svg = sparkline(pts);
   if (svg) {
     const vs = pts.map(p => p.v);
-    chart.append(svg, el('div',{class:'small muted',text:'Mín ' + fnum(Math.min(...vs), 1) + '° · Máx ' + fnum(Math.max(...vs), 1) + '°'}));
-  } else chart.append(el('div',{class:'small muted',text:'El historial se va completando cada vez que se abre la app.'}));
+    chart.append(svg, el('div',{class:'small muted',text:tr('Mín ') + fnum(Math.min(...vs), 1) + tr('° · Máx ') + fnum(Math.max(...vs), 1) + '°'}));
+  } else chart.append(el('div',{class:'small muted',text:tr('El historial se va completando cada vez que se abre la app.')}));
 }
 function stationFields() {
   const norm = v => { let x = v.trim().toUpperCase().replace(/[^0-9A-F]/g, ''); return x.length === 12 ? x.match(/../g).join(':') : null; };
   const wrap = el('div',{});
-  wrap.append(el('label',{class:'f',text:'Estaciones Ecowitt (dirección MAC)'}),
-    el('p',{class:'small muted',style:'margin:0 0 6px',text:'La MAC aparece en ecowitt.net → Dispositivos (formato AA:BB:CC:DD:EE:FF). Déjala vacía si esa vivienda no tiene estación.'}));
+  wrap.append(el('label',{class:'f',text:tr('Estaciones Ecowitt (dirección MAC)')}),
+    el('p',{class:'small muted',style:'margin:0 0 6px',text:tr('La MAC aparece en ecowitt.net → Dispositivos (formato AA:BB:CC:DD:EE:FF). Déjala vacía si esa vivienda no tiene estación.')}));
   PLACES.forEach(([k, label]) => {
     const inp = el('input',{placeholder:label + ': AA:BB:CC:DD:EE:FF',value:(state.stations.find(x => x.place === k) || {}).mac || '',autocapitalize:'characters',autocorrect:'off',maxlength:'20'});
-    const btn = el('button',{class:'soft',text:'Guardar'});
+    const btn = el('button',{class:'soft',text:tr('Guardar')});
     btn.onclick = async () => {
       const cur = state.stations.find(x => x.place === k);   // se lee al pulsar, por si se guardó antes en esta misma hoja
       const raw = inp.value.trim(), mac = raw ? norm(raw) : null;
-      if (raw && !mac) { toast('MAC no válida (12 caracteres hexadecimales)'); return; }
+      if (raw && !mac) { toast(tr('MAC no válida (12 caracteres hexadecimales)')); return; }
       btn.disabled = true;
       let error;
       if (!raw) {
@@ -1265,7 +1504,7 @@ function stationFields() {
       }
       btn.disabled = false;
       if (error) { toast(errMsg(error)); return; }
-      toast(raw ? 'Estación guardada' : 'Estación eliminada');
+      toast(raw ? tr('Estación guardada') : tr('Estación eliminada'));
       state.weather = null; state.weatherAt = 0; renderHome(); loadWeather(true);
     };
     wrap.append(el('div',{class:'row',style:'margin-bottom:8px'}, inp, btn));
@@ -1278,48 +1517,48 @@ function renderHome() {
   const box = $('#homeBox'); box.replaceChildren();
   const today = new Date(), tk = ymd(today);
   box.append(el('div',{style:'margin:2px 2px 14px'},
-    el('h2',{style:'margin:0;font-size:calc(24px * var(--fs));letter-spacing:-.3px',text:'Hola, ' + (state.members[state.user.id] || '')}),
+    el('h2',{style:'margin:0;font-size:calc(24px * var(--fs));letter-spacing:-.3px',text:tr('Hola, ') + (state.members[state.user.id] || '')}),
     el('div',{class:'muted',text:fmtDay(today)})));
   const split = list => PLACES.map(([k, l]) => l + ' ' + list.filter(x => !x.done && x.place === k).length).join(' · ');
   const tile = (list, label, tab) => el('button',{class:'tile',onclick:()=>openTab(tab)},
     el('span',{class:'n',text:list.filter(x=>!x.done).length}), label, el('div',{class:'small muted',style:'margin-top:2px',text:split(list)}));
-  box.append(el('div',{class:'tiles'}, tile(state.items, 'por comprar', 'shop'), tile(state.chores, 'tareas pendientes', 'chores')));
+  box.append(el('div',{class:'tiles'}, tile(state.items, tr('por comprar'), 'shop'), tile(state.chores, tr('tareas pendientes'), 'chores')));
   renderWeather(box);
 
-  box.append(el('div',{class:'group-title',text:'Hoy'}));
+  box.append(el('div',{class:'group-title',text:tr('Hoy')}));
   const evs = eventsOn(today), c = el('div',{class:'card'});
-  if (evs.length) evs.forEach(e => c.append(evRow(e,false))); else c.append(el('div',{class:'empty',style:'padding:10px',text:'Sin eventos hoy.'}));
+  if (evs.length) evs.forEach(e => c.append(evRow(e,false))); else c.append(el('div',{class:'empty',style:'padding:10px',text:tr('Sin eventos hoy.')}));
   box.append(c);
 
   const mine = state.chores.filter(x => !x.done && (x.assignee === state.user.id || (x.due && x.due <= tk)))
     .sort((a,b) => (a.due||'9999').localeCompare(b.due||'9999')).slice(0, 6);
   if (mine.length) {
-    box.append(el('div',{class:'group-title',text:'Tareas para hoy'}));
+    box.append(el('div',{class:'group-title',text:tr('Tareas para hoy')}));
     const cc = el('div',{class:'card'}); mine.forEach(x => cc.append(choreRow(x, true))); box.append(cc);
   }
 
   const t = menuOf(tk);
   if (t && t.meals.length) {
-    box.append(el('div',{class:'group-title',text:'Menú de la guardería'}));
+    box.append(el('div',{class:'group-title',text:tr('Menú de la guardería')}));
     box.append(el('div',{class:'card'}, mealsEl(t)));
   } else if (![0,6].includes(today.getDay())) {
-    box.append(el('div',{class:'group-title',text:'Menú de la guardería'}));
-    box.append(el('div',{class:'card'}, el('div',{class:'empty',style:'padding:10px',text:'No hay menú cargado para hoy.'}),
-      el('button',{class:'soft',style:'width:100%',text:'Cargar el menú',onclick:()=>openTab('menu')})));
+    box.append(el('div',{class:'group-title',text:tr('Menú de la guardería')}));
+    box.append(el('div',{class:'card'}, el('div',{class:'empty',style:'padding:10px',text:tr('No hay menú cargado para hoy.')}),
+      el('button',{class:'soft',style:'width:100%',text:tr('Cargar el menú'),onclick:()=>openTab('menu')})));
   }
 
   const next = upcomingEvents(30).filter(e => ymd(new Date(e.starts_at)) > tk).slice(0, 4);
   if (next.length) {
-    box.append(el('div',{class:'group-title',text:'Próximos eventos'}));
+    box.append(el('div',{class:'group-title',text:tr('Próximos eventos')}));
     const cn = el('div',{class:'card'}); next.forEach(e => cn.append(evRow(e,true)));
-    cn.append(el('button',{class:'ghost',style:'width:100%;margin-top:6px',text:'Ver todos',onclick:()=>{ state.calMode = 'list'; openTab('cal'); }}));
+    cn.append(el('button',{class:'ghost',style:'width:100%;margin-top:6px',text:tr('Ver todos'),onclick:()=>{ state.calMode = 'list'; openTab('cal'); }}));
     box.append(cn);
   }
 }
 
 /* ---------- copia de seguridad ---------- */
 async function exportBackup() {
-  toast('Preparando copia…');
+  toast(tr('Preparando copia…'));
   const get = async (t, q) => { const { data, error } = await q; if (error) throw error; return data; };
   try {
     const [eventos, mensajes, compra, habituales, tareas, menu] = await Promise.all([
@@ -1335,13 +1574,19 @@ async function exportBackup() {
     const blob = new Blob([JSON.stringify(data, null, 2)], { type:'application/json' });
     const file = new File([blob], 'hogar-copia-' + ymd(new Date()) + '.json', { type:'application/json' });
     if (navigator.canShare && navigator.canShare({ files:[file] })) {
-      try { await navigator.share({ files:[file], title:'Copia de seguridad de Nuestro Hogar' }); return; }
+      try { await navigator.share({ files:[file], title:tr('Copia de seguridad de Nuestro Hogar') }); return; }
       catch (e) { if (e && e.name === 'AbortError') return; }
     }
     const a = el('a',{href:URL.createObjectURL(blob), download:file.name}); document.body.append(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(a.href), 5000);
-    toast('Copia descargada');
+    toast(tr('Copia descargada'));
   } catch (e) { toast(errMsg(e)); }
+}
+function langSeg() {
+  const wrap = el('div',{class:'seg'});
+  [['es','Castellano'],['ca','Català']].forEach(([v, l]) => wrap.append(el('button',{type:'button',class:v === LANG ? 'on' : '',text:l,onclick:()=>{
+    if (v === LANG) return; try { localStorage.setItem('hogar-lang', v); } catch (_) {} location.reload(); }})));
+  return wrap;
 }
 function prefSeg(key, opts) {
   const wrap = el('div',{class:'seg'});
@@ -1355,20 +1600,20 @@ function prefSeg(key, opts) {
 
 /* ---------- ajustes ---------- */
 $('#btnSettings').onclick = () => {
-  const names = Object.values(state.members).join(' y ');
-  const pushNote = el('p',{class:'small muted',style:'margin:0 0 8px',text:'Comprobando…'});
+  const names = Object.values(state.members).join(LANG === 'ca' ? ' i ' : ' y ');
+  const pushNote = el('p',{class:'small muted',style:'margin:0 0 8px',text:tr('Comprobando…')});
   const pushBtn = el('button',{class:'soft',style:'width:100%',hidden:'',text:''});
   const paint = async () => {
     const st = await pushState();
     pushBtn.hidden = !(st==='on' || st==='off');
     pushBtn.disabled = false;
     pushNote.textContent = {
-      unsupported:'Para recibir avisos, añade esta app a la pantalla de inicio (Compartir → Añadir a pantalla de inicio) y ábrela desde ahí. Requiere iOS 16.4 o superior.',
-      denied:'Has bloqueado los avisos. Actívalos en Ajustes del iPhone → Notificaciones → Hogar.',
-      off:'Recibirás un aviso cuando tu pareja escriba, añada algo a la compra o cree un evento.',
-      on:'Avisos activados: te llegarán los mensajes, la compra y los eventos nuevos de tu pareja.'
+      unsupported:tr('Para recibir avisos, añade esta app a la pantalla de inicio (Compartir → Añadir a pantalla de inicio) y ábrela desde ahí. Requiere iOS 16.4 o superior.'),
+      denied:tr('Has bloqueado los avisos. Actívalos en Ajustes del iPhone → Notificaciones → Hogar.'),
+      off:tr('Recibirás un aviso cuando tu pareja escriba, añada algo a la compra o cree un evento.'),
+      on:tr('Avisos activados: te llegarán los mensajes, la compra y los eventos nuevos de tu pareja.')
     }[st];
-    pushBtn.textContent = st==='on' ? 'Desactivar avisos' : 'Activar avisos';
+    pushBtn.textContent = st==='on' ? tr('Desactivar avisos') : tr('Activar avisos');
     pushBtn.onclick = async () => {
       pushBtn.disabled = true;
       try { st==='on' ? await disablePush() : await enablePush(); }
@@ -1379,26 +1624,27 @@ $('#btnSettings').onclick = () => {
   paint();
   openSheet(
     el('h3',{text:state.household.name}),
-    el('p',{class:'muted',text:'En el hogar: '+names}),
-    el('label',{class:'f',text:'Código para invitar a tu pareja'}),
+    el('p',{class:'muted',text:tr('En el hogar: ')+names}),
+    el('label',{class:'f',text:tr('Código para invitar a tu pareja')}),
     el('div',{class:'code',text:state.household.invite_code}),
-    el('button',{class:'soft',style:'width:100%;margin-top:10px',text:'Copiar código',onclick:async()=>{
-      try { await navigator.clipboard.writeText(state.household.invite_code); toast('Código copiado'); } catch { toast('Cópialo a mano'); }}}),
+    el('button',{class:'soft',style:'width:100%;margin-top:10px',text:tr('Copiar código'),onclick:async()=>{
+      try { await navigator.clipboard.writeText(state.household.invite_code); toast(tr('Código copiado')); } catch { toast(tr('Cópialo a mano')); }}}),
     el('hr',{style:'border:0;border-top:1px solid var(--line);margin:18px 0'}),
-    el('label',{class:'f',text:'Tema'}), prefSeg('theme', [['', 'Automático'], ['light', 'Claro'], ['dark', 'Oscuro']]),
-    el('label',{class:'f',text:'Tamaño de letra'}), prefSeg('size', [['normal', 'Normal'], ['large', 'Grande'], ['xl', 'Muy grande']]),
+    el('label',{class:'f',text:'Idioma · Llengua'}), langSeg(),
+    el('label',{class:'f',text:'Tema'}), prefSeg('theme', [['', tr('Automático')], ['light', tr('Claro')], ['dark', tr('Oscuro')]]),
+    el('label',{class:'f',text:tr('Tamaño de letra')}), prefSeg('size', [['normal', 'Normal'], ['large', tr('Grande')], ['xl', tr('Muy grande')]]),
     el('hr',{style:'border:0;border-top:1px solid var(--line);margin:18px 0'}),
     stationFields(),
     el('hr',{style:'border:0;border-top:1px solid var(--line);margin:18px 0'}),
-    el('label',{class:'f',text:'Avisos en este móvil'}),
+    el('label',{class:'f',text:tr('Avisos en este móvil')}),
     pushNote, pushBtn,
     el('hr',{style:'border:0;border-top:1px solid var(--line);margin:18px 0'}),
-    el('label',{class:'f',text:'Copia de seguridad'}),
-    el('p',{class:'small muted',style:'margin:0 0 8px',text:'Descarga todos los datos del hogar (eventos, mensajes, compra, tareas y menús) en un archivo.'}),
-    el('button',{class:'soft',style:'width:100%',text:'Descargar copia de seguridad',onclick:exportBackup}),
+    el('label',{class:'f',text:tr('Copia de seguridad')}),
+    el('p',{class:'small muted',style:'margin:0 0 8px',text:tr('Descarga todos los datos del hogar (eventos, mensajes, compra, tareas y menús) en un archivo.')}),
+    el('button',{class:'soft',style:'width:100%',text:tr('Descargar copia de seguridad'),onclick:exportBackup}),
     el('hr',{style:'border:0;border-top:1px solid var(--line);margin:18px 0'}),
-    el('button',{class:'danger',style:'width:100%',text:'Cerrar sesión',onclick:()=>{closeSheet(); sb.auth.signOut();}}),
-    el('button',{class:'ghost',style:'width:100%;margin-top:6px',text:'Cerrar',onclick:closeSheet}));
+    el('button',{class:'danger',style:'width:100%',text:tr('Cerrar sesión'),onclick:()=>{closeSheet(); sb.auth.signOut();}}),
+    el('button',{class:'ghost',style:'width:100%;margin-top:6px',text:tr('Cerrar'),onclick:closeSheet}));
 };
 
 /* ---------- avisos push ---------- */
@@ -1418,7 +1664,7 @@ async function saveSub(sub) {
 }
 async function enablePush() {
   const perm = await Notification.requestPermission();
-  if (perm !== 'granted') throw new Error('Permiso denegado');
+  if (perm !== 'granted') throw new Error(tr('Permiso denegado'));
   const reg = await navigator.serviceWorker.ready;
   const sub = (await reg.pushManager.getSubscription()) ||
     await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64(VAPID_PUBLIC) });
