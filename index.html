@@ -140,6 +140,7 @@ details.past summary{cursor:pointer;color:var(--muted);font-weight:600;padding:6
 .sheet{background:var(--bg);width:100%;max-width:640px;border-radius:22px 22px 0 0;padding:18px 16px calc(env(safe-area-inset-bottom) + 18px);max-height:90dvh;overflow:auto}
 .sheet h3{margin:0 0 12px;font-size:calc(20px * var(--fs))}
 label.f{display:block;font-size:calc(13px * var(--fs));font-weight:600;color:var(--muted);margin:10px 0 4px}
+.toast.undo span{white-space:nowrap}.toast.undo{display:flex;align-items:center;gap:12px;padding:6px 6px 6px 16px}.toast.undo button{background:transparent;color:#ffb199;border:0;font-weight:700;padding:8px 10px;border-radius:8px;width:auto}
 .toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:calc(14px * var(--fs));z-index:20}
 .empty{text-align:center;color:var(--muted);padding:28px 10px}
 .code{font:700 26px/1 ui-monospace,Menlo,monospace;letter-spacing:3px;background:var(--accent-soft);color:var(--accent);padding:12px 14px;border-radius:12px;text-align:center}
@@ -538,6 +539,9 @@ const LANG = loadLang();
 const LOCALE = LANG === 'ca' ? 'ca-ES' : 'es-ES';
 const tr = s => (LANG === 'ca' && Object.prototype.hasOwnProperty.call(CA, s)) ? CA[s] : s;
 Object.assign(CA, {
+  'Deshacer': "Desfer", 'Producto eliminado': "Producte eliminat", 'Productos eliminados': "Productes eliminats",
+  'Tarea eliminada': "Tasca eliminada", 'Tareas eliminadas': "Tasques eliminades",
+  'Evento eliminado': "Esdeveniment eliminat", 'Menú eliminado': "Menú eliminat",
   'Contraseña': "Contrasenya",
   'Contraseña (mín. 8)': "Contrasenya (mín. 8)",
   'Nueva contraseña (mín. 8)': "Contrasenya nova (mín. 8)",
@@ -607,6 +611,27 @@ const MEMBER_COLORS = ['#e05d3f','#3c7dd9','#8a5cc2','#2e9c8a'];
 const memberColor = uid => { const ids = Object.keys(state.members).sort(); const i = ids.indexOf(uid); return MEMBER_COLORS[(i < 0 ? 0 : i) % MEMBER_COLORS.length]; };
 const who = uid => state.members[uid] || '—';
 const byLine = (prefix, uid) => el('div',{class:'small muted'}, el('span',{class:'dotm',style:'background:'+memberColor(uid)}), prefix + who(uid));
+const byCreated = (a, b) => (a.created_at || '').localeCompare(b.created_at || '');
+const pendingDeletes = new Set();
+function flushDeletes() { [...pendingDeletes].forEach(p => p.commit()); }
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flushDeletes(); });
+addEventListener('pagehide', flushDeletes);
+// Borrado con "Deshacer": se oculta al instante y se borra de verdad a los 5 s
+function deferDelete(msg, table, ids, apply, restore) {
+  flushDeletes();
+  apply();
+  const p = { done: false };
+  const clear = () => { p.done = true; clearTimeout(p.timer); pendingDeletes.delete(p); t.remove(); };
+  p.commit = async () => {
+    if (p.done) return; clear();
+    const { error } = await sb.from(table).delete().in('id', ids);
+    if (error) { toast(errMsg(error)); await loadAll(); render(); }
+  };
+  const t = el('div',{class:'toast undo'}, el('span',{text:msg}),
+    el('button',{type:'button',text:tr('Deshacer'),onclick:()=>{ if (p.done) return; clear(); restore(); }}));
+  document.body.append(t);
+  p.timer = setTimeout(p.commit, 5000); pendingDeletes.add(p);
+}
 function toast(msg){ const t=el('div',{class:'toast',text:msg}); document.body.append(t); setTimeout(()=>t.remove(),2500); }
 const errMsg = e => {
   const m = (e && e.message) || String(e);
@@ -963,12 +988,10 @@ function eventForm(day, ev=null) {
     el('label',{class:'f',text:tr('Lugar')}), place, el('label',{class:'f',text:tr('Notas')}), notes, err,
     el('div',{class:'row',style:'margin-top:12px'},
       el('button',{class:'ghost',text:'Cancelar',onclick:closeSheet}), save)];
-  if (ev) kids.push(el('button',{class:'danger',style:'width:100%;margin-top:6px',text:ev.recur?tr('Eliminar toda la serie'):tr('Eliminar evento'),onclick:async()=>{
-    if (!confirm(ev.recur ? tr('¿Eliminar este evento y todas sus repeticiones?') : tr('¿Eliminar este evento?'))) return;
-    const { error } = await sb.from('events').delete().eq('id',ev.id);
-    if (error) { err.textContent=errMsg(error); return; }
-    state.events = state.events.filter(x=>x.id!==ev.id); closeSheet(); render();
-  }}));
+  if (ev) kids.push(el('button',{class:'danger',style:'width:100%;margin-top:6px',text:ev.recur?tr('Eliminar toda la serie'):tr('Eliminar evento'),onclick:()=>{ closeSheet();
+    deferDelete(tr('Evento eliminado'), 'events', [ev.id],
+      () => { state.events = state.events.filter(x=>x.id!==ev.id); render(); },
+      () => { state.events.push(ev); state.events.sort((a,b)=>a.starts_at.localeCompare(b.starts_at)); render(); }); }}));
   openSheet(...kids);
   syncType(); if (!allDay.checked) { start.value = local(base); }
   syncRecur();
@@ -1132,10 +1155,10 @@ async function toggleItem(i) {
   const { error } = await sb.from('shopping_items').update({ done:i.done }).eq('id',i.id);
   if (error) { i.done=!i.done; renderShop(); toast(errMsg(error)); }
 }
-async function delItem(i) {
-  state.items = state.items.filter(x=>x.id!==i.id); renderShop();
-  const { error } = await sb.from('shopping_items').delete().eq('id',i.id);
-  if (error) { toast(errMsg(error)); await loadAll(); renderShop(); }
+function delItem(i) {
+  deferDelete(tr('Producto eliminado'), 'shopping_items', [i.id],
+    () => { state.items = state.items.filter(x => x.id !== i.id); renderShop(); },
+    () => { state.items.push(i); state.items.sort(byCreated); renderShop(); });
 }
 $('#shopForm').onsubmit = async e => {
   e.preventDefault();
@@ -1146,10 +1169,11 @@ $('#shopForm').onsubmit = async e => {
   if (!(await addItem(name, category))) $('#shopIn').value = name;
 };
 $('#clearDone').onclick = async () => {
-  const ids = state.items.filter(i=>i.done && i.place === state.place).map(i=>i.id); if (!ids.length) return;
-  state.items = state.items.filter(i=>!ids.includes(i.id)); render();
-  const { error } = await sb.from('shopping_items').delete().in('id', ids);
-  if (error) { toast(errMsg(error)); await loadAll(); renderShop(); }
+  const gone = state.items.filter(i=>i.done && i.place === state.place); if (!gone.length) return;
+  const ids = gone.map(i=>i.id);
+  deferDelete(tr('Productos eliminados'), 'shopping_items', ids,
+    () => { state.items = state.items.filter(i=>!ids.includes(i.id)); render(); },
+    () => { state.items.push(...gone); state.items.sort(byCreated); render(); });
 };
 
 /* ---------- coses de casa ---------- */
@@ -1226,10 +1250,10 @@ async function toggleChore(c) {
   const { error } = await sb.from('chores').update(patch).eq('id', c.id);
   if (error) { Object.assign(c, old); render(); toast(errMsg(error)); }
 }
-async function delChore(c) {
-  state.chores = state.chores.filter(x=>x.id!==c.id); render();
-  const { error } = await sb.from('chores').delete().eq('id', c.id);
-  if (error) { toast(errMsg(error)); await loadAll(); render(); }
+function delChore(c) {
+  deferDelete(tr('Tarea eliminada'), 'chores', [c.id],
+    () => { state.chores = state.chores.filter(x=>x.id!==c.id); render(); },
+    () => { state.chores.push(c); state.chores.sort(byCreated); render(); });
 }
 $('#choreForm').onsubmit = async e => {
   e.preventDefault();
@@ -1241,10 +1265,11 @@ $('#choreForm').onsubmit = async e => {
 };
 $('#choreMore').onclick = () => { const t = $('#choreIn').value.trim(); $('#choreIn').value = ''; choreForm(null, t); };
 $('#clearChores').onclick = async () => {
-  const ids = state.chores.filter(c=>c.done && c.place === state.place).map(c=>c.id); if (!ids.length) return;
-  state.chores = state.chores.filter(c=>!ids.includes(c.id)); render();
-  const { error } = await sb.from('chores').delete().in('id', ids);
-  if (error) { toast(errMsg(error)); await loadAll(); render(); }
+  const gone = state.chores.filter(c=>c.done && c.place === state.place); if (!gone.length) return;
+  const ids = gone.map(c=>c.id);
+  deferDelete(tr('Tareas eliminadas'), 'chores', ids,
+    () => { state.chores = state.chores.filter(c=>!ids.includes(c.id)); render(); },
+    () => { state.chores.push(...gone); state.chores.sort(byCreated); render(); });
 };
 function choreForm(c, presetTitle = '') {
   const title = el('input',{placeholder:tr('Tarea (p. ej. Bajar la basura)'),maxlength:'200',value:c?.title || presetTitle});
@@ -1285,12 +1310,7 @@ function choreForm(c, presetTitle = '') {
     el('label',{class:'f',text:tr('¿A quién le toca?')}), assignee,
     el('label',{class:'f',text:tr('Repetición')}), recur, daysWrap, dueLbl, due, err,
     el('div',{class:'row',style:'margin-top:12px'}, el('button',{class:'ghost',text:'Cancelar',onclick:closeSheet}), save)];
-  if (c) kids.push(el('button',{class:'danger',style:'width:100%;margin-top:6px',text:tr('Eliminar tarea'),onclick:async()=>{
-    if (!confirm(tr('¿Eliminar esta tarea?'))) return;
-    const { error } = await sb.from('chores').delete().eq('id', c.id);
-    if (error) { err.textContent = errMsg(error); return; }
-    state.chores = state.chores.filter(x=>x.id!==c.id); closeSheet(); render();
-  }}));
+  if (c) kids.push(el('button',{class:'danger',style:'width:100%;margin-top:6px',text:tr('Eliminar tarea'),onclick:()=>{ closeSheet(); delChore(c); }}));
   openSheet(...kids); sync();
 }
 
@@ -1439,12 +1459,10 @@ function menuForm(key) {
   const kids = [el('h3',{text:ex ? 'Editar menú' : tr('Añadir menú de un día')}), el('label',{class:'f',text:tr('Día')}), date, rows,
     el('button',{class:'ghost',style:'margin-top:6px',text:tr('+ Añadir comida'),onclick:()=>addRow()}), err,
     el('div',{class:'row',style:'margin-top:12px'}, el('button',{class:'ghost',text:'Cancelar',onclick:closeSheet}), save)];
-  if (ex) kids.push(el('button',{class:'danger',style:'width:100%;margin-top:6px',text:tr('Eliminar este día'),onclick:async()=>{
-    if (!confirm(tr('¿Eliminar el menú de este día?'))) return;
-    const { error } = await sb.from('menu_days').delete().eq('id', ex.id);
-    if (error) { err.textContent = errMsg(error); return; }
-    state.menu = state.menu.filter(m => m.id !== ex.id); closeSheet(); renderMenu();
-  }}));
+  if (ex) kids.push(el('button',{class:'danger',style:'width:100%;margin-top:6px',text:tr('Eliminar este día'),onclick:()=>{ closeSheet();
+    deferDelete(tr('Menú eliminado'), 'menu_days', [ex.id],
+      () => { state.menu = state.menu.filter(m => m.id !== ex.id); renderMenu(); },
+      () => { state.menu.push(ex); renderMenu(); }); }}));
   openSheet(...kids);
 }
 
