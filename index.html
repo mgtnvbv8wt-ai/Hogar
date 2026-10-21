@@ -183,7 +183,7 @@ label.f{display:block;font-size:calc(13px * var(--fs));font-weight:600;color:var
   <p class="muted" style="margin:0 0 20px">Calendario, chat, compra, tareas y menú, solo para vosotros.</p>
   <form id="authForm" class="stack">
     <input id="aEmail" type="email" placeholder="Email" autocomplete="email" required>
-    <input id="aPass" type="password" placeholder="Contraseña (mín. 6)" autocomplete="current-password" minlength="6" required>
+    <input id="aPass" type="password" placeholder="Contraseña" autocomplete="current-password" required>
     <div class="err" id="aErr"></div>
     <button id="aGo" type="submit" style="width:100%">Entrar</button>
     <button id="aSwitch" type="button" class="ghost" style="width:100%">Crear cuenta nueva</button>
@@ -538,6 +538,12 @@ const LANG = loadLang();
 const LOCALE = LANG === 'ca' ? 'ca-ES' : 'es-ES';
 const tr = s => (LANG === 'ca' && Object.prototype.hasOwnProperty.call(CA, s)) ? CA[s] : s;
 Object.assign(CA, {
+  'Contraseña': "Contrasenya",
+  'Contraseña (mín. 8)': "Contrasenya (mín. 8)",
+  'Nueva contraseña (mín. 8)': "Contrasenya nova (mín. 8)",
+  'La contraseña debe tener al menos 8 caracteres.': "La contrasenya ha de tenir almenys 8 caràcters.",
+  'Cerrar sesión en todos los dispositivos': "Tancar la sessió a tots els dispositius",
+  '¿Cerrar la sesión en todos los dispositivos? Tendréis que volver a entrar con la contraseña.': "Vols tancar la sessió a tots els dispositius? Haureu de tornar a entrar amb la contrasenya.",
   'Este hogar ya está completo.': "Aquesta llar ja és plena.",
   'Escribe tu email arriba y pulsa de nuevo.': "Escriu el teu correu a dalt i torna a prémer.",
   'Te hemos enviado un enlace para crear una contraseña nueva. Mira tu correo (y la carpeta de spam).': "T'hem enviat un enllaç per crear una contrasenya nova. Mira el correu (i la carpeta de brossa).",
@@ -548,7 +554,7 @@ Object.assign(CA, {
   'La contraseña debe tener al menos 6 caracteres.': "La contrasenya ha de tenir almenys 6 caràcters.",
   'Elige una contraseña nueva para entrar en Nuestro Hogar.': "Tria una contrasenya nova per entrar a Nuestro Hogar."
 });
-Object.assign(HTML_CA, { 'He olvidado la contraseña': "He oblidat la contrasenya" });
+Object.assign(HTML_CA, { 'Contraseña': "Contrasenya", 'He olvidado la contraseña': "He oblidat la contrasenya" });
 document.documentElement.lang = LANG;
 if (LANG === 'ca') {
   const T = x => { const k = x.trim(); const v = HTML_CA[k] || CA[k]; return v ? x.replace(k, v) : x; };
@@ -621,6 +627,8 @@ $('#aSwitch').onclick = () => {
   $('#aGo').textContent = state.signup ? tr('Crear cuenta') : 'Entrar';
   $('#aSwitch').textContent = state.signup ? tr('Ya tengo cuenta') : tr('Crear cuenta nueva');
   $('#aPass').autocomplete = state.signup ? 'new-password' : 'current-password';
+  $('#aPass').placeholder = state.signup ? tr('Contraseña (mín. 8)') : tr('Contraseña');
+  if (state.signup) $('#aPass').minLength = 8; else $('#aPass').removeAttribute('minlength');
   $('#aErr').textContent = '';
 };
 $('#authForm').onsubmit = async e => {
@@ -658,13 +666,13 @@ $('#aForgot').onclick = async () => {
   err.textContent = tr('Te hemos enviado un enlace para crear una contraseña nueva. Mira tu correo (y la carpeta de spam).');
 };
 function passwordForm(intro) {
-  const pw = el('input',{type:'password',placeholder:tr('Nueva contraseña (mín. 6)'),autocomplete:'new-password',minlength:'6'});
+  const pw = el('input',{type:'password',placeholder:tr('Nueva contraseña (mín. 8)'),autocomplete:'new-password',minlength:'8'});
   const err = el('div',{class:'err'});
   openSheet(el('h2',{text:tr('Nueva contraseña')}),
     intro ? el('p',{class:'small muted',text:tr('Elige una contraseña nueva para entrar en Nuestro Hogar.')}) : null,
     pw, err,
     el('button',{style:'width:100%;margin-top:10px',text:tr('Guardar'),onclick:async()=>{
-      if (pw.value.length < 6) { err.textContent = tr('La contraseña debe tener al menos 6 caracteres.'); return; }
+      if (pw.value.length < 8) { err.textContent = tr('La contraseña debe tener al menos 8 caracteres.'); return; }
       const { error } = await sb.auth.updateUser({ password: pw.value });
       if (error) { err.textContent = errMsg(error); return; }
       closeSheet(); toast(tr('Contraseña cambiada'));
@@ -673,7 +681,16 @@ function passwordForm(intro) {
   setTimeout(() => pw.focus(), 50);
 }
 
-$('#oOut').onclick = () => sb.auth.signOut();
+async function signOutHere(scope) {
+  try {
+    if (pushSupported() && Notification.permission === 'granted') {
+      const sub = await Promise.race([pushSub(), new Promise(r => setTimeout(() => r(null), 1500))]);
+      if (sub) await Promise.race([sb.from('push_subscriptions').delete().eq('endpoint', sub.endpoint), new Promise(r => setTimeout(r, 1500))]);
+    }
+  } catch (_) {}
+  await sb.auth.signOut(scope ? { scope } : undefined);
+}
+$('#oOut').onclick = () => signOutHere();
 async function onboard(fn) {
   const name = $('#oName').value.trim();
   if (!name) { $('#oErr').textContent = tr('Escribe tu nombre.'); return; }
@@ -1688,7 +1705,10 @@ $('#btnSettings').onclick = () => {
     el('button',{class:'soft',style:'width:100%',text:tr('Descargar copia de seguridad'),onclick:exportBackup}),
     el('hr',{style:'border:0;border-top:1px solid var(--line);margin:18px 0'}),
     el('button',{class:'soft',style:'width:100%;margin-bottom:8px',text:tr('Cambiar contraseña'),onclick:()=>passwordForm(false)}),
-    el('button',{class:'danger',style:'width:100%',text:tr('Cerrar sesión'),onclick:()=>{closeSheet(); sb.auth.signOut();}}),
+    el('button',{class:'soft',style:'width:100%;margin-bottom:8px',text:tr('Cerrar sesión en todos los dispositivos'),onclick:()=>{
+      if (!confirm(tr('¿Cerrar la sesión en todos los dispositivos? Tendréis que volver a entrar con la contraseña.'))) return;
+      closeSheet(); signOutHere('global'); }}),
+    el('button',{class:'danger',style:'width:100%',text:tr('Cerrar sesión'),onclick:()=>{closeSheet(); signOutHere();}}),
     el('button',{class:'ghost',style:'width:100%;margin-top:6px',text:tr('Cerrar'),onclick:closeSheet}));
 };
 
