@@ -130,11 +130,6 @@ nav button.on{color:var(--accent)}
 .menu-day{display:flex;gap:8px;align-items:flex-start}
 .menu-day>div:first-child{flex:1;min-width:0}
 .menu-day h4{margin:0 0 2px;font-size:calc(15px * var(--fs))}.menu-day h4::first-letter{text-transform:uppercase}
-details.notes{margin:8px 0;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:4px 14px 10px}
-details.notes summary{cursor:pointer;font-weight:700;padding:10px 0}
-button.note{display:block;width:100%;text-align:left;background:transparent;color:var(--ink);font-weight:400;border-radius:0;border-top:1px solid var(--line);padding:10px 0}
-button.note strong{display:block}
-button.note .small{white-space:pre-wrap;color:var(--muted);margin-top:2px}
 details.past{margin:14px 2px}
 details.past summary{cursor:pointer;color:var(--muted);font-weight:600;padding:6px 0}
 .mrow{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:10px}
@@ -544,12 +539,6 @@ const LANG = loadLang();
 const LOCALE = LANG === 'ca' ? 'ca-ES' : 'es-ES';
 const tr = s => (LANG === 'ca' && Object.prototype.hasOwnProperty.call(CA, s)) ? CA[s] : s;
 Object.assign(CA, {
-  'Notas de las viviendas': "Notes dels habitatges",
-  'Wifi, alarma, contadores, teléfonos útiles…': "Wifi, alarma, comptadors, telèfons útils…",
-  '+ Añadir nota': "+ Afegir nota", 'Título (p. ej. Wifi)': "Títol (p. ex. Wifi)",
-  'Contenido (p. ej. red y contraseña)': "Contingut (p. ex. xarxa i contrasenya)",
-  'Editar nota': "Editar nota", 'Nueva nota': "Nova nota", 'Título': "Títol", 'Contenido': "Contingut",
-  'Eliminar nota': "Eliminar nota", 'Nota eliminada': "Nota eliminada",
   'Deshacer': "Desfer", 'Producto eliminado': "Producte eliminat", 'Productos eliminados': "Productes eliminats",
   'Tarea eliminada': "Tasca eliminada", 'Tareas eliminadas': "Tasques eliminades",
   'Evento eliminado': "Esdeveniment eliminat", 'Menú eliminado': "Menú eliminat",
@@ -580,7 +569,7 @@ if (LANG === 'ca') {
 
 const $ = s => document.querySelector(s);
 const state = { user:null, member:null, household:null, members:{}, events:[], messages:[], items:[], chores:[], menu:[], staples:[],
-  tab:'home', place:loadPlace(), notes:[], notesOpen:{}, stations:[], weather:null, weatherAt:0, weatherBusy:false, calMode:'month', stapleEdit:false, month:new Date(), sel:new Date(), channel:null, signup:false };
+  tab:'home', place:loadPlace(), stations:[], weather:null, weatherAt:0, weatherBusy:false, calMode:'month', stapleEdit:false, month:new Date(), sel:new Date(), channel:null, signup:false };
 
 /* ---------- preferencias (tema y tamaño de letra) ---------- */
 const PLACES = [['estartit', "L'Estartit"], ['torello', 'Torelló']];
@@ -770,7 +759,7 @@ async function boot() {
 }
 async function loadAll() {
   const since = new Date(Date.now() - 60*86400e3).toISOString();
-  const [ev, ms, it, ch, mn, st, wst, nt] = await Promise.all([
+  const [ev, ms, it, ch, mn, st, wst] = await Promise.all([
     sb.from('events').select('*').or('starts_at.gte.' + since + ',recur.not.is.null').order('starts_at'),
     sb.from('messages').select('*').order('created_at', { ascending:false }).limit(200),
     sb.from('shopping_items').select('*').order('created_at'),
@@ -778,7 +767,6 @@ async function loadAll() {
     sb.from('menu_days').select('*').gte('day', ymd(new Date(Date.now() - 45*86400e3))).order('day'),
     sb.from('shopping_staples').select('*').order('name'),
     sb.from('weather_stations').select('*'),
-    sb.from('place_notes').select('*').order('position').order('created_at'),
   ]);
   state.events = ev.data || [];
   state.messages = (ms.data || []).reverse();
@@ -787,11 +775,10 @@ async function loadAll() {
   state.menu = mn.data || [];
   state.staples = st.data || [];
   state.stations = wst.data || [];
-  state.notes = nt.data || [];
 }
 function teardown() {
   if (state.channel) { sb.removeChannel(state.channel); state.channel = null; }
-  Object.assign(state, { member:null, household:null, events:[], messages:[], items:[], chores:[], menu:[], staples:[], stations:[], notes:[], weather:null, weatherAt:0 });
+  Object.assign(state, { member:null, household:null, events:[], messages:[], items:[], chores:[], menu:[], staples:[], stations:[], weather:null, weatherAt:0 });
 }
 
 /* ---------- tiempo real ---------- */
@@ -806,8 +793,7 @@ function subscribe() {
                                     ['shopping_items','items',(a,b)=>a.created_at.localeCompare(b.created_at)],
                                     ['chores','chores',(a,b)=>a.created_at.localeCompare(b.created_at)],
                                     ['menu_days','menu',(a,b)=>a.day.localeCompare(b.day)],
-                                    ['shopping_staples','staples',(a,b)=>a.name.localeCompare(b.name)],
-                                    ['place_notes','notes',(a,b)=>(a.position - b.position) || a.created_at.localeCompare(b.created_at)]]) {
+                                    ['shopping_staples','staples',(a,b)=>a.name.localeCompare(b.name)]]) {
     ch.on('postgres_changes', { event:'*', schema:'public', table, filter:f }, p => {
       if (p.eventType==='DELETE') state[key] = state[key].filter(x => x.id !== p.old.id);
       else { upsert(state[key], p.new); state[key].sort(sort); }
@@ -1647,48 +1633,6 @@ function renderHome() {
     cn.append(el('button',{class:'ghost',style:'width:100%;margin-top:6px',text:tr('Ver todos'),onclick:()=>{ state.calMode = 'list'; openTab('cal'); }}));
     box.append(cn);
   }
-  renderNotes(box);
-}
-
-/* ---------- notas fijas por vivienda ---------- */
-function renderNotes(box) {
-  box.append(el('div',{class:'group-title',text:tr('Notas de las viviendas')}));
-  PLACES.forEach(([k, l]) => {
-    const list = state.notes.filter(n => n.place === k);
-    const d = el('details',{class:'notes'}, el('summary',{text:l + (list.length ? ' (' + list.length + ')' : '')}));
-    if (state.notesOpen[k]) d.open = true;
-    d.addEventListener('toggle', () => { state.notesOpen[k] = d.open; });
-    list.forEach(n => d.append(el('button',{class:'note',onclick:()=>noteForm(k, n)},
-      el('strong',{text:n.title}), n.body ? el('div',{class:'small',text:n.body}) : null)));
-    if (!list.length) d.append(el('div',{class:'small muted',style:'padding:2px 0 8px',text:tr('Wifi, alarma, contadores, teléfonos útiles…')}));
-    d.append(el('button',{class:'soft',style:'width:100%;margin-top:6px',text:tr('+ Añadir nota'),onclick:()=>noteForm(k)}));
-    box.append(d);
-  });
-}
-function noteForm(place, n = null) {
-  const title = el('input',{placeholder:tr('Título (p. ej. Wifi)'),maxlength:'80',value:n?.title || ''});
-  const body = el('textarea',{rows:'6',maxlength:'2000',placeholder:tr('Contenido (p. ej. red y contraseña)')}); body.value = n?.body || '';
-  const err = el('div',{class:'err'});
-  const save = el('button',{text:tr('Guardar'),onclick:async()=>{
-    const t = title.value.trim(); if (!t) { err.textContent = tr('Pon un título.'); return; }
-    save.disabled = true;
-    const row = { title: t, body: body.value.trim() };
-    const { data, error } = n
-      ? await sb.from('place_notes').update({ ...row, updated_at: new Date().toISOString() }).eq('id', n.id).select().single()
-      : await sb.from('place_notes').insert({ ...row, household_id: state.household.id, place, position: state.notes.filter(x => x.place === place).length }).select().single();
-    save.disabled = false;
-    if (error) { err.textContent = errMsg(error); return; }
-    upsert(state.notes, data); state.notes.sort((a,b) => (a.position - b.position) || a.created_at.localeCompare(b.created_at));
-    state.notesOpen[place] = true; closeSheet(); render();
-  }});
-  const kids = [el('h2',{text:(n ? tr('Editar nota') : tr('Nueva nota')) + ' · ' + PLACE_NAME[place]}),
-    el('label',{class:'f',text:tr('Título')}), title, el('label',{class:'f',text:tr('Contenido')}), body, err,
-    el('div',{class:'row',style:'margin-top:12px'}, el('button',{class:'ghost',text:tr('Cancelar'),onclick:closeSheet}), save)];
-  if (n) kids.push(el('button',{class:'danger',style:'width:100%;margin-top:6px',text:tr('Eliminar nota'),onclick:()=>{ closeSheet();
-    deferDelete(tr('Nota eliminada'), 'place_notes', [n.id],
-      () => { state.notes = state.notes.filter(x => x.id !== n.id); render(); },
-      () => { state.notes.push(n); state.notes.sort((a,b) => (a.position - b.position) || a.created_at.localeCompare(b.created_at)); render(); }); }}));
-  openSheet(...kids); setTimeout(() => (n ? body : title).focus(), 50);
 }
 
 /* ---------- copia de seguridad ---------- */
@@ -1696,17 +1640,16 @@ async function exportBackup() {
   toast(tr('Preparando copia…'));
   const get = async (t, q) => { const { data, error } = await q; if (error) throw error; return data; };
   try {
-    const [eventos, mensajes, compra, habituales, tareas, menu, notas] = await Promise.all([
+    const [eventos, mensajes, compra, habituales, tareas, menu] = await Promise.all([
       get('events', sb.from('events').select('*').order('starts_at')),
       get('messages', sb.from('messages').select('*').order('created_at')),
       get('shopping_items', sb.from('shopping_items').select('*').order('created_at')),
       get('shopping_staples', sb.from('shopping_staples').select('*').order('name')),
       get('chores', sb.from('chores').select('*').order('created_at')),
       get('menu_days', sb.from('menu_days').select('*').order('day')),
-      get('place_notes', sb.from('place_notes').select('*').order('created_at')),
     ]);
     const data = { app:'Nuestro Hogar', exportado:new Date().toISOString(), hogar:state.household.name,
-      miembros:state.members, eventos, mensajes, compra, habituales, tareas, menu, notas };
+      miembros:state.members, eventos, mensajes, compra, habituales, tareas, menu };
     const blob = new Blob([JSON.stringify(data, null, 2)], { type:'application/json' });
     const file = new File([blob], 'hogar-copia-' + ymd(new Date()) + '.json', { type:'application/json' });
     if (navigator.canShare && navigator.canShare({ files:[file] })) {
