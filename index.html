@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://rlsxtsmaxhirdiljzsck.supabase.co wss://rlsxtsmaxhirdiljzsck.supabase.co; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta name="referrer" content="no-referrer">
 <title>Nuestro Hogar</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -536,6 +538,7 @@ const LANG = loadLang();
 const LOCALE = LANG === 'ca' ? 'ca-ES' : 'es-ES';
 const tr = s => (LANG === 'ca' && Object.prototype.hasOwnProperty.call(CA, s)) ? CA[s] : s;
 Object.assign(CA, {
+  'Este hogar ya está completo.': "Aquesta llar ja és plena.",
   'Escribe tu email arriba y pulsa de nuevo.': "Escriu el teu correu a dalt i torna a prémer.",
   'Te hemos enviado un enlace para crear una contraseña nueva. Mira tu correo (y la carpeta de spam).': "T'hem enviat un enllaç per crear una contrasenya nova. Mira el correu (i la carpeta de brossa).",
   'Nueva contraseña': "Contrasenya nova",
@@ -606,6 +609,7 @@ const errMsg = e => {
   if (/Email not confirmed/i.test(m)) return tr('Confirma tu email (mira tu correo) y vuelve a entrar.');
   if (/invalid invite code/i.test(m)) return tr('Código de invitación no válido.');
   if (/rate limit/i.test(m)) return tr('Demasiados intentos. Espera unos minutos.');
+  if (/household full/i.test(m)) return tr('Este hogar ya está completo.');
   return m;
 };
 
@@ -674,8 +678,9 @@ async function onboard(fn) {
   const name = $('#oName').value.trim();
   if (!name) { $('#oErr').textContent = tr('Escribe tu nombre.'); return; }
   $('#oErr').textContent = '';
-  const { error } = await fn(name);
+  const { data, error } = await fn(name);
   if (error) { $('#oErr').textContent = errMsg(error); return; }
+  if (!data) { $('#oErr').textContent = tr('Código de invitación no válido.'); return; }
   await boot();
 }
 $('#oCreate').onclick = () => onboard(n => sb.rpc('create_household', { p_name: $('#oHome').value.trim(), p_display_name: n }));
