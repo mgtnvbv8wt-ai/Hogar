@@ -143,6 +143,35 @@ label.f{display:block;font-size:calc(13px * var(--fs));font-weight:600;color:var
 .toast.undo span{white-space:nowrap}.toast.undo{display:flex;align-items:center;gap:12px;padding:6px 6px 6px 16px}.toast.undo button{background:transparent;color:#ffb199;border:0;font-weight:700;padding:8px 10px;border-radius:8px;width:auto}
 .toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:calc(14px * var(--fs));z-index:20}
 .empty{text-align:center;color:var(--muted);padding:28px 10px}
+.empty .ei{font-size:34px;line-height:1;margin-bottom:8px}
+.hbtns{display:flex;align-items:center;gap:2px}
+:root{--p-estartit:#2f7fc1;--p-torello:#3f8f5a;--place:var(--p-estartit)}
+@media (prefers-color-scheme: dark){:root:not([data-theme=light]){--p-estartit:#5aa3e0;--p-torello:#62b37e}}
+:root[data-theme=dark]{--p-estartit:#5aa3e0;--p-torello:#62b37e}
+body[data-place=estartit]{--place:var(--p-estartit)} body[data-place=torello]{--place:var(--p-torello)}
+#shopSeg button.on,#choreSeg button.on{background:var(--place);color:#fff}
+body[data-tab=shop] header,body[data-tab=chores] header{box-shadow:inset 0 -3px 0 var(--place)}
+.srow{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;background:transparent;color:var(--ink);font-weight:400;border-radius:0;border-top:1px solid var(--line);padding:10px 2px}
+.srow .si{font-size:18px;line-height:1.3}.srow .st{display:flex;flex-direction:column;min-width:0;word-break:break-word}
+.sgroup{margin:14px 2px 2px;font-size:calc(12px * var(--fs));font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--muted)}
+.replybar{display:flex;align-items:center;gap:8px;background:var(--accent-soft);border-left:4px solid var(--accent);border-radius:10px;padding:6px 6px 6px 10px;margin-top:6px}
+.replybar .rq{flex:1;min-width:0;font-size:calc(13px * var(--fs));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.msg .quote{display:block;border-left:3px solid currentColor;opacity:.75;padding:2px 8px;margin:2px 0 5px;border-radius:4px;font-size:calc(12px * var(--fs));background:rgba(0,0,0,.06);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60vw}
+.flash{background:var(--accent-soft)!important}
+@keyframes fadeup{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+@keyframes slideup{from{transform:translateY(40px);opacity:.6}to{transform:none;opacity:1}}
+@keyframes toastin{from{opacity:0;transform:translate(-50%,10px)}to{opacity:1;transform:translate(-50%,0)}}
+@keyframes flashbg{0%,60%{background:var(--accent-soft)}100%{background:transparent}}
+@media (prefers-reduced-motion: no-preference){
+  main section:not([hidden]){animation:fadeup .18s ease both}
+  .sheet-bg:not([hidden]){animation:fadein .18s ease both}
+  .sheet-bg:not([hidden]) .sheet{animation:slideup .22s ease both}
+  .toast{animation:toastin .2s ease both}
+  button{transition:transform .08s ease,background-color .15s ease}
+  button:active{transform:scale(.97)}
+  .flash{animation:flashbg 1.6s ease both}
+}
 .code{font:700 26px/1 ui-monospace,Menlo,monospace;letter-spacing:3px;background:var(--accent-soft);color:var(--accent);padding:12px 14px;border-radius:12px;text-align:center}
 
 /* nuevas piezas */
@@ -218,9 +247,10 @@ label.f{display:block;font-size:calc(13px * var(--fs));font-weight:600;color:var
 <div id="app" hidden>
   <header>
     <h1 id="title">Calendario</h1>
+    <div class="hbtns"><button class="ghost" id="btnSearch" aria-label="Buscar"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></button>
     <button class="ghost" id="btnSettings" aria-label="Ajustes">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
-    </button>
+    </button></div>
   </header>
   <main>
     <section id="view-home" hidden>
@@ -256,6 +286,7 @@ label.f{display:block;font-size:calc(13px * var(--fs));font-weight:600;color:var
 
     <section id="view-chat" hidden>
       <div id="chatlog"></div>
+      <div class="replybar" id="replyBar" hidden><div class="rq" id="replyQ"></div><button type="button" class="ghost" id="replyX" aria-label="Cancelar respuesta">×</button></div>
       <form class="composer" id="chatForm">
         <input id="chatIn" placeholder="Escribe un mensaje…" autocomplete="off" maxlength="2000">
         <button type="submit" aria-label="Enviar">Enviar</button>
@@ -276,6 +307,8 @@ label.f{display:block;font-size:calc(13px * var(--fs));font-weight:600;color:var
 
     <section id="view-chores" hidden>
       <div class="seg" id="choreSeg"></div>
+      <div class="seg" id="choreFilter" style="margin-bottom:8px"></div>
+      <div class="small muted" id="choreStats" style="margin:0 2px 10px" hidden></div>
       <form class="row" id="choreForm" style="margin-bottom:12px">
         <input id="choreIn" placeholder="Nueva tarea…" autocomplete="off" maxlength="200">
         <button type="submit">Añadir</button>
@@ -539,6 +572,10 @@ const LANG = loadLang();
 const LOCALE = LANG === 'ca' ? 'ca-ES' : 'es-ES';
 const tr = s => (LANG === 'ca' && Object.prototype.hasOwnProperty.call(CA, s)) ? CA[s] : s;
 Object.assign(CA, {
+  'Buscar en todo…': "Cercar a tot…", 'Escribe al menos 2 letras.': "Escriu almenys 2 lletres.", 'Sin resultados.': "Sense resultats.",
+  'Tareas': "Tasques", 'Eventos': "Esdeveniments", 'Mensajes': "Missatges", ' · comprado': " · comprat",
+  'Todas': "Totes", 'Mías': "Meves", 'Hechas este mes: ': "Fetes aquest mes: ",
+  'Respondiendo a ': "Responent a ", 'Mensaje anterior': "Missatge anterior",
   'Deshacer': "Desfer", 'Producto eliminado': "Producte eliminat", 'Productos eliminados': "Productes eliminats",
   'Tarea eliminada': "Tasca eliminada", 'Tareas eliminadas': "Tasques eliminades",
   'Evento eliminado': "Esdeveniment eliminat", 'Menú eliminado': "Menú eliminat",
@@ -558,7 +595,7 @@ Object.assign(CA, {
   'La contraseña debe tener al menos 6 caracteres.': "La contrasenya ha de tenir almenys 6 caràcters.",
   'Elige una contraseña nueva para entrar en Nuestro Hogar.': "Tria una contrasenya nova per entrar a Nuestro Hogar."
 });
-Object.assign(HTML_CA, { 'Contraseña': "Contrasenya", 'He olvidado la contraseña': "He oblidat la contrasenya" });
+Object.assign(HTML_CA, { 'Buscar': "Cercar", 'Cancelar respuesta': "Cancel·lar la resposta", 'Contraseña': "Contrasenya", 'He olvidado la contraseña': "He oblidat la contrasenya" });
 document.documentElement.lang = LANG;
 if (LANG === 'ca') {
   const T = x => { const k = x.trim(); const v = HTML_CA[k] || CA[k]; return v ? x.replace(k, v) : x; };
@@ -569,7 +606,7 @@ if (LANG === 'ca') {
 
 const $ = s => document.querySelector(s);
 const state = { user:null, member:null, household:null, members:{}, events:[], messages:[], items:[], chores:[], menu:[], staples:[],
-  tab:'home', place:loadPlace(), stations:[], weather:null, weatherAt:0, weatherBusy:false, calMode:'month', stapleEdit:false, month:new Date(), sel:new Date(), channel:null, signup:false };
+  tab:'home', place:loadPlace(), choreFilter:'all', choreLog:[], replyTo:null, stations:[], weather:null, weatherAt:0, weatherBusy:false, calMode:'month', stapleEdit:false, month:new Date(), sel:new Date(), channel:null, signup:false };
 
 /* ---------- preferencias (tema y tamaño de letra) ---------- */
 const PLACES = [['estartit', "L'Estartit"], ['torello', 'Torelló']];
@@ -632,6 +669,7 @@ function deferDelete(msg, table, ids, apply, restore) {
   document.body.append(t);
   p.timer = setTimeout(p.commit, 5000); pendingDeletes.add(p);
 }
+const emptyState = (icon, text) => el('div',{class:'empty'}, el('div',{class:'ei',text:icon}), el('div',{text}));
 function toast(msg){ const t=el('div',{class:'toast',text:msg}); document.body.append(t); setTimeout(()=>t.remove(),2500); }
 const errMsg = e => {
   const m = (e && e.message) || String(e);
@@ -759,7 +797,7 @@ async function boot() {
 }
 async function loadAll() {
   const since = new Date(Date.now() - 60*86400e3).toISOString();
-  const [ev, ms, it, ch, mn, st, wst] = await Promise.all([
+  const [ev, ms, it, ch, mn, st, wst, lg] = await Promise.all([
     sb.from('events').select('*').or('starts_at.gte.' + since + ',recur.not.is.null').order('starts_at'),
     sb.from('messages').select('*').order('created_at', { ascending:false }).limit(200),
     sb.from('shopping_items').select('*').order('created_at'),
@@ -767,6 +805,7 @@ async function loadAll() {
     sb.from('menu_days').select('*').gte('day', ymd(new Date(Date.now() - 45*86400e3))).order('day'),
     sb.from('shopping_staples').select('*').order('name'),
     sb.from('weather_stations').select('*'),
+    sb.from('chore_log').select('*').gte('done_at', new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString()),
   ]);
   state.events = ev.data || [];
   state.messages = (ms.data || []).reverse();
@@ -775,10 +814,11 @@ async function loadAll() {
   state.menu = mn.data || [];
   state.staples = st.data || [];
   state.stations = wst.data || [];
+  state.choreLog = lg.data || [];
 }
 function teardown() {
   if (state.channel) { sb.removeChannel(state.channel); state.channel = null; }
-  Object.assign(state, { member:null, household:null, events:[], messages:[], items:[], chores:[], menu:[], staples:[], stations:[], weather:null, weatherAt:0 });
+  Object.assign(state, { member:null, household:null, events:[], messages:[], items:[], chores:[], menu:[], staples:[], stations:[], choreLog:[], replyTo:null, weather:null, weatherAt:0 });
 }
 
 /* ---------- tiempo real ---------- */
@@ -793,7 +833,8 @@ function subscribe() {
                                     ['shopping_items','items',(a,b)=>a.created_at.localeCompare(b.created_at)],
                                     ['chores','chores',(a,b)=>a.created_at.localeCompare(b.created_at)],
                                     ['menu_days','menu',(a,b)=>a.day.localeCompare(b.day)],
-                                    ['shopping_staples','staples',(a,b)=>a.name.localeCompare(b.name)]]) {
+                                    ['shopping_staples','staples',(a,b)=>a.name.localeCompare(b.name)],
+                                    ['chore_log','choreLog',(a,b)=>a.done_at.localeCompare(b.done_at)]]) {
     ch.on('postgres_changes', { event:'*', schema:'public', table, filter:f }, p => {
       if (p.eventType==='DELETE') state[key] = state[key].filter(x => x.id !== p.old.id);
       else { upsert(state[key], p.new); state[key].sort(sort); }
@@ -829,6 +870,7 @@ $('#tabs').onclick = e => {
 function render() {
   if (!state.household) return;
   $('#title').textContent = TITLES[state.tab];
+  document.body.dataset.place = state.place; document.body.dataset.tab = state.tab;
   document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab===state.tab));
   for (const t of Object.keys(TITLES)) $('#view-'+t).hidden = t!==state.tab;
   $('main').style.overflowY = state.tab==='chat' ? 'hidden' : 'auto';
@@ -925,7 +967,7 @@ function evRow(e, showDate) {
 function renderEvents() {
   const box = $('#evList'); box.replaceChildren();
   const up = upcomingEvents(120);
-  if (!up.length) { box.append(el('div',{class:'empty',text:tr('No hay eventos próximos. ¡Crea el primero!')})); return; }
+  if (!up.length) { box.append(emptyState('📅', tr('No hay eventos próximos. ¡Crea el primero!'))); return; }
   const groups = {};
   up.forEach(e => { const k = ymd(new Date(e.starts_at)); (groups[k] ||= []).push(e); });
   Object.keys(groups).sort().forEach(k => {
@@ -1001,22 +1043,37 @@ function eventForm(day, ev=null) {
 function renderChat() {
   const log = $('#chatlog'); const atBottom = log.scrollHeight - log.scrollTop - log.clientHeight < 80;
   log.replaceChildren();
-  if (!state.messages.length) log.append(el('div',{class:'empty',text:tr('Aún no hay mensajes. Saluda 👋')}));
+  if (!state.messages.length) log.append(emptyState('💬', tr('Aún no hay mensajes. Saluda 👋')));
   state.messages.forEach(m => {
     const mine = m.user_id === state.user.id;
-    log.append(el('div',{class:'msg'+(mine?' mine':'')},
+    const orig = m.reply_to ? state.messages.find(x => x.id === m.reply_to) : null;
+    log.append(el('div',{class:'msg'+(mine?' mine':''),'data-id':m.id,onclick:()=>setReply(m)},
       mine ? null : el('span',{class:'who',style:'opacity:1;color:'+memberColor(m.user_id),text:who(m.user_id)}),
+      m.reply_to ? el('span',{class:'quote',onclick:ev=>{ ev.stopPropagation(); if (orig) focusRow(orig.id); }},
+        orig ? who(orig.user_id) + ': ' + orig.body : tr('Mensaje anterior')) : null,
       m.body, el('span',{class:'at',text:fmtTime(new Date(m.created_at))})));
   });
   if (atBottom) scrollChat();
+}
+function setReply(m) { state.replyTo = (state.replyTo && state.replyTo.id === m.id) ? null : m; updateReplyBar(); if (state.replyTo) $('#chatIn').focus(); }
+function updateReplyBar() {
+  const r = state.replyTo; $('#replyBar').hidden = !r;
+  if (r) $('#replyQ').textContent = tr('Respondiendo a ') + who(r.user_id) + ': ' + r.body;
+}
+$('#replyX').onclick = () => { state.replyTo = null; updateReplyBar(); };
+function focusRow(id) {
+  setTimeout(() => { const n = document.querySelector('[data-id="' + id + '"]'); if (!n) return;
+    n.scrollIntoView({ block:'center', behavior:'smooth' }); n.classList.remove('flash'); void n.offsetWidth; n.classList.add('flash'); }, 80);
 }
 function scrollChat() { requestAnimationFrame(()=>{ const l=$('#chatlog'); l.scrollTop=l.scrollHeight; }); }
 $('#chatForm').onsubmit = async e => {
   e.preventDefault();
   const body = $('#chatIn').value.trim(); if (!body) return;
   $('#chatIn').value = '';
-  const { data, error } = await sb.from('messages').insert({ household_id: state.household.id, body }).select().single();
+  const reply_to = state.replyTo ? state.replyTo.id : null;
+  const { data, error } = await sb.from('messages').insert({ household_id: state.household.id, body, ...(reply_to ? { reply_to } : {}) }).select().single();
   if (error) { toast(errMsg(error)); $('#chatIn').value = body; return; }
+  state.replyTo = null; updateReplyBar();
   upsert(state.messages, data); renderChat(); scrollChat();
 };
 
@@ -1059,7 +1116,7 @@ $('#shopCat').replaceWith(Object.assign(catSelect(true), { id:'shopCat', style:'
 const stapleOf = (name, place = state.place) => state.staples.find(x => x.place === place && x.name.toLowerCase() === name.trim().toLowerCase());
 
 function itemRow(i) {
-  return el('div',{class:'item'+(i.done?' done':'')},
+  return el('div',{class:'item'+(i.done?' done':''),'data-id':i.id},
     el('button',{class:'chk','aria-label':'Marcar',onclick:()=>toggleItem(i),text:i.done?'✓':''}),
     el('div',{class:'cn',style:'cursor:pointer',onclick:()=>itemForm(i)}, el('div',{class:'ct',text:i.name}), byLine('', i.added_by)),
     el('button',{class:'ghost del','aria-label':tr('Borrar'),text:'×',style:'font-size:22px',onclick:()=>delItem(i)}));
@@ -1068,7 +1125,7 @@ function renderShop() {
   const box = $('#shopList'); box.replaceChildren();
   const here = state.items.filter(i => i.place === state.place);
   const pending = here.filter(i=>!i.done), done = here.filter(i=>i.done);
-  if (!here.length) box.append(el('div',{class:'card'}, el('div',{class:'empty',text:tr('La lista de ') + PLACE_NAME[state.place] + tr(' está vacía.')})));
+  if (!here.length) box.append(el('div',{class:'card'}, emptyState('🛒', tr('La lista de ') + PLACE_NAME[state.place] + tr(' está vacía.'))));
   for (const [k, label] of CATS) {
     const its = pending.filter(i => catOf(i) === k); if (!its.length) continue;
     box.append(el('div',{class:'group-title',text:label}));
@@ -1216,7 +1273,7 @@ function choreRow(c, showPlace) {
   const rl = recurLabel(c); if (rl) meta.push('🔁 ' + rl);
   if (c.done) meta.push(tr('Hecho por ') + who(c.done_by) + (c.done_at ? ' · ' + fmtShort(new Date(c.done_at)) : ''));
   else if (c.last_done_at) meta.push(tr('Última vez: ') + who(c.last_done_by) + ' · ' + fmtShort(new Date(c.last_done_at)));
-  return el('div',{class:'item'+(c.done?' done':'')},
+  return el('div',{class:'item'+(c.done?' done':''),'data-id':c.id},
     el('button',{class:'chk','aria-label':c.done?tr('Marcar como pendiente'):tr('Marcar como hecha'),text:c.done?'✓':'',onclick:()=>toggleChore(c)}),
     el('div',{class:'cn',style:'cursor:pointer',onclick:()=>choreForm(c)},
       el('div',{class:'ct',text:c.title}),
@@ -1225,13 +1282,23 @@ function choreRow(c, showPlace) {
       c.done || c.last_done_at || c.assignee ? null : byLine(tr('Añadido por '), c.added_by)),
     el('button',{class:'ghost del','aria-label':tr('Borrar'),text:'×',style:'font-size:22px',onclick:()=>delChore(c)}));
 }
+function renderChoreMeta() {
+  $('#choreFilter').replaceChildren(...[['all', tr('Todas')], ['mine', tr('Mías')]].map(([k, l]) =>
+    el('button',{type:'button',class:state.choreFilter === k ? 'on' : '',text:l,onclick:()=>{ state.choreFilter = k; renderChores(); }})));
+  const counts = {}; state.choreLog.forEach(x => { counts[x.user_id] = (counts[x.user_id] || 0) + 1; });
+  const parts = Object.keys(state.members).map(u => who(u) + ' ' + (counts[u] || 0));
+  const st = $('#choreStats'); st.hidden = !state.choreLog.length;
+  st.textContent = tr('Hechas este mes: ') + parts.join(' · ');
+}
 function renderChores() {
   const box = $('#choreList'); box.replaceChildren();
-  const here = state.chores.filter(c => c.place === state.place);
+  const mineOnly = state.choreFilter === 'mine';
+  const here = state.chores.filter(c => c.place === state.place && (!mineOnly || c.assignee === state.user.id));
   const pending = here.filter(c=>!c.done)
     .sort((a,b) => (a.due||'9999').localeCompare(b.due||'9999') || a.created_at.localeCompare(b.created_at));
   const done = here.filter(c=>c.done).sort((a,b)=>(b.done_at||'').localeCompare(a.done_at||''));
-  if (!here.length) box.append(el('div',{class:'empty',text:tr('No hay tareas en ') + PLACE_NAME[state.place] + tr('. Añade la primera.')}));
+  renderChoreMeta();
+  if (!here.length) box.append(emptyState('✅', tr('No hay tareas en ') + PLACE_NAME[state.place] + tr('. Añade la primera.')));
   [...pending, ...done].forEach(c => box.append(choreRow(c)));
   $('#clearChores').hidden = !done.length; renderPlaceSeg();
 }
@@ -1248,7 +1315,17 @@ async function toggleChore(c) {
   }
   Object.assign(c, patch); render();
   const { error } = await sb.from('chores').update(patch).eq('id', c.id);
-  if (error) { Object.assign(c, old); render(); toast(errMsg(error)); }
+  if (error) { Object.assign(c, old); render(); toast(errMsg(error)); return; }
+  // registro para el contador de «hechas este mes»
+  try {
+    if (patch.done === false) {
+      const mine = state.choreLog.filter(x => x.chore_id === c.id && x.user_id === state.user.id).sort((a, b) => b.done_at.localeCompare(a.done_at))[0];
+      if (mine) { state.choreLog = state.choreLog.filter(x => x.id !== mine.id); renderChoreMeta(); await sb.from('chore_log').delete().eq('id', mine.id); }
+    } else {
+      const { data } = await sb.from('chore_log').insert({ household_id: state.household.id, chore_id: c.id, user_id: state.user.id, place: c.place }).select().single();
+      if (data) { upsert(state.choreLog, data); renderChoreMeta(); }
+    }
+  } catch (_) {}
 }
 function delChore(c) {
   deferDelete(tr('Tarea eliminada'), 'chores', [c.id],
@@ -1661,6 +1738,40 @@ async function exportBackup() {
     toast(tr('Copia descargada'));
   } catch (e) { toast(errMsg(e)); }
 }
+/* ---------- búsqueda ---------- */
+const norm = s => String(s == null ? '' : s).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+function openSearch() {
+  const q = el('input',{type:'search',placeholder:tr('Buscar en todo…'),autocomplete:'off',maxlength:'60'});
+  const out = el('div');
+  const row = (icon, title, sub, go) => el('button',{class:'srow',onclick:()=>{ closeSheet(); go(); }},
+    el('span',{class:'si',text:icon}), el('span',{class:'st'}, el('strong',{text:title}), sub ? el('span',{class:'small muted',text:sub}) : null));
+  const run = () => {
+    const t = norm(q.value.trim()); out.replaceChildren();
+    if (t.length < 2) { out.append(el('div',{class:'empty',text:tr('Escribe al menos 2 letras.')})); return; }
+    const has = (...f) => f.some(x => norm(x).includes(t));
+    const groups = [];
+    const add = (title, rows) => { if (rows.length) groups.push([title, rows.slice(0, 8)]); };
+    add(tr('Compra'), state.items.filter(i => has(i.name)).map(i => row('🛒', i.name,
+      PLACE_NAME[i.place] + (i.done ? tr(' · comprado') : ''), () => { state.place = i.place; savePlace(i.place); openTab('shop'); focusRow(i.id); })));
+    add(tr('Tareas'), state.chores.filter(c => has(c.title)).map(c => row('✅', c.title,
+      PLACE_NAME[c.place] + (c.done ? ' · ✓' : ''), () => { state.place = c.place; savePlace(c.place); state.choreFilter = 'all'; openTab('chores'); focusRow(c.id); })));
+    const ups = upcomingEvents(400);
+    add(tr('Eventos'), state.events.filter(e => has(e.title, e.place, e.notes)).map(e => {
+      const nx = ups.find(x => (x._series || x).id === e.id), d = new Date((nx || e).starts_at);
+      return row('📅', e.title, fmtDay(d), () => { state.calMode = 'month'; state.month = new Date(d.getFullYear(), d.getMonth(), 1); state.sel = d; openTab('cal'); });
+    }));
+    add(tr('Mensajes'), state.messages.filter(m => has(m.body)).slice().reverse().map(m => row('💬', m.body,
+      who(m.user_id) + ' · ' + fmtShort(new Date(m.created_at)), () => { openTab('chat'); focusRow(m.id); })));
+    add(tr('Menú'), state.menu.filter(m => has(...m.meals.map(x => x.text))).map(m => row('🍽️',
+      m.meals.map(x => x.text).join(' · '), fmtDay(keyDate(m.day)), () => openTab('menu'))));
+    if (!groups.length) { out.append(el('div',{class:'empty',text:tr('Sin resultados.')})); return; }
+    groups.forEach(([title, rows]) => { out.append(el('div',{class:'sgroup',text:title})); rows.forEach(r => out.append(r)); });
+  };
+  q.addEventListener('input', run); run();
+  openSheet(q, out, el('button',{class:'ghost',style:'width:100%;margin-top:8px',text:tr('Cerrar'),onclick:closeSheet}));
+  setTimeout(() => q.focus(), 60);
+}
+$('#btnSearch').onclick = openSearch;
 function langSeg() {
   const wrap = el('div',{class:'seg'});
   [['es','Castellano'],['ca','Català']].forEach(([v, l]) => wrap.append(el('button',{type:'button',class:v === LANG ? 'on' : '',text:l,onclick:()=>{
