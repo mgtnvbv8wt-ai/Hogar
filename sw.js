@@ -1,5 +1,5 @@
-const CACHE = 'hogar-v17';
-const SHELL = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon.png', './icon-maskable-512.png'];
+const CACHE = 'hogar-v19';
+const SHELL = ['./', './index.html', './manifest.webmanifest', './css/style.css', './js/config.js', './js/i18n.js', './js/core.js', './js/auth.js', './js/data.js', './js/nav.js', './js/calendar.js', './js/chat.js', './js/shop.js', './js/chores.js', './js/menu.js', './js/weather.js', './js/home.js', './js/backup.js', './js/search.js', './js/settings.js', './js/push.js', './js/main.js', './icon-192.png', './icon-512.png', './apple-touch-icon.png', './icon-maskable-512.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
