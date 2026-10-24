@@ -253,6 +253,11 @@ Object.assign(CA, {
   'La contraseña debe tener al menos 6 caracteres.': "La contrasenya ha de tenir almenys 6 caràcters.",
   'Elige una contraseña nueva para entrar en Nuestro Hogar.': "Tria una contrasenya nova per entrar a Nuestro Hogar."
 });
+Object.assign(CA, {
+  'Sin conexión. Inténtalo cuando tengas cobertura.': "Sense connexió. Torna-ho a provar quan tinguis cobertura.",
+  'Sin conexión': "Sense connexió", 'cambios pendientes': "canvis pendents", 'Sincronizando…': "Sincronitzant…",
+  'Cambios sincronizados': "Canvis sincronitzats", 'Algún cambio no se pudo guardar': "Algun canvi no s'ha pogut desar"
+});
 Object.assign(HTML_CA, { 'Buscar': "Cercar", 'Cancelar respuesta': "Cancel·lar la resposta", 'Contraseña': "Contrasenya", 'He olvidado la contraseña': "He oblidat la contrasenya" });
 document.documentElement.lang = LANG;
 if (LANG === 'ca') {

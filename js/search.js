@@ -16,7 +16,7 @@ function openSearch() {
     add(tr('Tareas'), state.chores.filter(c => has(c.title)).map(c => row('✅', c.title,
       PLACE_NAME[c.place] + (c.done ? ' · ✓' : ''), () => { state.place = c.place; savePlace(c.place); state.choreFilter = 'all'; openTab('chores'); focusRow(c.id); })));
     const ups = upcomingEvents(400);
-    add(tr('Eventos'), state.events.filter(e => has(e.title, e.place, e.notes)).map(e => {
+    add(tr('Eventos'), state.events.filter(e => has(e.title, e.location, e.notes)).map(e => {
       const nx = ups.find(x => (x._series || x).id === e.id), d = new Date((nx || e).starts_at);
       return row('📅', e.title, fmtDay(d), () => { state.calMode = 'month'; state.month = new Date(d.getFullYear(), d.getMonth(), 1); state.sel = d; openTab('cal'); });
     }));

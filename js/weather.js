@@ -1,6 +1,6 @@
 /* ---------- el tiempo (estaciones Ecowitt) ---------- */
 async function loadWeather(force) {
-  if (!state.household || !state.stations.length || state.weatherBusy) return;
+  if (!state.household || !state.stations.length || state.weatherBusy || navigator.onLine === false || state.offlineMode) return;
   if (!force && Date.now() - state.weatherAt < 2 * 60 * 1000) return;
   state.weatherBusy = true;
   try {

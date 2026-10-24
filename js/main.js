@@ -3,8 +3,9 @@
 sb.auth.onAuthStateChange((event, session) => {
   // evitar deadlocks: no hacer llamadas supabase dentro del callback
   setTimeout(() => {
-    if (session) { state.user = session.user; const rec = event === 'PASSWORD_RECOVERY'; Promise.resolve(boot()).then(() => { if (rec) { passwordForm(true); history.replaceState(null, '', location.pathname); } }); }
-    else { state.user = null; teardown(); showOnly('auth'); }
+    if (session) { state.offlineMode = false; state.user = session.user; const rec = event === 'PASSWORD_RECOVERY'; Promise.resolve(boot()).then(() => { if (rec) { passwordForm(true); history.replaceState(null, '', location.pathname); } }); }
+    else if (event !== 'SIGNED_OUT' && bootOffline()) { /* sin sesión válida pero con datos guardados: se abre sin conexión */ }
+    else { if (event === 'SIGNED_OUT') clearLocalData(); state.user = null; teardown(); showOnly('auth'); }
   }, 0);
 });
 
@@ -12,4 +13,4 @@ sb.auth.onAuthStateChange((event, session) => {
 if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(()=>{}));
 
 // estado inicial
-sb.auth.getSession().then(({ data }) => { if (!data.session) showOnly('auth'); });
+sb.auth.getSession().then(({ data }) => { if (!data.session && !loadSnapshot()) showOnly('auth'); });

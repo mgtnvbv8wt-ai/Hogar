@@ -1,7 +1,8 @@
 /* ---------- arranque ---------- */
 async function boot() {
-  const { data: me, error } = await sb.from('members').select('*').eq('user_id', state.user.id).maybeSingle();
-  if (error) { toast(errMsg(error)); return; }
+  const { data: me, error, status } = await sb.from('members').select('*').eq('user_id', state.user.id).maybeSingle();
+  if (error) { if ((status === 0 || isNetErr(error)) && bootOffline()) return; toast(errMsg(error)); return; }
+  state.offlineMode = false; updateNetBar();
   if (!me) { showOnly('onboard'); return; }
   state.member = me;
   const [{ data: h }, { data: ms }] = await Promise.all([
@@ -31,6 +32,7 @@ async function loadAll() {
     sb.from('weather_stations').select('*'),
     sb.from('chore_log').select('*').gte('done_at', new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString()),
   ]);
+  if ([ev, ms, it, ch, mn, st, wst, lg].some(netFail)) return false;   // sin red: se conservan los datos que ya hay
   state.events = ev.data || [];
   state.messages = (ms.data || []).reverse();
   state.items = it.data || [];

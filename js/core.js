@@ -74,5 +74,6 @@ const errMsg = e => {
   if (/invalid invite code/i.test(m)) return tr('Código de invitación no válido.');
   if (/rate limit/i.test(m)) return tr('Demasiados intentos. Espera unos minutos.');
   if (/household full/i.test(m)) return tr('Este hogar ya está completo.');
+  if (typeof isNetErr === 'function' && isNetErr(e)) return tr('Sin conexión. Inténtalo cuando tengas cobertura.');
   return m;
 };

@@ -62,6 +62,7 @@
     single() { this.one = true; return this; }
     maybeSingle() { this.maybe = true; return this; }
     async run() {
+      if (window.__offline) return { data: null, error: { message: 'TypeError: Failed to fetch', details: '', hint: '', code: '' }, status: 0 };
       const rows = db[this.t]; if (!rows) return { data: null, error: { message: 'tabla desconocida ' + this.t } };
       const match = r => this.f.every(fn => fn(r));
       const stamp = r => ({ id: uid(), created_at: nowIso(), ...r });
@@ -102,8 +103,8 @@
     createClient() {
       return {
         auth: {
-          getSession: async () => ({ data: { session } }),
-          onAuthStateChange: cb => { setTimeout(() => cb('INITIAL_SESSION', session), 10); return { data: { subscription: {} } }; },
+          getSession: async () => ({ data: { session: window.__noSession ? null : session } }),
+          onAuthStateChange: cb => { setTimeout(() => cb('INITIAL_SESSION', window.__noSession ? null : session), 10); return { data: { subscription: {} } }; },
           signOut: async () => {}, signInWithPassword: async () => ({}), signUp: async () => ({}),
         },
         from: t => new Q(t),

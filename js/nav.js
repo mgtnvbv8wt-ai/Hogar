@@ -22,4 +22,5 @@ function render() {
   $('main').style.display = state.tab==='chat' ? 'flex' : 'block';
   $('main').style.flexDirection = 'column';
   renderPlaceSeg(); renderHome(); renderCal(); renderEvents(); renderChat(); renderShop(); renderChores(); renderMenu();
+  saveSnapshotSoon();
 }

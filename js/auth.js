@@ -68,6 +68,7 @@ async function signOutHere(scope) {
     }
   } catch (_) {}
   await sb.auth.signOut(scope ? { scope } : undefined);
+  clearLocalData();
 }
 $('#oOut').onclick = () => signOutHere();
 async function onboard(fn) {
