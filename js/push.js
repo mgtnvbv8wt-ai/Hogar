@@ -8,9 +8,15 @@ async function pushState() {
   if (Notification.permission === 'denied') return 'denied';
   return (Notification.permission === 'granted' && await pushSub()) ? 'on' : 'off';
 }
+function deviceName() {
+  try { const v = localStorage.getItem('hogar-device'); if (v) return v; } catch (_) {}
+  const ua = navigator.userAgent, os = (ua.match(/OS (\d+)[_\d]*/) || [])[1];
+  return (/iPad/.test(ua) ? 'iPad' : /iPhone/.test(ua) ? 'iPhone' : tr('Móvil')) + (os ? ' · iOS ' + os : '');
+}
+function setDeviceName(n) { try { localStorage.setItem('hogar-device', n.trim().slice(0, 40)); } catch (_) {} }
 async function saveSub(sub) {
   const j = sub.toJSON();
-  const { error } = await sb.rpc('save_push_subscription', { p_endpoint: j.endpoint, p_p256dh: j.keys.p256dh, p_auth: j.keys.auth });
+  const { error } = await sb.rpc('save_push_subscription', { p_endpoint: j.endpoint, p_p256dh: j.keys.p256dh, p_auth: j.keys.auth, p_device: deviceName() });
   if (error) throw error;
 }
 async function enablePush() {

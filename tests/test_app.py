@@ -157,6 +157,7 @@ with sync_playwright() as p:
     page.click('nav button[data-tab=menu]')
     page.click('button:has-text("Pegar el menú de todo el mes")'); page.wait_for_selector('#sheet textarea')
     sample = "Lunes 19\nComida: crema de calabaza\nMerienda: fruta\n\nMartes 20 de octubre\n- Comida: macarrones\n- Merienda: yogur\n\n21/10: Comida: pescado con arroz; Merienda: pan con queso\n22/10/2026\nComida: lentejas\nMerienda: galletas\n\n23 - Menú: Festivo"
+    page.fill('#sheet input[type=month]', '2026-10'); page.dispatch_event('#sheet input[type=month]', 'input'); page.dispatch_event('#sheet input[type=month]', 'change')
     page.fill('#sheet textarea', sample); page.dispatch_event('#sheet textarea', 'input')
     prev = page.inner_text('#sheet .preview')
     check('vista previa reconoce 5 días', page.inner_text('#sheet button:has-text("Guardar")') .startswith('Guardar 5'), prev)

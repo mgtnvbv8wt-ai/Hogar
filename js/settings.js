@@ -34,10 +34,28 @@ $('#btnSettings').onclick = () => {
       pushBtn.disabled = true;
       try { st==='on' ? await disablePush() : await enablePush(); }
       catch (e) { toast(errMsg(e)); }
-      paint();
+      paint(); paintDevices();
     };
   };
-  paint();
+  const devBox = el('div',{});
+  const paintDevices = async () => {
+    devBox.replaceChildren();
+    if (await pushState() !== 'on') return;
+    const inp = el('input',{type:'text',maxlength:'40',value:deviceName(),'aria-label':tr('Nombre de este móvil')});
+    const mine = (await pushSub()).endpoint;
+    devBox.append(
+      el('label',{class:'f',text:tr('Nombre de este móvil')}),
+      el('div',{style:'display:flex;gap:8px'}, inp, el('button',{class:'soft',text:tr('Guardar'),onclick:async()=>{
+        if (!inp.value.trim()) return; setDeviceName(inp.value);
+        try { await saveSub(await pushSub()); toast(tr('Nombre guardado')); paintDevices(); } catch (e) { toast(errMsg(e)); } }})));
+    const { data } = await sb.from('push_subscriptions').select('id,endpoint,device_name,created_at').order('created_at');
+    if (data && data.length) {
+      devBox.append(el('label',{class:'f',text:tr('Tus móviles con avisos')}));
+      data.forEach(d => devBox.append(el('p',{class:'small',style:'margin:2px 0',
+        text:(d.device_name || tr('Sin nombre')) + (d.endpoint === mine ? ' ' + tr('(este)') : '') + ' · ' + new Date(d.created_at).toLocaleDateString(LOCALE,{day:'numeric',month:'short'})})));
+    }
+  };
+  paint(); paintDevices();
   openSheet(
     el('h3',{text:state.household.name}),
     el('p',{class:'muted',text:tr('En el hogar: ')+names}),
@@ -53,7 +71,7 @@ $('#btnSettings').onclick = () => {
     stationFields(),
     el('hr',{style:'border:0;border-top:1px solid var(--line);margin:18px 0'}),
     el('label',{class:'f',text:tr('Avisos en este móvil')}),
-    pushNote, pushBtn,
+    pushNote, pushBtn, devBox,
     el('hr',{style:'border:0;border-top:1px solid var(--line);margin:18px 0'}),
     el('label',{class:'f',text:tr('Copia de seguridad')}),
     el('p',{class:'small muted',style:'margin:0 0 8px',text:tr('Descarga todos los datos del hogar (eventos, mensajes, compra, tareas y menús) en un archivo.')}),
