@@ -76,7 +76,7 @@ function evRow(e, showDate) {
     el('div',{class:'time', text: showDate ? s.toLocaleDateString(LOCALE,{day:'numeric',month:'short'}) : (e.all_day?tr('Día'):fmtTime(s))}),
     el('div',{class:'body'},
       el('div',{class:'t',text:e.title}),
-      el('div',{class:'small muted',text: [showDate?when:(e.all_day?tr('Todo el día'):when), e.location, e.recur ? '🔁 ' + REC_LABEL[e.recur] : null].filter(Boolean).join(' · ')}),
+      el('div',{class:'small muted',text: [showDate?when:(e.all_day?tr('Todo el día'):when), e.location, e.recur ? '🔁 ' + REC_LABEL[e.recur] : null, e.remind_min != null ? '🔔' : null].filter(Boolean).join(' · ')}),
       e.notes ? el('div',{class:'small',text:e.notes}) : null,
       byLine(tr('Añadido por '), e.created_by)),
     el('button',{class:'ghost del','aria-label':tr('Editar'),text:'✎',onclick:()=>eventForm(null, e._series || e)}));
@@ -117,11 +117,19 @@ function eventForm(day, ev=null) {
   const untilWrap = el('div',{}, el('label',{class:'f',text:tr('Repetir hasta (opcional)')}), until);
   const syncRecur = () => { untilWrap.hidden = !recur.value; };
   recur.onchange = syncRecur;
+  const REMIND_TIMED = [['',tr('Sin aviso')],['15',tr('15 min antes')],['60',tr('1 hora antes')],['180',tr('3 horas antes')],['1440',tr('1 día antes')]];
+  const REMIND_DAY = [['',tr('Sin aviso')],['240',tr('La víspera a las 20:00')],['-480',tr('Ese día a las 8:00')]];
+  const remind = el('select',{});
+  const paintRemind = keep => {
+    const opts = allDay.checked ? REMIND_DAY : REMIND_TIMED;
+    remind.replaceChildren(...opts.map(([v,l]) => el('option',{value:v,text:l})));
+    remind.value = opts.some(([v]) => v === keep) ? keep : '';
+  };
   const err = el('div',{class:'err'});
   const syncType = () => { const t = allDay.checked?'date':'datetime-local'; start.type=t; endI.type=t;
     start.value = allDay.checked ? ymd(base) : local(base); endI.value=''; endI.parentElement.hidden = allDay.checked; };
   const endWrap = el('div',{},el('label',{class:'f',text:tr('Fin (opcional)')}),endI);
-  allDay.onchange = syncType;
+  allDay.onchange = () => { syncType(); paintRemind(''); };
   const save = el('button',{text:ev?tr('Guardar'):tr('Crear evento'),style:'flex:1'});
   save.onclick = async () => {
     if (!title.value.trim()) { err.textContent=tr('Pon un título.'); return; }
@@ -132,7 +140,8 @@ function eventForm(day, ev=null) {
     if (recur.value && until.value && until.value < ymd(s)) { err.textContent=tr('«Repetir hasta» es anterior al inicio.'); return; }
     const row = { title:title.value.trim(), location:place.value.trim()||null, notes:notes.value.trim()||null,
       starts_at:s.toISOString(), ends_at:e2?e2.toISOString():null, all_day:allDay.checked,
-      recur: recur.value || null, recur_until: recur.value && until.value ? until.value : null };
+      recur: recur.value || null, recur_until: recur.value && until.value ? until.value : null,
+      remind_min: remind.value === '' ? null : +remind.value };
     save.disabled = true;
     const q = ev ? sb.from('events').update(row).eq('id',ev.id).select().single()
                  : sb.from('events').insert({ ...row, household_id: state.household.id }).select().single();
@@ -146,6 +155,7 @@ function eventForm(day, ev=null) {
     el('label',{class:'f row'},allDay,tr(' Todo el día')),
     el('label',{class:'f',text:tr('Inicio')}), start, endWrap,
     el('label',{class:'f',text:tr('Repetición')}), recur, untilWrap,
+    el('label',{class:'f',text:tr('Avisar')}), remind,
     el('label',{class:'f',text:tr('Lugar')}), place, el('label',{class:'f',text:tr('Notas')}), notes, err,
     el('div',{class:'row',style:'margin-top:12px'},
       el('button',{class:'ghost',text:'Cancelar',onclick:closeSheet}), save)];
@@ -155,5 +165,6 @@ function eventForm(day, ev=null) {
       () => { state.events.push(ev); state.events.sort((a,b)=>a.starts_at.localeCompare(b.starts_at)); render(); }); }}));
   openSheet(...kids);
   syncType(); if (!allDay.checked) { start.value = local(base); }
+  paintRemind(ev && ev.remind_min != null ? String(ev.remind_min) : '');
   syncRecur();
 }

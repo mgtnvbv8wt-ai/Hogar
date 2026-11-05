@@ -58,14 +58,14 @@ function renderChoreMeta() {
 function renderChores() {
   const box = $('#choreList'); box.replaceChildren();
   const mineOnly = state.choreFilter === 'mine';
-  const here = state.chores.filter(c => c.place === state.place && (!mineOnly || c.assignee === state.user.id));
+  const here = state.chores.filter(c => (state.allPlaces || c.place === state.place) && (!mineOnly || c.assignee === state.user.id));
   const pending = here.filter(c=>!c.done)
     .sort((a,b) => (a.due||'9999').localeCompare(b.due||'9999') || a.created_at.localeCompare(b.created_at));
   const done = here.filter(c=>c.done).sort((a,b)=>(b.done_at||'').localeCompare(a.done_at||''));
   renderChoreMeta();
-  if (!here.length) box.append(emptyState('✅', tr('No hay tareas en ') + PLACE_NAME[state.place] + tr('. Añade la primera.')));
-  [...pending, ...done].forEach(c => box.append(choreRow(c)));
-  $('#clearChores').hidden = !done.length; renderPlaceSeg();
+  if (!here.length) box.append(emptyState('✅', state.allPlaces ? tr('No hay tareas.') : tr('No hay tareas en ') + PLACE_NAME[state.place] + tr('. Añade la primera.')));
+  [...pending, ...done].forEach(c => box.append(choreRow(c, state.allPlaces)));
+  $('#clearChores').hidden = !done.length || state.allPlaces; renderPlaceSeg();
 }
 async function toggleChore(c) {
   const old = { done:c.done, done_by:c.done_by, done_at:c.done_at, due:c.due, last_done_at:c.last_done_at, last_done_by:c.last_done_by };

@@ -3,10 +3,15 @@ function renderPlaceSeg() {
   const fill = (sel, list) => {
     $(sel).replaceChildren(...PLACES.map(([k, l]) => {
       const n = list.filter(x => !x.done && x.place === k).length;
-      const b = el('button',{class:state.place === k ? 'on' : '', text:l + (n ? ' (' + n + ')' : '')});
-      b.onclick = () => { state.place = k; savePlace(k); render(); };
+      const b = el('button',{class:!state.allPlaces && state.place === k ? 'on' : '', text:l + (n ? ' (' + n + ')' : '')});
+      b.onclick = () => { state.place = k; state.allPlaces = false; savePlace(k); saveAllPlaces(false); render(); };
       return b;
-    }));
+    }).concat(function () {
+      const n = list.filter(x => !x.done).length;
+      const b = el('button',{class:state.allPlaces ? 'on' : '', text:tr('Todas') + (n ? ' (' + n + ')' : '')});
+      b.onclick = () => { state.allPlaces = true; saveAllPlaces(true); render(); };
+      return b;
+    }()));
   };
   fill('#shopSeg', state.items); fill('#choreSeg', state.chores);
 }
@@ -39,14 +44,16 @@ const stapleOf = (name, place = state.place) => state.staples.find(x => x.place 
 function itemRow(i) {
   return el('div',{class:'item'+(i.done?' done':''),'data-id':i.id},
     el('button',{class:'chk','aria-label':'Marcar',onclick:()=>toggleItem(i),text:i.done?'✓':''}),
-    el('div',{class:'cn',style:'cursor:pointer',onclick:()=>itemForm(i)}, el('div',{class:'ct',text:i.name}), byLine('', i.added_by)),
+    el('div',{class:'cn',style:'cursor:pointer',onclick:()=>itemForm(i)}, el('div',{class:'ct',text:i.name}),
+      state.allPlaces ? el('div',{class:'small muted',text:'🏠 ' + PLACE_NAME[i.place]}) : null, byLine('', i.added_by)),
     el('button',{class:'ghost del','aria-label':tr('Borrar'),text:'×',style:'font-size:22px',onclick:()=>delItem(i)}));
 }
 function renderShop() {
   const box = $('#shopList'); box.replaceChildren();
-  const here = state.items.filter(i => i.place === state.place);
+  const here = state.items.filter(i => state.allPlaces || i.place === state.place);
+  if (state.allPlaces && here.length) box.append(el('div',{class:'small muted',style:'margin:0 2px 8px',text:tr('Vista de las dos viviendas. Elige una para añadir productos.')}));
   const pending = here.filter(i=>!i.done), done = here.filter(i=>i.done);
-  if (!here.length) box.append(el('div',{class:'card'}, emptyState('🛒', tr('La lista de ') + PLACE_NAME[state.place] + tr(' está vacía.'))));
+  if (!here.length) box.append(el('div',{class:'card'}, emptyState('🛒', state.allPlaces ? tr('No hay nada por comprar.') : tr('La lista de ') + PLACE_NAME[state.place] + tr(' está vacía.'))));
   for (const [k, label] of CATS) {
     const its = pending.filter(i => catOf(i) === k); if (!its.length) continue;
     box.append(el('div',{class:'group-title',text:label}));
@@ -56,7 +63,7 @@ function renderShop() {
     box.append(el('div',{class:'group-title',text:tr('Comprado')}));
     const c = el('div',{class:'card'}); done.forEach(i => c.append(itemRow(i))); box.append(c);
   }
-  $('#clearDone').hidden = !done.length;
+  $('#clearDone').hidden = !done.length || state.allPlaces;
   renderStaples(); renderPlaceSeg();
 }
 function renderStaples() {

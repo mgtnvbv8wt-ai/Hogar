@@ -15,7 +15,7 @@ $('#tabs').onclick = e => {
 function render() {
   if (!state.household) return;
   $('#title').textContent = TITLES[state.tab];
-  document.body.dataset.place = state.place; document.body.dataset.tab = state.tab;
+  document.body.dataset.place = state.place; document.body.dataset.tab = state.tab; document.body.dataset.all = state.allPlaces ? '1' : '0';
   document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab===state.tab));
   for (const t of Object.keys(TITLES)) $('#view-'+t).hidden = t!==state.tab;
   $('main').style.overflowY = state.tab==='chat' ? 'hidden' : 'auto';
