@@ -77,7 +77,7 @@ async function onboard(fn) {
   $('#oErr').textContent = '';
   const { data, error } = await fn(name);
   if (error) { $('#oErr').textContent = errMsg(error); return; }
-  if (!data) { $('#oErr').textContent = tr('Código de invitación no válido.'); return; }
+  if (!data || !data.id) { $('#oErr').textContent = tr('Código de invitación no válido.'); return; }
   await boot();
 }
 $('#oCreate').onclick = () => onboard(n => sb.rpc('create_household', { p_name: $('#oHome').value.trim(), p_display_name: n }));

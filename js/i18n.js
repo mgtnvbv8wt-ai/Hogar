@@ -178,6 +178,7 @@ const CA = {
 "Tus móviles con avisos": "Els teus mòbils amb avisos",
 "Nombre guardado": "Nom desat",
 "Avisar": "Avisar",
+"Demasiados intentos. Espera unos minutos.": "Massa intents. Espera uns minuts.",
 "Vista de las dos viviendas. Elige una para añadir productos.": "Vista de les dues cases. Tria'n una per afegir productes.",
 "No hay nada por comprar.": "No hi ha res per comprar.",
 "No hay tareas.": "No hi ha tasques.",

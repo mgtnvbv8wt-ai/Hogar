@@ -74,6 +74,7 @@ const errMsg = e => {
   if (/already registered/i.test(m)) return tr('Ese email ya tiene cuenta. Prueba a entrar.');
   if (/Email not confirmed/i.test(m)) return tr('Confirma tu email (mira tu correo) y vuelve a entrar.');
   if (/invalid invite code/i.test(m)) return tr('Código de invitación no válido.');
+  if (/too many attempts/i.test(m)) return tr('Demasiados intentos. Espera unos minutos.');
   if (/rate limit/i.test(m)) return tr('Demasiados intentos. Espera unos minutos.');
   if (/household full/i.test(m)) return tr('Este hogar ya está completo.');
   if (typeof isNetErr === 'function' && isNetErr(e)) return tr('Sin conexión. Inténtalo cuando tengas cobertura.');
