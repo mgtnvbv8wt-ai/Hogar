@@ -40,3 +40,16 @@ if ('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('mess
   const t = e.data && e.data.tab;
   if (t) openTab(t);
 });
+
+/* preferencias de avisos de cada persona (tabla notif_prefs; las aplica el servidor al enviar) */
+const NOTIF_KINDS = [['chat', 'Mensajes del chat'], ['shop', 'Productos nuevos en la compra'], ['chores', 'Tareas nuevas'], ['events', 'Eventos nuevos'],
+  ['reminders', 'Recordatorios de eventos'], ['today', 'Resumen de tareas del día (8:05)'], ['menu', 'Menú de la guardería (8:30)']];
+async function loadNotifPrefs() {
+  const { data, error } = await sb.from('notif_prefs').select('prefs').eq('user_id', state.user.id).maybeSingle();
+  if (error) throw error;
+  return (data && data.prefs) || {};
+}
+async function saveNotifPrefs(prefs) {
+  const { error } = await sb.from('notif_prefs').upsert({ user_id: state.user.id, prefs, updated_at: new Date().toISOString() }, { onConflict: 'user_id' });
+  if (error) throw error;
+}

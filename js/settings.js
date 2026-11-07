@@ -55,7 +55,29 @@ $('#btnSettings').onclick = () => {
         text:(d.device_name || tr('Sin nombre')) + (d.endpoint === mine ? ' ' + tr('(este)') : '') + ' · ' + new Date(d.created_at).toLocaleDateString(LOCALE,{day:'numeric',month:'short'})})));
     }
   };
-  paint(); paintDevices();
+  const prefsBox = el('div',{});
+  const paintPrefs = async () => {
+    prefsBox.replaceChildren();
+    if (!pushSupported()) return;
+    let prefs;
+    try { prefs = await loadNotifPrefs(); } catch (_) { return; }
+    const save = async () => { try { await saveNotifPrefs(prefs); } catch (e) { toast(errMsg(e)); } };
+    prefsBox.append(el('label',{class:'f',text:tr('Qué avisos quieres recibir')}));
+    NOTIF_KINDS.forEach(([k, label]) => {
+      const cb = el('input',{type:'checkbox',style:'width:auto'}); cb.checked = prefs[k] !== false;
+      cb.onchange = () => { prefs[k] = cb.checked; save(); };
+      prefsBox.append(el('label',{class:'f row',style:'margin:6px 0'}, cb, ' ' + tr(label)));
+    });
+    const q = el('input',{type:'checkbox',style:'width:auto'}); q.checked = prefs.quiet === true;
+    const from = el('input',{type:'time',value:prefs.quiet_from || '23:00'}), to = el('input',{type:'time',value:prefs.quiet_to || '07:30'});
+    const times = el('div',{class:'row',style:'gap:8px'}, from, el('span',{text:'→',style:'align-self:center'}), to);
+    const sync = () => { times.hidden = !q.checked; };
+    const upd = () => { prefs.quiet = q.checked; prefs.quiet_from = from.value || '23:00'; prefs.quiet_to = to.value || '07:30'; sync(); save(); };
+    q.onchange = upd; from.onchange = upd; to.onchange = upd; sync();
+    prefsBox.append(el('label',{class:'f row',style:'margin:10px 0 6px'}, q, ' ' + tr('Silencio por la noche')), times,
+      el('p',{class:'small muted',style:'margin:6px 0 0',text:tr('En silencio no suena nada, salvo los recordatorios de eventos. Estos ajustes valen para todos tus móviles.')}));
+  };
+  paint(); paintDevices(); paintPrefs();
   openSheet(
     el('h3',{text:state.household.name}),
     el('p',{class:'muted',text:tr('En el hogar: ')+names}),
@@ -71,7 +93,7 @@ $('#btnSettings').onclick = () => {
     stationFields(),
     el('hr',{style:'border:0;border-top:1px solid var(--line);margin:18px 0'}),
     el('label',{class:'f',text:tr('Avisos en este móvil')}),
-    pushNote, pushBtn, devBox,
+    pushNote, pushBtn, devBox, prefsBox,
     el('hr',{style:'border:0;border-top:1px solid var(--line);margin:18px 0'}),
     el('label',{class:'f',text:tr('Copia de seguridad')}),
     el('p',{class:'small muted',style:'margin:0 0 8px',text:tr('Descarga todos los datos del hogar (eventos, mensajes, compra, tareas y menús) en un archivo.')}),

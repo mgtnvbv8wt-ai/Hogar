@@ -37,6 +37,7 @@
     weather_stations: [{ id: 'w1', household_id: HID, place: 'torello', mac: 'AA:BB:CC:DD:EE:FF' }],
     weather_readings: [8, 6, 4, 2, 1].map((h, i) => ({ id: i + 1, household_id: HID, place: 'torello', taken_at: new Date(Date.now() - h * 3600e3).toISOString(), temp_c: 15 + i * 1.5 })),
     push_subscriptions: [],
+    notif_prefs: [],
   };
   window.__weather = { configured: true, stations: [{ place: 'torello', stale: false, reading: {
     place: 'torello', taken_at: new Date(Date.now() - 4 * 60e3).toISOString(), fetched_at: new Date().toISOString(),
