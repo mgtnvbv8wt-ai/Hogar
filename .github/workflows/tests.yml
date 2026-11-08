@@ -1,0 +1,32 @@
+name: Pruebas
+on:
+  push:
+    branches: [main]
+  pull_request:
+jobs:
+  pruebas:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Sintaxis de los scripts
+        run: for f in js/*.js sw.js; do node --check "$f"; done
+      - name: Instalar Playwright
+        run: |
+          pip install playwright
+          playwright install --with-deps chromium
+      - name: Pruebas de interfaz
+        run: bash tests/run_all.sh
+      - name: Registros de las pruebas
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: registros-pruebas
+          path: tests/out
+          retention-days: 7
