@@ -34,3 +34,15 @@ bash tests/run_all.sh        # arranca un servidor local en :8765, ejecuta las p
 ```
 
 Las capturas y registros quedan en `tests/out/` (no se sube).
+
+## Mantenimiento
+
+- **Pruebas automáticas:** `.github/workflows/tests.yml` ejecuta la sintaxis de los scripts y `tests/run_all.sh` en cada push a `main` y en cada pull request. Si falla alguna prueba, la ejecución sale en rojo en la pestaña *Actions* de GitHub.
+- **Copias de seguridad:** el día 1 de cada mes a las 3:00 UTC (`pg_cron`, tarea `copia-mensual`) se guarda en `private.backups` una copia de hogar, miembros, eventos, mensajes, compra, tareas y menús. Se conservan las 6 últimas. Para hacer una a mano: `select private.take_backup();`. Para ver las copias: `select id, taken_at, rows_total from private.backups order by taken_at desc;`.
+  Ejemplo de restauración de eventos borrados por error (sin pisar los que ya existen):
+  ```sql
+  insert into public.events
+  select * from jsonb_populate_recordset(null::public.events, (select data->'events' from private.backups where id = 1))
+  on conflict (id) do nothing;
+  ```
+  Estas copias viven en la misma base de datos: protegen de borrados por error, no de perder el proyecto. Para eso, usa también *Copia de seguridad* en Ajustes de la app.
