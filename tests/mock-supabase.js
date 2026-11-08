@@ -38,6 +38,7 @@
     weather_readings: [8, 6, 4, 2, 1].map((h, i) => ({ id: i + 1, household_id: HID, place: 'torello', taken_at: new Date(Date.now() - h * 3600e3).toISOString(), temp_c: 15 + i * 1.5 })),
     push_subscriptions: [],
     notif_prefs: [],
+    checklists: [],
   };
   window.__weather = { configured: true, stations: [{ place: 'torello', stale: false, reading: {
     place: 'torello', taken_at: new Date(Date.now() - 4 * 60e3).toISOString(), fetched_at: new Date().toISOString(),
@@ -74,6 +75,7 @@
         chores: { place: 'estartit', done: false, done_by: null, done_at: null, added_by: ME, assignee: null, recur: null, recur_days: null, due: null, last_done_at: null, last_done_by: null },
         events: { created_by: ME, recur: null, recur_until: null },
         messages: { user_id: ME },
+        checklists: { items: [], completed_at: null, created_by: ME },
       };
       let out;
       if (this.op === 'select') out = rows.filter(match);

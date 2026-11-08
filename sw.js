@@ -1,5 +1,5 @@
-const CACHE = 'hogar-v25';
-const SHELL = ['./', './index.html', './manifest.webmanifest', './css/style.css', './js/config.js', './js/i18n.js', './js/core.js', './js/offline.js', './js/auth.js', './js/data.js', './js/nav.js', './js/calendar.js', './js/chat.js', './js/shop.js', './js/chores.js', './js/menu.js', './js/weather.js', './js/home.js', './js/backup.js', './js/search.js', './js/swipe.js', './js/settings.js', './js/push.js', './js/main.js', './icon-192.png', './icon-512.png', './apple-touch-icon.png', './icon-maskable-512.png'];
+const CACHE = 'hogar-v26';
+const SHELL = ['./', './index.html', './manifest.webmanifest', './css/style.css', './js/config.js', './js/i18n.js', './js/core.js', './js/offline.js', './js/auth.js', './js/data.js', './js/nav.js', './js/calendar.js', './js/chat.js', './js/shop.js', './js/chores.js', './js/lists.js', './js/menu.js', './js/weather.js', './js/home.js', './js/backup.js', './js/search.js', './js/swipe.js', './js/settings.js', './js/push.js', './js/main.js', './icon-192.png', './icon-512.png', './apple-touch-icon.png', './icon-maskable-512.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
@@ -40,6 +40,10 @@ self.addEventListener('fetch', e => {
 self.addEventListener('push', e => {
   let d = {};
   try { d = e.data ? e.data.json() : {}; } catch (_) {}
+  // número en el icono: el servidor lo manda con el resumen de tareas del día
+  if (typeof d.badge === 'number' && self.navigator && self.navigator.setAppBadge) {
+    try { (d.badge > 0 ? self.navigator.setAppBadge(d.badge) : self.navigator.clearAppBadge()).catch(() => {}); } catch (_) {}
+  }
   e.waitUntil(self.registration.showNotification(d.title || 'Nuestro Hogar', {
     body: d.body || '',
     icon: 'icon-192.png',

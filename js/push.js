@@ -53,3 +53,10 @@ async function saveNotifPrefs(prefs) {
   const { error } = await sb.from('notif_prefs').upsert({ user_id: state.user.id, prefs, updated_at: new Date().toISOString() }, { onConflict: 'user_id' });
   if (error) throw error;
 }
+
+/* número en el icono de la app (iPhone, app instalada): tareas pendientes de hoy o atrasadas */
+function updateBadge() {
+  if (!('setAppBadge' in navigator) || !state.household) return;
+  const tk = ymd(new Date()), n = state.chores.filter(c => !c.done && c.due && c.due <= tk).length;
+  try { (n ? navigator.setAppBadge(n) : navigator.clearAppBadge()).catch(() => {}); } catch (_) {}
+}

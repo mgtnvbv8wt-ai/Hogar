@@ -1,8 +1,8 @@
 /* ---------- sin cobertura: cola de cambios + copia local de los datos ---------- */
 // Los cambios (crear, editar, borrar) que fallan por falta de red se guardan en una cola y se envían al volver.
 // También se guarda una copia de los datos para poder abrir la app sin conexión.
-const OFFLINE_TABLES = new Set(['events', 'messages', 'shopping_items', 'shopping_staples', 'chores', 'chore_log', 'menu_days']);
-const STATE_KEY = { events:'events', messages:'messages', shopping_items:'items', shopping_staples:'staples', chores:'chores', chore_log:'choreLog', menu_days:'menu' };
+const OFFLINE_TABLES = new Set(['events', 'messages', 'shopping_items', 'shopping_staples', 'chores', 'chore_log', 'menu_days', 'checklists']);
+const STATE_KEY = { events:'events', messages:'messages', shopping_items:'items', shopping_staples:'staples', chores:'chores', chore_log:'choreLog', menu_days:'menu', checklists:'lists' };
 const QUEUE_KEY = 'hogar-queue', CACHE_KEY = 'hogar-cache';
 const netFail = r => !!(r && r.error && (r.status === 0 || isNetErr(r.error)));
 const isNetErr = e => !!e && ( /failed to fetch|load failed|networkerror|network request failed|fetch failed|internet connection/i.test(String(e.message || '') + ' ' + String(e.details || '').slice(0, 200)));
@@ -33,6 +33,7 @@ function localRow(table, row) {
     shopping_staples: { category:'otros', place:'estartit' },
     chore_log:        { user_id:uid, done_at:now },
     menu_days:        { meals:[], updated_at:now },
+    checklists:       { items:[], completed_at:null, created_by:uid },
   }[table] || {};
   return { created_at: now, ...base, ...row };
 }
@@ -123,19 +124,19 @@ function saveSnapshotSoon() {
   clearTimeout(snapTimer);
   snapTimer = setTimeout(() => {
     try {
-      const { user, member, household, members, events, messages, items, chores, menu, staples, stations, choreLog } = state;
-      localStorage.setItem(CACHE_KEY, JSON.stringify({ user: { id: user.id, email: user.email }, member, household, members, events, messages: messages.slice(-200), items, chores, menu, staples, stations, choreLog, savedAt: Date.now() }));
+      const { user, member, household, members, events, messages, items, chores, menu, staples, stations, choreLog, lists } = state;
+      localStorage.setItem(CACHE_KEY, JSON.stringify({ user: { id: user.id, email: user.email }, member, household, members, events, messages: messages.slice(-200), items, chores, menu, staples, stations, choreLog, lists, savedAt: Date.now() }));
     } catch (_) {}
   }, 600);
 }
 function loadSnapshot() { try { return JSON.parse(localStorage.getItem(CACHE_KEY)); } catch (_) { return null; } }
-function clearLocalData() { clearTimeout(snapTimer); OPS = []; try { localStorage.removeItem(CACHE_KEY); localStorage.removeItem(QUEUE_KEY); } catch (_) {} }
+function clearLocalData() { try { if ('clearAppBadge' in navigator) navigator.clearAppBadge().catch(() => {}); } catch (_) {} clearTimeout(snapTimer); OPS = []; try { localStorage.removeItem(CACHE_KEY); localStorage.removeItem(QUEUE_KEY); } catch (_) {} }
 
 // Abre la app con los últimos datos guardados (sin red o sin poder renovar la sesión)
 function bootOffline() {
   const c = loadSnapshot(); if (!c || !c.user || !c.household) return false;
   Object.assign(state, { user: c.user, member: c.member, household: c.household, members: c.members || {}, events: c.events || [], messages: c.messages || [],
-    items: c.items || [], chores: c.chores || [], menu: c.menu || [], staples: c.staples || [], stations: c.stations || [], choreLog: c.choreLog || [], offlineMode: true });
+    items: c.items || [], chores: c.chores || [], menu: c.menu || [], staples: c.staples || [], stations: c.stations || [], choreLog: c.choreLog || [], lists: c.lists || [], offlineMode: true });
   showOnly('app'); render(); updateNetBar();
   return true;
 }

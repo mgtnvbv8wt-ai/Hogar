@@ -9,7 +9,7 @@ SERVER=$!
 trap 'kill $SERVER 2>/dev/null' EXIT
 sleep 1
 FAIL=0
-for t in tests/test_app.py tests/test_tiempo.py tests/test_deshacer.py tests/test_busqueda_tareas_chat.py tests/test_catalan.py tests/test_contrasena.py tests/test_sin_cobertura.py tests/test_diario.py tests/test_chat_paginas.py; do
+for t in tests/test_app.py tests/test_tiempo.py tests/test_deshacer.py tests/test_busqueda_tareas_chat.py tests/test_catalan.py tests/test_contrasena.py tests/test_sin_cobertura.py tests/test_diario.py tests/test_chat_paginas.py tests/test_listas.py; do
   echo "== $t"
   python3 "$t" > "tests/out/$(basename "$t").log" 2>&1 || { echo "   ERROR de ejecución (ver tests/out/$(basename "$t").log)"; FAIL=1; continue; }
   grep -E "FALLA|ERRORS \[[^]]|fallos" "tests/out/$(basename "$t").log" | head -5

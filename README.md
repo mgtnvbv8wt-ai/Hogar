@@ -15,7 +15,7 @@ Se publica con GitHub Pages desde `main`. Datos y usuarios en Supabase (proyecto
 | `tests/` | Pruebas de interfaz con un Supabase simulado |
 
 Orden y papel de los archivos JS: `config` (cliente Supabase) → `i18n` (castellano/català) → `core` (preferencias, utilidades, estado) → `offline` (cola de cambios y copia local) →
-`auth` → `data` (carga y tiempo real) → `nav` → `calendar` → `chat` → `shop` → `chores` → `menu` → `weather` → `home` → `backup` →
+`auth` → `data` (carga y tiempo real) → `nav` → `calendar` → `chat` → `shop` → `chores` → `lists` → `menu` → `weather` → `home` → `backup` →
 `search` → `swipe` → `settings` → `push` → `main` (se carga el último: registra la sesión y el service worker).
 Son scripts clásicos que comparten ámbito global, así que una función de un archivo se puede llamar desde otro **solo cuando ya se ha ejecutado**
 (no hay código que se ejecute al cargar y dependa de un archivo posterior).

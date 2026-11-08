@@ -22,7 +22,7 @@ async function boot() {
 }
 async function loadAll() {
   const since = new Date(Date.now() - 60*86400e3).toISOString();
-  const [ev, ms, it, ch, mn, st, wst, lg] = await Promise.all([
+  const [ev, ms, it, ch, mn, st, wst, lg, cl] = await Promise.all([
     sb.from('events').select('*').or('starts_at.gte.' + since + ',recur.not.is.null').order('starts_at'),
     sb.from('messages').select('*').order('created_at', { ascending:false }).limit(CHAT_PAGE),
     sb.from('shopping_items').select('*').order('created_at'),
@@ -31,8 +31,9 @@ async function loadAll() {
     sb.from('shopping_staples').select('*').order('name'),
     sb.from('weather_stations').select('*'),
     sb.from('chore_log').select('*').gte('done_at', new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString()),
+    sb.from('checklists').select('*').order('created_at'),
   ]);
-  if ([ev, ms, it, ch, mn, st, wst, lg].some(netFail)) return false;   // sin red: se conservan los datos que ya hay
+  if ([ev, ms, it, ch, mn, st, wst, lg, cl].some(netFail)) return false;   // sin red: se conservan los datos que ya hay
   state.events = ev.data || [];
   const fresh = (ms.data || []).slice().reverse();
   // si ya se habían cargado mensajes más antiguos, se conservan
@@ -45,10 +46,11 @@ async function loadAll() {
   state.staples = st.data || [];
   state.stations = wst.data || [];
   state.choreLog = lg.data || [];
+  state.lists = cl.data || [];
 }
 function teardown() {
   if (state.channel) { sb.removeChannel(state.channel); state.channel = null; }
-  Object.assign(state, { chatMore:false, member:null, household:null, events:[], messages:[], items:[], chores:[], menu:[], staples:[], stations:[], choreLog:[], replyTo:null, weather:null, weatherAt:0 });
+  Object.assign(state, { lists:[], chatMore:false, member:null, household:null, events:[], messages:[], items:[], chores:[], menu:[], staples:[], stations:[], choreLog:[], replyTo:null, weather:null, weatherAt:0 });
 }
 
 /* ---------- tiempo real ---------- */
@@ -64,7 +66,8 @@ function subscribe() {
                                     ['chores','chores',(a,b)=>a.created_at.localeCompare(b.created_at)],
                                     ['menu_days','menu',(a,b)=>a.day.localeCompare(b.day)],
                                     ['shopping_staples','staples',(a,b)=>a.name.localeCompare(b.name)],
-                                    ['chore_log','choreLog',(a,b)=>a.done_at.localeCompare(b.done_at)]]) {
+                                    ['chore_log','choreLog',(a,b)=>a.done_at.localeCompare(b.done_at)],
+                                    ['checklists','lists',byCreated]]) {
     ch.on('postgres_changes', { event:'*', schema:'public', table, filter:f }, p => {
       if (p.eventType==='DELETE') state[key] = state[key].filter(x => x.id !== p.old.id);
       else { upsert(state[key], p.new); state[key].sort(sort); }

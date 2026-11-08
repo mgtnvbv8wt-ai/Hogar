@@ -3,16 +3,17 @@ async function exportBackup() {
   toast(tr('Preparando copia…'));
   const get = async (t, q) => { const { data, error } = await q; if (error) throw error; return data; };
   try {
-    const [eventos, mensajes, compra, habituales, tareas, menu] = await Promise.all([
+    const [eventos, mensajes, compra, habituales, tareas, menu, listas] = await Promise.all([
       get('events', sb.from('events').select('*').order('starts_at')),
       get('messages', sb.from('messages').select('*').order('created_at')),
       get('shopping_items', sb.from('shopping_items').select('*').order('created_at')),
       get('shopping_staples', sb.from('shopping_staples').select('*').order('name')),
       get('chores', sb.from('chores').select('*').order('created_at')),
       get('menu_days', sb.from('menu_days').select('*').order('day')),
+      get('checklists', sb.from('checklists').select('*').order('created_at')),
     ]);
     const data = { app:'Nuestro Hogar', exportado:new Date().toISOString(), hogar:state.household.name,
-      miembros:state.members, eventos, mensajes, compra, habituales, tareas, menu };
+      miembros:state.members, eventos, mensajes, compra, habituales, tareas, menu, listas };
     const blob = new Blob([JSON.stringify(data, null, 2)], { type:'application/json' });
     const file = new File([blob], 'hogar-copia-' + ymd(new Date()) + '.json', { type:'application/json' });
     if (navigator.canShare && navigator.canShare({ files:[file] })) {

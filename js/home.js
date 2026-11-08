@@ -23,6 +23,8 @@ function renderHome() {
     const cc = el('div',{class:'card'}); mine.forEach(x => cc.append(choreRow(x, true))); box.append(cc);
   }
 
+  renderLists(box);
+
   const t = menuOf(tk);
   if (t && t.meals.length) {
     box.append(el('div',{class:'group-title',text:tr('Menú de la guardería')}));
