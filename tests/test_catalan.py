@@ -9,7 +9,7 @@ MOCK=open(os.path.join(HERE, 'mock-supabase.js'),encoding='utf-8').read()
 ES=re.compile(r"\b(el|la|los|las|de|del|para|sin|con|una|hoy|mañana|añadir|eliminar|guardar|nuevo|nueva|tarea|tareas|evento|eventos|compra|menú|días?|semana|hecho|aún|todavía|escribe|pon|elige|ajustes|cerrar|crear|vivienda|opcional|repetir|repetición|fecha|lugar|notas|copia|seguridad|avisos|código|tiempo|viento|lluvia|humedad|presión|lista|vacía|está|próximos?|todo)\b",re.I)
 with sync_playwright() as p:
     b=p.chromium.launch()
-    ctx=b.new_context(viewport={'width':390,'height':844},device_scale_factor=2,locale='ca-ES',timezone_id='Europe/Madrid')
+    ctx=b.new_context(service_workers='block',viewport={'width':390,'height':844},device_scale_factor=2,locale='ca-ES',timezone_id='Europe/Madrid')
     ctx.route('**/supabase-js*/**',lambda r:r.fulfill(status=200,content_type='application/javascript',body=MOCK))
     ctx.route('**/sw.js',lambda r:r.abort())
     ctx.add_init_script("try{localStorage.setItem('hogar-lang','ca')}catch(e){}")

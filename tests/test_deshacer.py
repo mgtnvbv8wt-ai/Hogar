@@ -5,7 +5,7 @@ os.makedirs(OUT, exist_ok=True)
 from playwright.sync_api import sync_playwright
 MOCK=open(os.path.join(HERE, 'mock-supabase.js'),encoding='utf-8').read()
 with sync_playwright() as p:
-    b=p.chromium.launch(); ctx=b.new_context(viewport={'width':390,'height':844},device_scale_factor=2)
+    b=p.chromium.launch(); ctx=b.new_context(service_workers='block',viewport={'width':390,'height':844},device_scale_factor=2)
     ctx.route('**/supabase-js*/**',lambda r:r.fulfill(status=200,content_type='application/javascript',body=MOCK)); ctx.route('**/sw.js',lambda r:r.abort())
     pg=ctx.new_page(); errs=[]; pg.on('pageerror',lambda e:errs.append(str(e)))
     pg.goto(os.environ.get('HOGAR_URL', 'http://localhost:8765/index.html')); pg.wait_for_selector('#app:not([hidden])'); pg.wait_for_timeout(300)

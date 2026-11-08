@@ -13,7 +13,7 @@ def check(name, cond, extra=''):
 
 with sync_playwright() as p:
     b = p.chromium.launch()
-    ctx = b.new_context(viewport={'width': 390, 'height': 844}, device_scale_factor=2, locale='es-ES', has_touch=True)
+    ctx = b.new_context(service_workers='block',viewport={'width': 390, 'height': 844}, device_scale_factor=2, locale='es-ES', has_touch=True)
     ctx.route('**/supabase-js*/**', lambda r: r.fulfill(status=200, content_type='application/javascript', body=MOCK))
     ctx.route('**/sw.js', lambda r: r.abort())
     pg = ctx.new_page(); errs = []; pg.on('pageerror', lambda e: errs.append(str(e)))

@@ -13,7 +13,7 @@ def check(name, cond, extra=''):
 
 with sync_playwright() as p:
     b = p.chromium.launch()
-    ctx = b.new_context(viewport={'width': 390, 'height': 844}, device_scale_factor=2, locale='es-ES', timezone_id='Europe/Madrid')
+    ctx = b.new_context(service_workers='block',viewport={'width': 390, 'height': 844}, device_scale_factor=2, locale='es-ES', timezone_id='Europe/Madrid')
     ctx.route('**/supabase-js*/**', lambda r: r.fulfill(status=200, content_type='application/javascript', body=MOCK))
     ctx.route('**/sw.js', lambda r: r.abort())
     # el estado «sin red» sobrevive a las recargas con localStorage (solo para la prueba)
@@ -49,7 +49,7 @@ with sync_playwright() as p:
     pg.evaluate("localStorage.setItem('t_off','1')")
     # nueva sesión del navegador (conserva localStorage) para reabrir la app; el contexto offline no recarga bien los scripts simulados
     st = ctx.storage_state(); ctx.close()
-    ctx = b.new_context(viewport={'width': 390, 'height': 844}, device_scale_factor=2, locale='es-ES', timezone_id='Europe/Madrid', storage_state=st)
+    ctx = b.new_context(service_workers='block',viewport={'width': 390, 'height': 844}, device_scale_factor=2, locale='es-ES', timezone_id='Europe/Madrid', storage_state=st)
     ctx.route('**/supabase-js*/**', lambda r: r.fulfill(status=200, content_type='application/javascript', body=MOCK))
     ctx.route('**/sw.js', lambda r: r.abort())
     ctx.add_init_script("try{ if(localStorage.getItem('t_off')==='1'){ window.__offline=true; window.__noSession=true; } }catch(e){}")

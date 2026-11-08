@@ -11,7 +11,7 @@ def check(n,c,x=''):
     (oks if c else fails).append(n); print(('OK   ' if c else 'FALLA'),n,'' if c else x)
 
 def new_page(b, init=''):
-    ctx=b.new_context(viewport={'width':390,'height':844},device_scale_factor=2,locale='es-ES',timezone_id='Europe/Madrid')
+    ctx=b.new_context(service_workers='block',viewport={'width':390,'height':844},device_scale_factor=2,locale='es-ES',timezone_id='Europe/Madrid')
     ctx.route('**/supabase-js*/**',lambda r:r.fulfill(status=200,content_type='application/javascript',body=MOCK+'\n'+init))
     ctx.route('**/sw.js',lambda r:r.abort())
     pg=ctx.new_page(); errs=[]

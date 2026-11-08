@@ -7,7 +7,7 @@ from playwright.sync_api import sync_playwright
 MOCK=open(os.path.join(HERE, 'mock-supabase.js'),encoding='utf-8').read()
 lang=sys.argv[1] if len(sys.argv)>1 else 'es'
 with sync_playwright() as p:
-    b=p.chromium.launch(); ctx=b.new_context(viewport={'width':390,'height':844},device_scale_factor=2,timezone_id='Europe/Madrid')
+    b=p.chromium.launch(); ctx=b.new_context(service_workers='block',viewport={'width':390,'height':844},device_scale_factor=2,timezone_id='Europe/Madrid')
     ctx.route('**/supabase-js*/**',lambda r:r.fulfill(status=200,content_type='application/javascript',body=MOCK)); ctx.route('**/sw.js',lambda r:r.abort())
     ctx.add_init_script(f"try{{localStorage.setItem('hogar-lang','{lang}')}}catch(e){{}}")
     pg=ctx.new_page(); errs=[]; pg.on('pageerror',lambda e:errs.append(str(e))); pg.on('console',lambda m:errs.append(m.text) if m.type=='error' else None)
