@@ -23,6 +23,12 @@ jobs:
           playwright install --with-deps chromium
       - name: Pruebas de interfaz
         run: bash tests/run_all.sh
+      - name: Resumen de fallos
+        if: failure()
+        run: |
+          for f in tests/out/*.log; do
+            echo "::error title=$(basename $f)::$(grep -E 'FALLA|Error|ERROR|Timeout' $f | head -8 | tr '\n' '|' | cut -c1-900)"
+          done
       - name: Registros de las pruebas
         if: always()
         uses: actions/upload-artifact@v4
