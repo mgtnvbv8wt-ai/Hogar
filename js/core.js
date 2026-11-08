@@ -7,7 +7,8 @@ function savePlace(v) { try { localStorage.setItem('hogar-place', v); } catch (_
 function loadAllPlaces() { try { return localStorage.getItem('hogar-all') === '1'; } catch (_) { return false; } }
 function saveAllPlaces(v) { try { localStorage.setItem('hogar-all', v ? '1' : '0'); } catch (_) {} }
 
-const state = { user:null, member:null, household:null, members:{}, events:[], messages:[], items:[], chores:[], menu:[], staples:[],
+const CHAT_PAGE = 60;                       // mensajes que se cargan de una vez en el chat
+const state = { chatMore:false, user:null, member:null, household:null, members:{}, events:[], messages:[], items:[], chores:[], menu:[], staples:[],
   tab:'home', place:loadPlace(), allPlaces:loadAllPlaces(), choreFilter:'all', choreLog:[], replyTo:null, stations:[], weather:null, weatherAt:0, weatherBusy:false, calMode:'month', stapleEdit:false, month:new Date(), sel:new Date(), channel:null, signup:false };
 
 const PREFS_KEY = 'hogar-prefs';

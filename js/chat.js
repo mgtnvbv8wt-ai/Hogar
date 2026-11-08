@@ -2,6 +2,7 @@
 function renderChat() {
   const log = $('#chatlog'); const atBottom = log.scrollHeight - log.scrollTop - log.clientHeight < 80;
   log.replaceChildren();
+  if (state.chatMore) log.append(el('button',{class:'ghost more',text:tr('Cargar mensajes anteriores'),onclick:e => loadOlderMessages(e.currentTarget)}));
   if (!state.messages.length) log.append(emptyState('💬', tr('Aún no hay mensajes. Saluda 👋')));
   state.messages.forEach(m => {
     const mine = m.user_id === state.user.id;
@@ -13,6 +14,17 @@ function renderChat() {
       m.body, el('span',{class:'at',text:fmtTime(new Date(m.created_at))})));
   });
   if (atBottom) scrollChat();
+}
+async function loadOlderMessages(btn) {
+  const oldest = state.messages[0]; if (!oldest) return;
+  if (btn) btn.disabled = true;
+  const { data, error } = await sb.from('messages').select('*').lt('created_at', oldest.created_at)
+    .order('created_at', { ascending:false }).limit(CHAT_PAGE);
+  if (error) { if (btn) btn.disabled = false; toast(errMsg(error)); return; }
+  const log = $('#chatlog'), h = log.scrollHeight, t = log.scrollTop;
+  state.messages = data.slice().reverse().concat(state.messages);
+  state.chatMore = data.length === CHAT_PAGE;
+  renderChat(); log.scrollTop = t + (log.scrollHeight - h);     // el chat no salta: se queda donde estabas leyendo
 }
 function setReply(m) { state.replyTo = (state.replyTo && state.replyTo.id === m.id) ? null : m; updateReplyBar(); if (state.replyTo) $('#chatIn').focus(); }
 function updateReplyBar() {

@@ -24,7 +24,7 @@ async function loadAll() {
   const since = new Date(Date.now() - 60*86400e3).toISOString();
   const [ev, ms, it, ch, mn, st, wst, lg] = await Promise.all([
     sb.from('events').select('*').or('starts_at.gte.' + since + ',recur.not.is.null').order('starts_at'),
-    sb.from('messages').select('*').order('created_at', { ascending:false }).limit(200),
+    sb.from('messages').select('*').order('created_at', { ascending:false }).limit(CHAT_PAGE),
     sb.from('shopping_items').select('*').order('created_at'),
     sb.from('chores').select('*').order('created_at'),
     sb.from('menu_days').select('*').gte('day', ymd(new Date(Date.now() - 45*86400e3))).order('day'),
@@ -34,7 +34,11 @@ async function loadAll() {
   ]);
   if ([ev, ms, it, ch, mn, st, wst, lg].some(netFail)) return false;   // sin red: se conservan los datos que ya hay
   state.events = ev.data || [];
-  state.messages = (ms.data || []).reverse();
+  const fresh = (ms.data || []).slice().reverse();
+  // si ya se habían cargado mensajes más antiguos, se conservan
+  const keep = fresh.length ? state.messages.filter(m => m.created_at < fresh[0].created_at) : [];
+  state.messages = keep.concat(fresh);
+  if (!keep.length) state.chatMore = (ms.data || []).length === CHAT_PAGE;
   state.items = it.data || [];
   state.chores = ch.data || [];
   state.menu = mn.data || [];
@@ -44,7 +48,7 @@ async function loadAll() {
 }
 function teardown() {
   if (state.channel) { sb.removeChannel(state.channel); state.channel = null; }
-  Object.assign(state, { member:null, household:null, events:[], messages:[], items:[], chores:[], menu:[], staples:[], stations:[], choreLog:[], replyTo:null, weather:null, weatherAt:0 });
+  Object.assign(state, { chatMore:false, member:null, household:null, events:[], messages:[], items:[], chores:[], menu:[], staples:[], stations:[], choreLog:[], replyTo:null, weather:null, weatherAt:0 });
 }
 
 /* ---------- tiempo real ---------- */

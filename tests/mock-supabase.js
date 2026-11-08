@@ -57,6 +57,8 @@
     in(k, vs) { this.f.push(r => vs.includes(r[k])); return this; }
     neq(k, v) { this.f.push(r => r[k] !== v); return this; }
     gte(k, v) { this.f.push(r => r[k] >= v); return this; }
+    lt(k, v) { this.f.push(r => r[k] < v); return this; }
+    ilike(k, p) { const re = new RegExp('^' + p.replace(/\\([%_\\])/g, '$1').replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/%/g, '.*') + '$', 'i'); this.f.push(r => re.test(String(r[k]))); return this; }
     or() { return this; }            // el filtro .or() no se simula: devuelve todo
     order(k, o) { this.ord = [k, !(o && o.ascending === false)]; return this; }
     limit(n) { this.lim = n; return this; }

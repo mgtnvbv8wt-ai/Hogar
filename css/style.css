@@ -169,3 +169,4 @@ body[data-tab=shop] header,body[data-tab=chores] header{box-shadow:inset 0 -3px 
 /* vista «Todas» (las dos viviendas): solo lectura/edición, sin formularios de alta */
 body[data-all="1"] #shopForm, body[data-all="1"] #shopCat, body[data-all="1"] #staples, body[data-all="1"] #choreForm{display:none}
 .item{touch-action:pan-y}
+#chatlog .more{align-self:center;margin:4px 0 8px;padding:6px 14px;font-size:13px;flex:none}
