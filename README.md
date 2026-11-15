@@ -46,3 +46,11 @@ Las capturas y registros quedan en `tests/out/` (no se sube).
   on conflict (id) do nothing;
   ```
   Estas copias viven en la misma base de datos: protegen de borrados por error, no de perder el proyecto. Para eso, usa también *Copia de seguridad* en Ajustes de la app.
+
+## Piezas añadidas (noviembre)
+
+- `js/lists.js`: listas reutilizables (tabla `checklists`; se reinician 12 h después de terminarlas).
+- `js/admin.js`: pantalla de administración. Usa las funciones `admin_*` del servidor, que solo responden a quien entró primero en el hogar.
+- `js/swipe.js`: deslizar para marcar (→) o borrar (←) en compra y tareas.
+- Avisos (función `notify`): chat, compra, tareas, eventos, recordatorios, resumen de tareas, menú y alertas de seguridad (registro nuevo o códigos de invitación fallidos). Las preferencias de cada persona están en `notif_prefs`.
+- Vista de **semana** en el calendario (`renderWeek` en `js/calendar.js`).

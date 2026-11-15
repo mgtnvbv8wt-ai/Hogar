@@ -95,6 +95,7 @@
     <section id="view-cal" hidden>
       <div class="seg" id="calSeg">
         <button data-m="month" class="on">Mes</button>
+        <button data-m="week">Semana</button>
         <button data-m="list">Próximos eventos</button>
       </div>
       <div id="calMonth">
@@ -112,6 +113,16 @@
         <button class="soft" id="addEvDay">+ Evento</button>
       </div>
       <div class="card" id="dayList"></div>
+      </div>
+      <div id="calWeek" hidden>
+        <div class="card">
+          <div class="cal-head">
+            <button class="ghost" id="prevW" aria-label="Semana anterior">‹</button>
+            <h2 id="weekTitle"></h2>
+            <button class="ghost" id="nextW" aria-label="Semana siguiente">›</button>
+          </div>
+        </div>
+        <div id="weekDays"></div>
       </div>
       <div id="calList" hidden>
         <div class="row" style="justify-content:flex-end;margin-bottom:6px"><button id="addEv">+ Nuevo evento</button></div>

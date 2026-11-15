@@ -178,6 +178,9 @@ const CA = {
 "Tus móviles con avisos": "Els teus mòbils amb avisos",
 "Nombre guardado": "Nom desat",
 "Avisar": "Avisar",
+"hoy": "avui",
+"Añadir evento": "Afegeix un esdeveniment",
+"Semana": "Setmana",
 "Listas": "Llistes",
 "Vacía": "Buida",
 "Crea listas para lo que repetís: la maleta, la mochila de la guardería…": "Crea llistes per al que repetiu: la maleta, la motxilla de la llar d'infants…",
@@ -320,7 +323,7 @@ Object.assign(CA, {
   'Sin conexión': "Sense connexió", 'cambios pendientes': "canvis pendents", 'Sincronizando…': "Sincronitzant…",
   'Cambios sincronizados': "Canvis sincronitzats", 'Algún cambio no se pudo guardar': "Algun canvi no s'ha pogut desar"
 });
-Object.assign(HTML_CA, { 'Buscar': "Cercar", 'Cancelar respuesta': "Cancel·lar la resposta", 'Contraseña': "Contrasenya", 'He olvidado la contraseña': "He oblidat la contrasenya" });
+Object.assign(HTML_CA, { 'Semana': "Setmana", 'Semana anterior': "Setmana anterior", 'Semana siguiente': "Setmana següent", 'Buscar': "Cercar", 'Cancelar respuesta': "Cancel·lar la resposta", 'Contraseña': "Contrasenya", 'He olvidado la contraseña': "He oblidat la contrasenya" });
 document.documentElement.lang = LANG;
 if (LANG === 'ca') {
   const T = x => { const k = x.trim(); const v = HTML_CA[k] || CA[k]; return v ? x.replace(k, v) : x; };

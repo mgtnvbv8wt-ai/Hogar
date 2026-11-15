@@ -22,6 +22,7 @@ const CATS = [['frutas',tr('Fruta y verdura')],['carne',tr('Carne y pescado')],[
   ['despensa',tr('Despensa')],['bebidas',tr('Bebidas')],['congelados',tr('Congelados')],['limpieza',tr('Limpieza')],
   ['higiene',tr('Higiene y farmacia')],['bebe',tr('Bebé')],['otros',tr('Otros')]];
 const CAT_NAME = Object.fromEntries(CATS);
+const CAT_ICON = { frutas:'🥬', carne:'🥩', lacteos:'🥛', pan:'🥖', despensa:'🥫', bebidas:'🥤', congelados:'🧊', limpieza:'🧽', higiene:'🧴', bebe:'🍼', otros:'🛒' };
 const GUESS = [
   ['bebe', /pa[ñn]al|biber[óo]n|potito|papilla|chupete|beb[ée]|continuaci[óo]n|bolquer|biber[oó]|nad[oó]|llet de continuaci/i],
   ['frutas', /manzana|\bpera|pl[áa]tano|naranja|mandarina|lim[óo]n|fresa|\buvas?\b|mel[óo]n|sand[íi]a|kiwi|aguacate|tomate|lechuga|cebolla|\bajos?\b|patata|zanahoria|pimiento|calabac[ií]n|pepino|br[óo]coli|espinaca|champi[ñn]|fruta|verdura|ensalada|puerro|berenjena|jud[íi]as verdes|coliflor|\bcol\b|rúcula|rucula|nectarina|melocot[óo]n|ciruela|cereza|\bpoma|\bpera|platan|taronja|llimona|maduixa|\braim|\bmelo|sindria|alvocat|tomaquet|enciam|\bceba|pastanaga|pebrot|carbasso|cogombre|broquil|espinac|bolets|fruita|verdura|amanida/i],
@@ -56,7 +57,7 @@ function renderShop() {
   if (!here.length) box.append(el('div',{class:'card'}, emptyState('🛒', state.allPlaces ? tr('No hay nada por comprar.') : tr('La lista de ') + PLACE_NAME[state.place] + tr(' está vacía.'))));
   for (const [k, label] of CATS) {
     const its = pending.filter(i => catOf(i) === k); if (!its.length) continue;
-    box.append(el('div',{class:'group-title',text:label}));
+    box.append(el('div',{class:'group-title',text:(CAT_ICON[k] || '') + ' ' + label}));
     const c = el('div',{class:'card'}); its.forEach(i => c.append(itemRow(i))); box.append(c);
   }
   if (done.length) {

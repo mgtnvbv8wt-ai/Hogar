@@ -46,7 +46,8 @@ function upcomingEvents(days) {              // desde hoy; los que no se repiten
 
 function renderCal() {
   document.querySelectorAll('#calSeg button').forEach(b => b.classList.toggle('on', b.dataset.m === state.calMode));
-  $('#calMonth').hidden = state.calMode !== 'month'; $('#calList').hidden = state.calMode !== 'list';
+  $('#calMonth').hidden = state.calMode !== 'month'; $('#calList').hidden = state.calMode !== 'list'; $('#calWeek').hidden = state.calMode !== 'week';
+  if (state.calMode === 'week') renderWeek();
   const m = state.month, y = m.getFullYear(), mo = m.getMonth();
   $('#monthTitle').textContent = m.toLocaleDateString(LOCALE,{month:'long',year:'numeric'});
   const first = new Date(y, mo, 1);
@@ -66,6 +67,24 @@ function renderCal() {
   if (!evs.length) list.append(el('div',{class:'empty',text:tr('Nada planeado este día.')}));
   evs.forEach(e => list.append(evRow(e, false)));
 }
+/* ---------- semana ---------- */
+const mondayOf = d => new Date(d.getFullYear(), d.getMonth(), d.getDate() - ((d.getDay() + 6) % 7));
+function renderWeek() {
+  const mon = mondayOf(state.sel), sun = new Date(mon.getFullYear(), mon.getMonth(), mon.getDate() + 6), today = new Date();
+  const short = d => d.toLocaleDateString(LOCALE, { day:'numeric', month:'short' });
+  $('#weekTitle').textContent = short(mon) + ' – ' + short(sun);
+  const box = $('#weekDays'); box.replaceChildren();
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(mon.getFullYear(), mon.getMonth(), mon.getDate() + i), evs = eventsOn(d), isToday = sameDay(d, today);
+    box.append(el('div',{class:'wday' + (isToday ? ' today' : '')},
+      el('div',{class:'wh'},
+        el('strong',{text:d.toLocaleDateString(LOCALE, { weekday:'long', day:'numeric' }) + (isToday ? ' · ' + tr('hoy') : '')}),
+        el('button',{class:'ghost','aria-label':tr('Añadir evento'),text:'+',onclick:()=>eventForm(d)})),
+      el('div',{class:'card'}, ...(evs.length ? evs.map(e => evRow(e, false)) : [el('div',{class:'small muted',style:'padding:4px 2px',text:tr('Nada planeado este día.')})]))));
+  }
+}
+const shiftWeek = n => { const m = mondayOf(state.sel); state.sel = new Date(m.getFullYear(), m.getMonth(), m.getDate() + 7 * n); state.month = new Date(state.sel.getFullYear(), state.sel.getMonth(), 1); render(); };
+$('#prevW').onclick = () => shiftWeek(-1); $('#nextW').onclick = () => shiftWeek(1);
 $('#addEvDay').onclick = () => eventForm(state.sel);
 $('#calSeg').onclick = e => { const b = e.target.closest('button[data-m]'); if (!b) return; state.calMode = b.dataset.m; render(); };
 
