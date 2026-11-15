@@ -113,7 +113,16 @@
           signOut: async () => {}, signInWithPassword: async () => ({}), signUp: async () => ({}),
         },
         from: t => new Q(t),
-        rpc: async () => ({ data: null, error: null }),
+        rpc: async (name, args) => {
+          (window.__rpc = window.__rpc || []).push([name, args]);
+          if (name === 'admin_overview') return { data: window.__admin || { is_admin: true, invite_code: window.__code || 'abc123abc123', last_backup: '2026-11-08T21:15:00Z',
+            members: [{ user_id: ME, display_name: 'Guillem', email: 'guillem@example.com', joined: '2026-10-17T08:00:00Z', last_sign_in: '2026-11-15T10:00:00Z', devices: 3 },
+                      { user_id: 'u2', display_name: 'Sílvia', email: 'silvia@example.com', joined: '2026-10-17T08:10:00Z', last_sign_in: '2026-11-14T10:00:00Z', devices: 2 }],
+            devices: [{ id: 'd1', user_id: ME, name: 'iPhone · iOS 18', created: '2026-10-17T08:24:00Z' }, { id: 'd2', user_id: 'u2', name: null, created: '2026-10-19T19:40:00Z' }] }, error: null };
+          if (name === 'admin_regenerate_invite') { window.__code = 'nuevo0000000'; return { data: 'nuevo0000000', error: null }; }
+          if (name === 'admin_backup_now') return { data: '2026-11-16T00:00:00Z', error: null };
+          return { data: null, error: null };
+        },
         functions: { invoke: async () => { window.__weatherCalls++; if (window.__weatherFail) return { data: null, error: { message: 'boom' } }; return { data: window.__weather, error: null }; } },
         channel: () => ({ on() { return this; }, subscribe() { return this; } }),
         removeChannel: () => {},

@@ -6,8 +6,8 @@ $('#aSwitch').onclick = () => {
   $('#aGo').textContent = state.signup ? tr('Crear cuenta') : 'Entrar';
   $('#aSwitch').textContent = state.signup ? tr('Ya tengo cuenta') : tr('Crear cuenta nueva');
   $('#aPass').autocomplete = state.signup ? 'new-password' : 'current-password';
-  $('#aPass').placeholder = state.signup ? tr('Contraseña (mín. 8)') : tr('Contraseña');
-  if (state.signup) $('#aPass').minLength = 8; else $('#aPass').removeAttribute('minlength');
+  $('#aPass').placeholder = state.signup ? tr('Contraseña (mín. 10)') : tr('Contraseña');
+  if (state.signup) $('#aPass').minLength = 10; else $('#aPass').removeAttribute('minlength');
   $('#aErr').textContent = '';
 };
 $('#authForm').onsubmit = async e => {
@@ -45,13 +45,13 @@ $('#aForgot').onclick = async () => {
   err.textContent = tr('Te hemos enviado un enlace para crear una contraseña nueva. Mira tu correo (y la carpeta de spam).');
 };
 function passwordForm(intro) {
-  const pw = el('input',{type:'password',placeholder:tr('Nueva contraseña (mín. 8)'),autocomplete:'new-password',minlength:'8'});
+  const pw = el('input',{type:'password',placeholder:tr('Nueva contraseña (mín. 10)'),autocomplete:'new-password',minlength:'10'});
   const err = el('div',{class:'err'});
   openSheet(el('h2',{text:tr('Nueva contraseña')}),
     intro ? el('p',{class:'small muted',text:tr('Elige una contraseña nueva para entrar en Nuestro Hogar.')}) : null,
     pw, err,
     el('button',{style:'width:100%;margin-top:10px',text:tr('Guardar'),onclick:async()=>{
-      if (pw.value.length < 8) { err.textContent = tr('La contraseña debe tener al menos 8 caracteres.'); return; }
+      if (pw.value.length < 10) { err.textContent = tr('La contraseña debe tener al menos 10 caracteres.'); return; }
       const { error } = await sb.auth.updateUser({ password: pw.value });
       if (error) { err.textContent = errMsg(error); return; }
       closeSheet(); toast(tr('Contraseña cambiada'));

@@ -77,6 +77,7 @@ $('#btnSettings').onclick = () => {
     prefsBox.append(el('label',{class:'f row',style:'margin:10px 0 6px'}, q, ' ' + tr('Silencio por la noche')), times,
       el('p',{class:'small muted',style:'margin:6px 0 0',text:tr('En silencio no suena nada, salvo los recordatorios de eventos. Estos ajustes valen para todos tus móviles.')}));
   };
+  const adminBox = el('div',{}); adminButtonFor(adminBox);
   paint(); paintDevices(); paintPrefs();
   openSheet(
     el('h3',{text:state.household.name}),
@@ -95,6 +96,7 @@ $('#btnSettings').onclick = () => {
     el('label',{class:'f',text:tr('Avisos en este móvil')}),
     pushNote, pushBtn, devBox, prefsBox,
     el('hr',{style:'border:0;border-top:1px solid var(--line);margin:18px 0'}),
+    adminBox,
     el('label',{class:'f',text:tr('Copia de seguridad')}),
     el('p',{class:'small muted',style:'margin:0 0 8px',text:tr('Descarga todos los datos del hogar (eventos, mensajes, compra, tareas y menús) en un archivo.')}),
     el('button',{class:'soft',style:'width:100%',text:tr('Descargar copia de seguridad'),onclick:exportBackup}),
