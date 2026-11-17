@@ -1,5 +1,5 @@
 /* ---------- navegación ---------- */
-const TITLES = { home:tr('Inicio'), cal:tr('Calendario'), chat:tr('Chat'), shop:'Compra', chores:'Coses de Casa', menu:'Menú' };
+const TITLES = { home:tr('Inicio'), cal:tr('Calendario'), chat:tr('Chat'), angia:'AngIA', shop:'Compra', chores:'Coses de Casa', menu:'Menú' };
 function openTab(t) {
   if (t === 'ev') { t = 'cal'; state.calMode = 'list'; }   // pestaña antigua «Eventos»
   if (!TITLES[t]) return;
@@ -7,6 +7,7 @@ function openTab(t) {
   $('main').scrollTop = 0;
   if (t === 'home') loadWeather();
   if (t === 'chat') scrollChat();
+  if (t === 'angia') scrollAngia();
 }
 $('#tabs').onclick = e => {
   const b = e.target.closest('button[data-tab]'); if (!b) return;
@@ -18,9 +19,9 @@ function render() {
   document.body.dataset.place = state.place; document.body.dataset.tab = state.tab; document.body.dataset.all = state.allPlaces ? '1' : '0';
   document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab===state.tab));
   for (const t of Object.keys(TITLES)) $('#view-'+t).hidden = t!==state.tab;
-  $('main').style.overflowY = state.tab==='chat' ? 'hidden' : 'auto';
-  $('main').style.display = state.tab==='chat' ? 'flex' : 'block';
+  $('main').style.overflowY = (state.tab==='chat'||state.tab==='angia') ? 'hidden' : 'auto';
+  $('main').style.display = (state.tab==='chat'||state.tab==='angia') ? 'flex' : 'block';
   $('main').style.flexDirection = 'column';
-  renderPlaceSeg(); renderHome(); renderCal(); renderEvents(); renderChat(); renderShop(); renderChores(); renderMenu();
+  renderPlaceSeg(); renderHome(); renderCal(); renderEvents(); renderChat(); renderAngia(); renderShop(); renderChores(); renderMenu();
   saveSnapshotSoon(); updateBadge();
 }

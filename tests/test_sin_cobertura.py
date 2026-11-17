@@ -35,7 +35,7 @@ with sync_playwright() as p:
     pg.fill('#choreIn', 'Regar plantas'); pg.press('#choreIn', 'Enter'); pg.wait_for_timeout(300)
     check('la tarea aparece sin red', 'Regar plantas' in pg.inner_text('#choreList'))
     pg.evaluate("toggleChore(state.chores.find(c => c.id === 'c2'))"); pg.wait_for_timeout(300)
-    pg.click('nav button[data-tab=chat]'); pg.wait_for_timeout(150)
+    pg.evaluate("openTab('chat')"); pg.wait_for_timeout(150)
     pg.fill('#chatIn', 'Estoy sin cobertura'); pg.press('#chatIn', 'Enter'); pg.wait_for_timeout(300)
     check('el mensaje aparece sin red', 'Estoy sin cobertura' in pg.inner_text('#chatlog'))
     pending = pg.evaluate('OPS.length')

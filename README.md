@@ -54,3 +54,11 @@ Las capturas y registros quedan en `tests/out/` (no se sube).
 - `js/swipe.js`: deslizar para marcar (→) o borrar (←) en compra y tareas.
 - Avisos (función `notify`): chat, compra, tareas, eventos, recordatorios, resumen de tareas, menú y alertas de seguridad (registro nuevo o códigos de invitación fallidos). Las preferencias de cada persona están en `notif_prefs`.
 - Vista de **semana** en el calendario (`renderWeek` en `js/calendar.js`).
+
+### AngIA (asistente con Gemini)
+- Pestaña `AngIA` (js/angia.js) en lugar de Chat; el chat sigue en la base de datos y su vista existe, pero la pestaña está oculta.
+- Función `angia` de Supabase (verify_jwt): valida la sesión, lee compra/tareas/eventos/menú con RLS de su casa y llama a Gemini. Solo responde, no modifica datos.
+- Secretos en Vault: `gemini_api_key` (obligatorio) y `gemini_model` (opcional, por defecto `gemini-flash-latest`).
+- Límite de 40 preguntas al día por persona (`public.angia_take`, tabla `private.angia_usage`). La conversación se guarda solo en el móvil.
+- Prueba: `tests/test_angia.py`.
+

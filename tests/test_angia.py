@@ -1,0 +1,42 @@
+# AngIA: pestaña que sustituye al chat, conversación, errores, límite y memoria por móvil
+import os
+from playwright.sync_api import sync_playwright
+HERE = os.path.dirname(os.path.abspath(__file__))
+BASE = os.environ.get('HOGAR_URL', 'http://localhost:8765/index.html')
+MOCK = open(os.path.join(HERE, 'mock-supabase.js'), encoding='utf-8').read()
+fails = []
+def check(name, cond, extra=''):
+    print(('OK   ' if cond else 'FALLA'), name, '' if cond else extra)
+    if not cond: fails.append(name)
+
+with sync_playwright() as p:
+    b = p.chromium.launch()
+    ctx = b.new_context(service_workers='block', viewport={'width': 390, 'height': 844}, locale='es-ES', timezone_id='Europe/Madrid')
+    ctx.route('**/supabase-js*/**', lambda r: r.fulfill(status=200, content_type='application/javascript', body=MOCK))
+    pg = ctx.new_page(); errs = []; pg.on('pageerror', lambda e: errs.append(str(e)))
+    pg.goto(BASE); pg.wait_for_selector('#app:not([hidden])'); pg.wait_for_timeout(300)
+    check('la pestaña Chat está oculta', not pg.is_visible('nav button[data-tab=chat]'))
+    check('hay pestaña AngIA', pg.is_visible('nav button[data-tab=angia]'))
+    pg.click('nav button[data-tab=angia]'); pg.wait_for_timeout(200)
+    check('el título es AngIA', pg.inner_text('#title') == 'AngIA')
+    check('se ven sugerencias al empezar', pg.locator('.angia-hints button').count() == 4)
+    pg.evaluate("window.__angiaDelay = 400")
+    pg.fill('#angiaIn', '¿Qué falta por comprar?'); pg.press('#angiaIn', 'Enter'); pg.wait_for_timeout(100)
+    check('mientras responde se ve «escribiendo»', pg.is_visible('#angialog .typing'))
+    pg.wait_for_timeout(600)
+    check('aparece la pregunta y la respuesta', pg.locator('#angialog .msg').count() == 2, str(pg.locator('#angialog .msg').count()))
+    check('la negrita se pinta sin HTML crudo', pg.locator('#angialog .msg.ai b').inner_text() == 'leche' and '**' not in pg.inner_text('#angialog'))
+    check('las viñetas se convierten en •', '• Pan' in pg.inner_text('#angialog'))
+    pg.fill('#angiaIn', 'Y para la cena?'); pg.press('#angiaIn', 'Enter'); pg.wait_for_timeout(700)
+    calls = pg.evaluate("window.__angiaCalls")
+    check('se envía el historial en la segunda pregunta', len(calls) == 2 and len(calls[1]['history']) == 2, str(calls))
+    check('se recuerda en este móvil', pg.evaluate("JSON.parse(localStorage.getItem(angiaKey())).length") == 4)
+    pg.reload(); pg.wait_for_selector('#app:not([hidden])'); pg.evaluate("openTab('angia')"); pg.wait_for_timeout(300)
+    check('tras recargar sigue la conversación', pg.locator('#angialog .msg').count() == 4)
+    pg.evaluate("window.__angiaFail = 'limit'"); pg.fill('#angiaIn', 'otra'); pg.press('#angiaIn', 'Enter'); pg.wait_for_timeout(300)
+    check('el límite diario se explica', 'límite de preguntas' in pg.inner_text('#angialog'))
+    pg.click('#angialog .clear'); pg.wait_for_timeout(200)
+    check('borrar conversación la vacía', pg.locator('#angialog .msg').count() == 0 and pg.locator('.angia-hints button').count() == 4)
+    check('sin errores de JS', not errs, str(errs))
+    b.close()
+print('fallos:', len(fails)); raise SystemExit(1 if fails else 0)

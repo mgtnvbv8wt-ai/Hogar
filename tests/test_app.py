@@ -173,7 +173,7 @@ with sync_playwright() as p:
     check('fecha imposible se avisa y no se guarda', bad['days'] == [] and len(bad['warnings']) == 1, json.dumps(bad, ensure_ascii=False))
 
     # ---- Chat
-    page.click('nav button[data-tab=chat]')
+    page.evaluate("openTab('chat')")
     check('chat muestra nombre coloreado de Marc', page.eval_on_selector('#chatlog .who', 'e=>getComputedStyle(e).color') != '')
 
     # ---- Ajustes: tema, letra, copia

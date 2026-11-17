@@ -32,7 +32,7 @@ with sync_playwright() as p:
     pg.evaluate("toggleChore(state.chores.find(c=>c.id==='c2'))"); pg.wait_for_timeout(300); print('stats tras hacer c2:',pg.inner_text('#choreStats'))
     pg.evaluate("toggleChore(state.chores.find(c=>c.id==='c2'))"); pg.wait_for_timeout(300); print('stats tras deshacer c2:',pg.inner_text('#choreStats'))
     # --- chat: respuesta
-    pg.click('nav button[data-tab=chat]'); pg.wait_for_timeout(250)
+    pg.evaluate("openTab('chat')"); pg.wait_for_timeout(250)
     pg.click('#chatlog .msg >> nth=0'); pg.wait_for_timeout(100); print('barra:',pg.inner_text('#replyBar'),'| hidden:',pg.evaluate("document.querySelector('#replyBar').hidden"))
     pg.fill('#chatIn','Vale, gracias'); pg.click('#chatForm button[type=submit]'); pg.wait_for_timeout(300)
     print('mensaje con reply_to:',pg.evaluate("state.messages.at(-1).reply_to"),'| cita visible:',pg.inner_text('#chatlog .msg:last-child').replace('\n',' | ')); pg.screenshot(path=OUT+f'q-chat-{lang}.png')

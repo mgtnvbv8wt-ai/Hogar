@@ -123,7 +123,7 @@
           if (name === 'admin_backup_now') return { data: '2026-11-16T00:00:00Z', error: null };
           return { data: null, error: null };
         },
-        functions: { invoke: async () => { window.__weatherCalls++; if (window.__weatherFail) return { data: null, error: { message: 'boom' } }; return { data: window.__weather, error: null }; } },
+        functions: { invoke: async (name, opts) => { if (name === 'angia') { window.__angiaCalls = (window.__angiaCalls || []); window.__angiaCalls.push(opts.body); if (window.__angiaDelay) await new Promise(r => setTimeout(r, window.__angiaDelay)); return window.__angiaFail ? { data: { error: window.__angiaFail }, error: null } : { data: { reply: window.__angiaReply || 'Te falta **leche**.\n* Pan\n* Huevos' }, error: null }; } window.__weatherCalls++; if (window.__weatherFail) return { data: null, error: { message: 'boom' } }; return { data: window.__weather, error: null }; } },
         channel: () => ({ on() { return this; }, subscribe() { return this; } }),
         removeChannel: () => {},
       };

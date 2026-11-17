@@ -22,7 +22,7 @@ with sync_playwright() as p:
         body: i === 5 ? 'la clave del garaje es zorro' : 'mensaje antiguo ' + i, created_at: new Date(Date.now() - (200 - i) * 60000).toISOString() });
     }""")
     pg.evaluate("loadAll().then(render)"); pg.wait_for_timeout(300)
-    pg.click('nav button[data-tab=chat]'); pg.wait_for_timeout(300)
+    pg.evaluate("openTab('chat')"); pg.wait_for_timeout(300)
     n = lambda: pg.evaluate("state.messages.length")
     check('al abrir se cargan solo 60 mensajes', n() == 60, str(n()))
     check('hay botón «Cargar mensajes anteriores»', pg.is_visible('#chatlog .more'))

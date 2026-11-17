@@ -324,6 +324,17 @@ Object.assign(CA, {
   'Cambios sincronizados': "Canvis sincronitzats", 'Algún cambio no se pudo guardar': "Algun canvi no s'ha pogut desar"
 });
 Object.assign(HTML_CA, { 'Semana': "Setmana", 'Semana anterior': "Setmana anterior", 'Semana siguiente': "Setmana següent", 'Buscar': "Cercar", 'Cancelar respuesta': "Cancel·lar la resposta", 'Contraseña': "Contrasenya", 'He olvidado la contraseña': "He oblidat la contrasenya" });
+Object.assign(CA, {
+  'Hola, soc AngIA. Pregúntame lo que quieras sobre la casa, la compra, las tareas o el menú, o cualquier duda del día a día.': "Hola, soc l'AngIA. Pregunta'm el que vulguis sobre la casa, la compra, les tasques o el menú, o qualsevol dubte del dia a dia.",
+  '¿Qué falta por comprar?': "Què falta per comprar?", '¿Qué tenemos esta semana?': "Què tenim aquesta setmana?",
+  '¿Qué hay de menú en la guardería hoy?': "Què hi ha de menú a la llar d'infants avui?", 'Idea de cena rápida': "Idea de sopar ràpid",
+  'Borrar conversación': "Esborrar la conversa", 'AngIA está escribiendo': "L'AngIA està escrivint",
+  'Has llegado al límite de preguntas de hoy. Mañana podrás seguir.': "Has arribat al límit de preguntes d'avui. Demà podràs continuar.",
+  'AngIA aún no está activada.': "L'AngIA encara no està activada.", 'AngIA está muy ocupada ahora. Inténtalo en un minuto.': "L'AngIA està molt ocupada ara. Torna-ho a provar d'aquí un minut.",
+  'Vuelve a iniciar sesión.': "Torna a iniciar la sessió.", 'No he sabido qué responder. ¿Puedes reformularlo?': "No he sabut què respondre. Ho pots reformular?",
+  'No he podido responder ahora. Inténtalo de nuevo.': "Ara no he pogut respondre. Torna-ho a provar."
+});
+Object.assign(HTML_CA, { 'Pregunta a AngIA…': "Pregunta a l'AngIA…" });
 document.documentElement.lang = LANG;
 if (LANG === 'ca') {
   const T = x => { const k = x.trim(); const v = HTML_CA[k] || CA[k]; return v ? x.replace(k, v) : x; };

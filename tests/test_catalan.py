@@ -23,7 +23,7 @@ with sync_playwright() as p:
         return t
     print('lang attr:',pg.evaluate('document.documentElement.lang'))
     dump('home')
-    for tab in ['cal','chat','shop','chores','menu']:
+    for tab in ['cal','angia','shop','chores','menu']:
         pg.click(f'nav button[data-tab={tab}]'); pg.wait_for_timeout(250); dump(tab)
     pg.click('nav button[data-tab=cal]'); pg.wait_for_timeout(200)
     pg.click('#btnNewEvent') if pg.query_selector('#btnNewEvent') else None

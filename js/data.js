@@ -50,7 +50,7 @@ async function loadAll() {
 }
 function teardown() {
   if (state.channel) { sb.removeChannel(state.channel); state.channel = null; }
-  Object.assign(state, { lists:[], chatMore:false, member:null, household:null, events:[], messages:[], items:[], chores:[], menu:[], staples:[], stations:[], choreLog:[], replyTo:null, weather:null, weatherAt:0 });
+  Object.assign(state, { angia:null, angiaBusy:false, lists:[], chatMore:false, member:null, household:null, events:[], messages:[], items:[], chores:[], menu:[], staples:[], stations:[], choreLog:[], replyTo:null, weather:null, weatherAt:0 });
 }
 
 /* ---------- tiempo real ---------- */
