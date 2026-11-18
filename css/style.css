@@ -209,3 +209,6 @@ body[data-all="1"] #shopForm, body[data-all="1"] #shopCat, body[data-all="1"] #s
 .angia-hints button{font-size:13px;padding:6px 12px}
 #angialog .clear{align-self:center;flex:none;font-size:12px;padding:4px 12px;margin-top:4px}
 .angia-top{display:flex;justify-content:flex-end;flex:none;margin:-4px 0 2px}.angia-top button{font-size:13px;padding:4px 10px}
+.attach{flex:none;font-size:20px;padding:6px 10px;line-height:1}
+#angiaPrev{display:flex;align-items:center;gap:10px}#angiaPrev[hidden]{display:none}#angiaPrev img{border-radius:8px;object-fit:cover}
+.msg .pic{display:block;max-width:100%;width:160px;border-radius:12px;margin-bottom:6px}

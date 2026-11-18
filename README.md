@@ -63,3 +63,6 @@ Las capturas y registros quedan en `tests/out/` (no se sube).
 - Prueba: `tests/test_angia.py`.
 - Memoria compartida: tabla `angia_memory` (RLS por hogar, máx. 60 recuerdos), herramienta `remember_fact` y botón «Memoria» en la pestaña. La conversación sigue guardándose solo en cada móvil.
 - El tiempo: si la pregunta lo menciona, la función refresca la estación de Torelló (función `weather`) y pasa la lectura real (no previsión) a Gemini.
+- Fotos: botón 📷 en la pestaña; la foto se reduce en el móvil (máx. 1600 px, JPEG) y viaja a la función como `image` (base64, máx. ~5 MB). AngIA la interpreta (invitaciones → eventos, recetas → compra, menú de la guardería → `add_menu_days`).
+- Herramientas de la función: `add_shopping_items`, `add_chore` (con repetición diaria/semanal/mensual), `add_event`, `add_menu_days` (upsert por día), `complete_items` (marca compra o tareas como hechas, como la app; nunca borra) y `remember_fact`.
+

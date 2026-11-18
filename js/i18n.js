@@ -341,6 +341,8 @@ Object.assign(CA, {
   'Aún no recuerda nada.': "Encara no recorda res."
 });
 Object.assign(HTML_CA, { '🧠 Memoria': "🧠 Memòria" });
+Object.assign(CA, { '📷 Foto': "📷 Foto", 'No he podido leer la foto.': "No he pogut llegir la foto.", 'La foto es demasiado grande.': "La foto és massa gran.", 'No puedo leer ese tipo de imagen.': "No puc llegir aquest tipus d'imatge." });
+Object.assign(HTML_CA, { 'Foto lista para enviar': "Foto a punt per enviar", 'Adjuntar foto': "Adjuntar una foto", 'Quitar foto': "Treure la foto" });
 document.documentElement.lang = LANG;
 if (LANG === 'ca') {
   const T = x => { const k = x.trim(); const v = HTML_CA[k] || CA[k]; return v ? x.replace(k, v) : x; };

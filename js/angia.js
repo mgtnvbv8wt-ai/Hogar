@@ -3,7 +3,7 @@ const ANGIA_KEEP = 40;                                    // mensajes que se rec
 const ANGIA_HINTS = ['¿Qué falta por comprar?', '¿Qué tenemos esta semana?', '¿Qué hay de menú en la guardería hoy?', 'Idea de cena rápida', 'Añade leche y pan a la compra'];
 const angiaKey = () => 'hogar-angia-' + (state.user ? state.user.id : '');
 function angiaLoad() { try { return JSON.parse(localStorage.getItem(angiaKey())) || []; } catch (_) { return []; } }
-function angiaSave() { try { localStorage.setItem(angiaKey(), JSON.stringify(state.angia.slice(-ANGIA_KEEP))); } catch (_) {} }
+function angiaSave() { try { localStorage.setItem(angiaKey(), JSON.stringify(state.angia.slice(-ANGIA_KEEP).map(m => ({ role: m.role, text: m.text })))); } catch (_) {} }
 function angiaMsgs() { if (!state.angia) state.angia = angiaLoad(); return state.angia; }
 
 // texto → nodos: **negrita** y viñetas «* », sin HTML (todo con textContent)
@@ -31,6 +31,7 @@ function renderAngia() {
     const mine = m.role === 'user';
     log.append(el('div', { class: 'msg' + (mine ? ' mine' : ' ai') },
       mine ? null : el('span', { class: 'who', text: 'AngIA' }),
+      m.thumb ? el('img', { class: 'pic', src: m.thumb, alt: '' }) : null,
       mine ? m.text : angiaText(m.text)));
   });
   if (state.angiaBusy) log.append(el('div', { class: 'msg ai', 'aria-label': tr('AngIA está escribiendo') }, el('span', { class: 'who', text: 'AngIA' }), el('span', { class: 'typing' }, el('i'), el('i'), el('i'))));
@@ -41,16 +42,17 @@ function scrollAngia() { requestAnimationFrame(() => { const l = $('#angialog');
 
 function angiaError(code) {
   return { limit: 'Has llegado al límite de preguntas de hoy. Mañana podrás seguir.', not_configured: 'AngIA aún no está activada.', busy: 'AngIA está muy ocupada ahora. Inténtalo en un minuto.',
-    auth: 'Vuelve a iniciar sesión.', empty_reply: 'No he sabido qué responder. ¿Puedes reformularlo?' }[code] || 'No he podido responder ahora. Inténtalo de nuevo.';
+    auth: 'Vuelve a iniciar sesión.', empty_reply: 'No he sabido qué responder. ¿Puedes reformularlo?', image_too_big: 'La foto es demasiado grande.', bad_image: 'No puedo leer ese tipo de imagen.' }[code] || 'No he podido responder ahora. Inténtalo de nuevo.';
 }
-async function askAngia(text) {
-  text = (text || '').trim(); if (!text || state.angiaBusy) return;
+async function askAngia(text, photo) {
+  text = (text || '').trim(); if ((!text && !photo) || state.angiaBusy) return;
+  if (photo && !text) text = tr('📷 Foto');
   if (navigator.onLine === false || state.offlineMode) { toast(tr('Sin conexión. Inténtalo cuando tengas cobertura.')); return; }
   const msgs = angiaMsgs(), history = msgs.slice(-10).map(m => ({ role: m.role, text: m.text }));
-  msgs.push({ role: 'user', text }); state.angiaBusy = true; angiaSave(); renderAngia();
+  msgs.push({ role: 'user', text, thumb: photo ? photo.thumb : undefined }); state.angiaBusy = true; angiaSave(); renderAngia();
   let reply;
   try {
-    const { data, error } = await sb.functions.invoke('angia', { body: { message: text, history, place: state.place } });
+    const { data, error } = await sb.functions.invoke('angia', { body: { message: photo && text === tr('📷 Foto') ? '' : text, history, place: state.place, ...(photo ? { image: { mime: photo.mime, data: photo.data } } : {}) } });
     let code = data && data.error;
     if (error && !code) { try { const j = await error.context.json(); code = j && j.error; } catch (_) {} code = code || 'upstream'; }
     reply = (data && data.reply) || tr(angiaError(code));
@@ -60,7 +62,33 @@ async function askAngia(text) {
   msgs.push({ role: 'model', text: reply }); angiaSave();
   if (state.tab === 'angia') renderAngia();
 }
-$('#angiaForm').onsubmit = e => { e.preventDefault(); const i = $('#angiaIn'), v = i.value; i.value = ''; askAngia(v); };
+$('#angiaForm').onsubmit = e => { e.preventDefault(); const i = $('#angiaIn'), v = i.value, ph = state.angiaPhoto; i.value = ''; setPhoto(null); askAngia(v, ph); };
+
+/* fotos: se reducen en el móvil (máx. 1600 px, JPEG) antes de enviarlas */
+function setPhoto(p) { state.angiaPhoto = p; $('#angiaPrev').hidden = !p; if (p) $('#angiaThumb').src = p.thumb; }
+function shrink(file, max, q) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file), img = new Image();
+    img.onload = () => {
+      const k = Math.min(1, max / Math.max(img.naturalWidth, img.naturalHeight));
+      const c = document.createElement('canvas'); c.width = Math.round(img.naturalWidth * k); c.height = Math.round(img.naturalHeight * k);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
+      resolve(c.toDataURL('image/jpeg', q));
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('img')); };
+    img.src = url;
+  });
+}
+$('#angiaCam').onclick = () => $('#angiaFile').click();
+$('#angiaPrevX').onclick = () => setPhoto(null);
+$('#angiaFile').onchange = async e => {
+  const f = e.target.files && e.target.files[0]; e.target.value = ''; if (!f) return;
+  try {
+    const big = await shrink(f, 1600, 0.82), small = await shrink(f, 160, 0.7);
+    setPhoto({ mime: 'image/jpeg', data: big.split(',')[1], thumb: small });
+    $('#angiaIn').focus();
+  } catch (_) { toast(tr('No he podido leer la foto.')); }
+};
 
 /* memoria compartida: datos que AngIA recuerda para toda la familia (tabla angia_memory) */
 async function openMemory() {

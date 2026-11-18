@@ -142,7 +142,10 @@
     <section id="view-angia" hidden>
       <div class="angia-top"><button type="button" class="ghost" id="angiaMem">🧠 Memoria</button></div>
       <div id="angialog"></div>
+      <div class="replybar" id="angiaPrev" hidden><img id="angiaThumb" alt="" width="40" height="40"><div class="rq">Foto lista para enviar</div><button type="button" class="ghost" id="angiaPrevX" aria-label="Quitar foto">×</button></div>
       <form class="composer" id="angiaForm">
+        <button type="button" class="ghost attach" id="angiaCam" aria-label="Adjuntar foto">📷</button>
+        <input type="file" id="angiaFile" accept="image/*" hidden>
         <input id="angiaIn" placeholder="Pregunta a AngIA…" autocomplete="off" maxlength="1500">
         <button type="submit" aria-label="Enviar">Enviar</button>
       </form>

@@ -38,6 +38,18 @@ with sync_playwright() as p:
     check('el límite diario se explica', 'límite de preguntas' in pg.inner_text('#angialog'))
     pg.click('#angialog .clear'); pg.wait_for_timeout(200)
     check('borrar conversación la vacía', pg.locator('#angialog .msg').count() == 0 and pg.locator('.angia-hints button').count() == 5)
+    # foto: se reduce y se envía con la pregunta
+    import base64
+    png = base64.b64decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==')
+    open(os.path.join(HERE, 'out', 'pix.png'), 'wb').write(png)
+    pg.set_input_files('#angiaFile', os.path.join(HERE, 'out', 'pix.png')); pg.wait_for_timeout(500)
+    check('aparece la vista previa de la foto', pg.is_visible('#angiaPrev'))
+    pg.fill('#angiaIn', 'apunta esta invitación'); pg.press('#angiaIn', 'Enter'); pg.wait_for_timeout(700)
+    last = pg.evaluate("window.__angiaCalls[window.__angiaCalls.length - 1]")
+    check('la foto viaja como JPEG en base64', last.get('image', {}).get('mime') == 'image/jpeg' and len(last['image']['data']) > 50, str(last)[:200])
+    check('la vista previa se limpia al enviar', not pg.is_visible('#angiaPrev'))
+    check('la burbuja muestra la miniatura', pg.locator('#angialog .msg.mine img.pic').count() == 1)
+    check('la miniatura no se guarda en el móvil', 'thumb' not in pg.evaluate("localStorage.getItem(angiaKey())"))
     pg.click('#angiaMem'); pg.wait_for_timeout(300)
     check('se abre la memoria vacía', 'Aún no recuerda nada' in pg.inner_text('#sheet'))
     pg.fill('#sheet input', 'Sílvia es alérgica a la penicilina'); pg.click('#sheet button:has-text("Guardar")'); pg.wait_for_timeout(300)
