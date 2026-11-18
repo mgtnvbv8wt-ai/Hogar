@@ -61,4 +61,5 @@ Las capturas y registros quedan en `tests/out/` (no se sube).
 - Secretos en Vault: `gemini_api_key` (obligatorio) y `gemini_model` (opcional, por defecto `gemini-flash-latest`).
 - Límite de 40 preguntas al día por persona (`public.angia_take`, tabla `private.angia_usage`). La conversación se guarda solo en el móvil.
 - Prueba: `tests/test_angia.py`.
-
+- Memoria compartida: tabla `angia_memory` (RLS por hogar, máx. 60 recuerdos), herramienta `remember_fact` y botón «Memoria» en la pestaña. La conversación sigue guardándose solo en cada móvil.
+- El tiempo: si la pregunta lo menciona, la función refresca la estación de Torelló (función `weather`) y pasa la lectura real (no previsión) a Gemini.

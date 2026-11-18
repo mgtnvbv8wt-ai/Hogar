@@ -39,6 +39,7 @@
     push_subscriptions: [],
     notif_prefs: [],
     checklists: [],
+    angia_memory: [],
   };
   window.__weather = { configured: true, stations: [{ place: 'torello', stale: false, reading: {
     place: 'torello', taken_at: new Date(Date.now() - 4 * 60e3).toISOString(), fetched_at: new Date().toISOString(),

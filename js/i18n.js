@@ -335,6 +335,12 @@ Object.assign(CA, {
   'No he podido responder ahora. Inténtalo de nuevo.': "Ara no he pogut respondre. Torna-ho a provar."
 });
 Object.assign(HTML_CA, { 'Pregunta a AngIA…': "Pregunta a l'AngIA…" });
+Object.assign(CA, {
+  'Memoria de AngIA': "Memòria de l'AngIA", 'Ej.: Sílvia es alérgica a la penicilina': "Ex.: La Sílvia és al·lèrgica a la penicil·lina",
+  'Lo que AngIA recuerda para toda la familia. Puedes decirle «recuerda que…» en la conversación o escribirlo aquí. No guardes contraseñas ni datos bancarios.': "Allò que l'AngIA recorda per a tota la família. Li pots dir «recorda que…» a la conversa o escriure-ho aquí. No hi desis contrasenyes ni dades bancàries.",
+  'Aún no recuerda nada.': "Encara no recorda res."
+});
+Object.assign(HTML_CA, { '🧠 Memoria': "🧠 Memòria" });
 document.documentElement.lang = LANG;
 if (LANG === 'ca') {
   const T = x => { const k = x.trim(); const v = HTML_CA[k] || CA[k]; return v ? x.replace(k, v) : x; };

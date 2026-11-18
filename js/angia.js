@@ -61,3 +61,29 @@ async function askAngia(text) {
   if (state.tab === 'angia') renderAngia();
 }
 $('#angiaForm').onsubmit = e => { e.preventDefault(); const i = $('#angiaIn'), v = i.value; i.value = ''; askAngia(v); };
+
+/* memoria compartida: datos que AngIA recuerda para toda la familia (tabla angia_memory) */
+async function openMemory() {
+  const body = el('div');
+  const paint = async () => {
+    const { data, error } = await sb.from('angia_memory').select('*').order('created_at');
+    if (error) { toast(errMsg(error)); return; }
+    const input = el('input', { placeholder: tr('Ej.: Sílvia es alérgica a la penicilina'), maxlength: '300', autocomplete: 'off' });
+    const add = async () => {
+      const text = input.value.trim(); if (!text) return;
+      const r = await sb.from('angia_memory').insert({ household_id: state.household.id, text });
+      if (r.error) { toast(errMsg(r.error)); return; }
+      paint();
+    };
+    body.replaceChildren(
+      el('h3', { text: tr('Memoria de AngIA') }),
+      el('p', { class: 'small muted', text: tr('Lo que AngIA recuerda para toda la familia. Puedes decirle «recuerda que…» en la conversación o escribirlo aquí. No guardes contraseñas ni datos bancarios.') }),
+      ...(data.length ? data.map(m => el('div', { class: 'adm-row' }, el('div', { class: 'cn' }, m.text),
+        el('button', { class: 'ghost danger', text: tr('Borrar'), onclick: async () => { const r = await sb.from('angia_memory').delete().eq('id', m.id); if (r.error) toast(errMsg(r.error)); else paint(); } })))
+        : [el('div', { class: 'small muted', text: tr('Aún no recuerda nada.') })]),
+      el('div', { class: 'row', style: 'margin-top:12px' }, input, el('button', { text: tr('Guardar'), onclick: add })),
+      el('button', { class: 'ghost', style: 'width:100%;margin-top:10px', text: tr('Cerrar'), onclick: closeSheet }));
+  };
+  openSheet(body); await paint();
+}
+$('#angiaMem').onclick = openMemory;
