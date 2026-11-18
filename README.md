@@ -57,7 +57,7 @@ Las capturas y registros quedan en `tests/out/` (no se sube).
 
 ### AngIA (asistente con Gemini)
 - Pestaña `AngIA` (js/angia.js) en lugar de Chat; el chat sigue en la base de datos y su vista existe, pero la pestaña está oculta.
-- Función `angia` de Supabase (verify_jwt): valida la sesión, lee compra/tareas/eventos/menú con RLS de su casa y llama a Gemini. Solo responde, no modifica datos.
+- Función `angia` de Supabase (verify_jwt): valida la sesión, lee compra/tareas/eventos/menú con RLS de su casa y llama a Gemini. Responde y puede AÑADIR (no borrar ni editar) productos a la compra, tareas y eventos mediante function calling de Gemini; inserta con la sesión de quien pregunta (RLS) y como máximo 15 acciones por petición.
 - Secretos en Vault: `gemini_api_key` (obligatorio) y `gemini_model` (opcional, por defecto `gemini-flash-latest`).
 - Límite de 40 preguntas al día por persona (`public.angia_take`, tabla `private.angia_usage`). La conversación se guarda solo en el móvil.
 - Prueba: `tests/test_angia.py`.

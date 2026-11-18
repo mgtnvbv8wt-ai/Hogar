@@ -1,6 +1,6 @@
 /* ---------- AngIA: asistente de la casa (Gemini, vía la función «angia») ---------- */
 const ANGIA_KEEP = 40;                                    // mensajes que se recuerdan en este móvil
-const ANGIA_HINTS = ['¿Qué falta por comprar?', '¿Qué tenemos esta semana?', '¿Qué hay de menú en la guardería hoy?', 'Idea de cena rápida'];
+const ANGIA_HINTS = ['¿Qué falta por comprar?', '¿Qué tenemos esta semana?', '¿Qué hay de menú en la guardería hoy?', 'Idea de cena rápida', 'Añade leche y pan a la compra'];
 const angiaKey = () => 'hogar-angia-' + (state.user ? state.user.id : '');
 function angiaLoad() { try { return JSON.parse(localStorage.getItem(angiaKey())) || []; } catch (_) { return []; } }
 function angiaSave() { try { localStorage.setItem(angiaKey(), JSON.stringify(state.angia.slice(-ANGIA_KEEP))); } catch (_) {} }
@@ -50,10 +50,11 @@ async function askAngia(text) {
   msgs.push({ role: 'user', text }); state.angiaBusy = true; angiaSave(); renderAngia();
   let reply;
   try {
-    const { data, error } = await sb.functions.invoke('angia', { body: { message: text, history } });
+    const { data, error } = await sb.functions.invoke('angia', { body: { message: text, history, place: state.place } });
     let code = data && data.error;
     if (error && !code) { try { const j = await error.context.json(); code = j && j.error; } catch (_) {} code = code || 'upstream'; }
     reply = (data && data.reply) || tr(angiaError(code));
+    if (data && data.done && data.done.length) loadAll().then(render).catch(() => {});   // lo que ha añadido aparece ya en su pestaña
   } catch (_) { reply = tr(angiaError('upstream')); }
   state.angiaBusy = false;
   msgs.push({ role: 'model', text: reply }); angiaSave();

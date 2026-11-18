@@ -327,7 +327,7 @@ Object.assign(HTML_CA, { 'Semana': "Setmana", 'Semana anterior': "Setmana anteri
 Object.assign(CA, {
   'Hola, soc AngIA. Pregúntame lo que quieras sobre la casa, la compra, las tareas o el menú, o cualquier duda del día a día.': "Hola, soc l'AngIA. Pregunta'm el que vulguis sobre la casa, la compra, les tasques o el menú, o qualsevol dubte del dia a dia.",
   '¿Qué falta por comprar?': "Què falta per comprar?", '¿Qué tenemos esta semana?': "Què tenim aquesta setmana?",
-  '¿Qué hay de menú en la guardería hoy?': "Què hi ha de menú a la llar d'infants avui?", 'Idea de cena rápida': "Idea de sopar ràpid",
+  '¿Qué hay de menú en la guardería hoy?': "Què hi ha de menú a la llar d'infants avui?", 'Idea de cena rápida': "Idea de sopar ràpid", 'Añade leche y pan a la compra': "Afegeix llet i pa a la compra",
   'Borrar conversación': "Esborrar la conversa", 'AngIA está escribiendo': "L'AngIA està escrivint",
   'Has llegado al límite de preguntas de hoy. Mañana podrás seguir.': "Has arribat al límit de preguntes d'avui. Demà podràs continuar.",
   'AngIA aún no está activada.': "L'AngIA encara no està activada.", 'AngIA está muy ocupada ahora. Inténtalo en un minuto.': "L'AngIA està molt ocupada ara. Torna-ho a provar d'aquí un minut.",
